@@ -15,6 +15,8 @@
 #ifndef VIRTUAL_TOOLBOX_SD_2019_2020_TOOLSCANNER_H
 #define VIRTUAL_TOOLBOX_SD_2019_2020_TOOLSCANNER_H
 
+#include <stdio.h>
+
 /**
  * The ToolScanner class will allow the backend of the virtual toolbox
  * to communicate with physical hardware.
@@ -52,7 +54,7 @@ public:
      * Each row could have a varied number of columns. Each column should contain
      * a unique ID number stored as an int.
      */
-    int[][] scanForTools(int numScans);
+    int** scanForTools(int numScans);
 
     /**
      * This is just a placeholder for a setup function.

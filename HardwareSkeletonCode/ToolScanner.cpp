@@ -34,7 +34,7 @@
  * Implicit Constructor for the Class
  */
 ToolScanner::ToolScanner() {
-
+    printf("Created Object\n");
 }
 
 /**
@@ -49,8 +49,8 @@ ToolScanner::ToolScanner() {
  * Each row could have a varied number of columns. Each column should contain
  * a unique ID number stored as an int.
  */
-int[][] int ToolScanner::scanForTools(int numScans){
-    cout << "Made an object";
+int** ToolScanner::scanForTools(int numScans){
+
 }
 
 /**
