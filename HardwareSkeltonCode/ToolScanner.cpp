@@ -50,7 +50,7 @@ ToolScanner::ToolScanner() {
  * a unique ID number stored as an int.
  */
 int[][] int ToolScanner::scanForTools(int numScans){
-
+    cout << "Made an object";
 }
 
 /**
