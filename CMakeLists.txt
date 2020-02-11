@@ -6,3 +6,6 @@ add_executable(HardwareSkeletonCode HardwareSkeletonCode/HardwareCodeTester.cpp
         HardwareSkeletonCode/ToolScanner.cpp
         HardwareSkeletonCode/ToolScanner.h)
 
+add_executable(RFIDDriverCode RFIDDriverCode/RFIDCodeTester.cpp
+        RFIDDriverCode/ToolScanner.cpp
+        RFIDDriverCode/ToolScanner.h)
