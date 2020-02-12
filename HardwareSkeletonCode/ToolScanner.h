@@ -47,16 +47,12 @@ public:
     /**
      * Scans the physical tool box for present tools.
      *
-     * @param numTools specifies the number of scans to perform
-     * @return a 2D list of integers representing the ID's found for each scan
+     * @return a list of integers representing the ID's that are in the ToolBox
      *
-     * Returned list should be formatted as such:
-     * The list should have the same number of rows as the parameter numScans.
-     * Each row should correspond to a different scan.
-     * Each row could have a varied number of columns. Each column should contain
-     * a unique ID number stored as an int.
+     * The returned list is assumed to have a complete and accurate list of tool
+     * IDs that are in the physical ToolBox.
      */
-     vector<int> scanForTools(int numScans);
+     vector<int> scanForTools();
 
     /**
      * This is just a placeholder for a setup function.
