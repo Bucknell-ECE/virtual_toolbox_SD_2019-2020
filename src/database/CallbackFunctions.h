@@ -7,8 +7,11 @@
 
 #include "SQLiteDatabase.h"
 #include <iostream>
+#include <string.h>
 
-static int print_cols = 10;
+
+
+
 /**
  * A call back function for the SQL call. This function is called when the SQL call
  * is finished.
@@ -21,5 +24,7 @@ static int print_cols = 10;
  * @return a 0 on success, 1 on error
  */
 int callback(void *data, int argc, char **argv, char **columnNames);
+
+string getCallBackResponse();
 
 #endif //VIRTUAL_TOOLBOX_SD_2019_2020_CALLBACKFUNCTIONS_H

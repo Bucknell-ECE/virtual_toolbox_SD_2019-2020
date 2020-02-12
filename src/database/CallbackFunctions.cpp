@@ -5,8 +5,8 @@
 
 #include "CallbackFunctions.h"
 
-
-
+string callbackResponse;
+int print_cols;
 /**
  * A call back function for the SQL call. This function is called when the SQL call
  * is finished.
@@ -19,24 +19,49 @@
  * @return a 0 on success, 1 on error
  */
 int callback(void *data, int argc, char **argv, char **columnNames){
-    int i;
     char* cmdtype = (char*) data;
-    cout << print_cols << endl;
-    if(print_cols){
+    cout<<cmdtype<<endl;
+    if(strcmp(cmdtype, "DUMP") == 0){
+        int i;
+        if(callbackResponse.size() == 0){
+            string str = "";
+            for(i = 0; i < argc; i++){
+                str += columnNames[i]; str += "   ";
+            }
+            cout << str << endl;
+            callbackResponse = "DUMPED";
+        }
+
         string str = "";
         for(i = 0; i < argc; i++){
-            str += columnNames[i];
-            str += "   ";
+            str += argv[i]; str += "   ";
         }
         cout << str << endl;
-        print_cols = 0;
-    }
+        return 0;
+    }else if(strcmp(cmdtype, "MISS") == 0){
+        int i;
+        for(i = 0; i < argc; i++) {
+            callbackResponse += (argv[i]);
+            callbackResponse += " ";
+        }
+        return 0;
+    }else if(strcmp(cmdtype, "INS") == 0) {
 
-    string str = "";
-    for(i = 0; i < argc; i++){
-        str += argv[i];
-        str += "   ";
+    }else if(strcmp(cmdtype, "EXIST") == 0){
+        callbackResponse = argv[0];
+        return 0;
     }
-    cout << str << endl;
-    return 0;
 }
+
+
+string getCallBackResponse(){
+    string str = callbackResponse;
+    callbackResponse = "";
+    return str;
+}
+
+
+
+    //    int i;
+//    cout << print_cols << endl;
+

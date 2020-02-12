@@ -6,9 +6,15 @@
 #include "SQLiteDatabase.h"
 
 int main(int argc, char * argv[]) {
-    SQLiteDatabase *db_tools = new SQLiteDatabase("../../ToolBox.db");
-    vector<int> x = {12323, 123456, 233456, 357345, 3451123, 52443, 128382};
-    db_tools->findMissingTool(x);
+    SQLiteDatabase *db_tools = new SQLiteDatabase(
+            "C:/Users/MattTurconi/virtual_toolbox_SD_2019-2020/ToolBox.db");
+
+
+//    db_tools->addTool(12554455, "WRENCH1");
+//    db_tools->addTool(52464455, "WRENCH2");
+//    db_tools->addTool(12665455, "WRENCH3");
+//    db_tools->addTool(12666555, "WRENCH4");
+   db_tools->findMissingTool({52464455,12666555,12665455});
 
     return 1;
 }

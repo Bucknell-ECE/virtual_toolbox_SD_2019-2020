@@ -35,7 +35,7 @@ public:
      * @param tooID an unique tool id integer
      * @param toolName a human readable tool name string.
      */
-    void addTool(int tooID, string toolName);
+    void addTool(int ID, string toolName);
 
     //TODO make sure we close the database and free the db pointer
     void operator delete(void *ptr);
@@ -46,7 +46,7 @@ public:
 
     void findMissingTool(vector<int> toolIDs);
 
-    void dumpDB(int numEntries);
+    void dumpDB();
 
     int addTool(vector<string> columns, vector<string> values);
 
