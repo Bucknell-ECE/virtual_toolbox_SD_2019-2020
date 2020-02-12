@@ -45,8 +45,6 @@ int callback(void *data, int argc, char **argv, char **columnNames){
             callbackResponse += " ";
         }
         return 0;
-    }else if(strcmp(cmdtype, "INS") == 0) {
-
     }else if(strcmp(cmdtype, "EXIST") == 0){
         callbackResponse = argv[0];
         return 0;
@@ -60,8 +58,4 @@ string getCallBackResponse(){
     return str;
 }
 
-
-
-    //    int i;
-//    cout << print_cols << endl;
 

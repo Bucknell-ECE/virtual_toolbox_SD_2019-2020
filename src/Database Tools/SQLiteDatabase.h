@@ -50,6 +50,8 @@ public:
 
     int addTool(vector<string> columns, vector<string> values);
 
+    vector<int> findNewTool(vector<int> toolIDs);
+
 };
 
 

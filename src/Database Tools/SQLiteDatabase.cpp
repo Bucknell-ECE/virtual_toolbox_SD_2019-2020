@@ -75,6 +75,10 @@ void SQLiteDatabase::findMissingTool(vector<int> toolIDs) {
     cout<<resp<<endl;
 }
 
+vector<int> SQLiteDatabase::findNewTool(vector<int> toolIDs){
+
+}
+
 //Done
 void SQLiteDatabase::dumpDB() {
     char* errMsg;

@@ -10,6 +10,10 @@ We have a way to send a list of missing tool names to the UI after we process th
 
 TODO:
 Write some functions that will aid in our unit test.
+    All that test code that will allow me to run my tests with relative ease
+Write a function that will remove a thing
+NEED TO DO A REGISTRATION FIND NEW TOOL FUNCTION
+
 
 How could the system Fail?
 1. The missing tool detection command is larger than 1000000 bytes.
@@ -17,7 +21,7 @@ How could the system Fail?
     * However this is very unlikey to happen. We would need thousands of tools
     to exceed this.
 2. Can any changes be corrupted?
-    * If there is a total power failure during tool registration will everything be lost?
+    * IDK just pull the plug on it a few times and see what happens to appease Cheville
 
 
 UNIT TEST PROCEDURES:
