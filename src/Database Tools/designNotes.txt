@@ -1,0 +1,39 @@
+What else needs added:
+ins:
+We have the basic tool registration giving an ID and a Name.
+We have the basic ability to search for missing tools.
+NEED A WAY TO SHOW BOX CLOSED
+
+outs:
+We have a way to send a list of missing tool names to the UI after we process them
+
+
+TODO:
+Write some functions that will aid in our unit test.
+
+How could the system Fail?
+1. The missing tool detection command is larger than 1000000 bytes.
+    * This would need detected and split into two commands
+    * However this is very unlikey to happen. We would need thousands of tools
+    to exceed this.
+2. Can any changes be corrupted?
+    * If there is a total power failure during tool registration will everything be lost?
+
+
+UNIT TEST PROCEDURES:
+How many tools if there is a number would cause a problem when we want to search for lost
+tools. This would allow us to determine the upper limit of tools we can support and what degree
+we can guarantee success of our system.
+    * Will create databases with varying number of tools. 300, 500, 1000, 10000. Any number of tools
+    is assumed to be out of the scope of this project.
+    * We will then compute the average time to find one tool, 5 tools, 10 tools and 15 tools, over
+    10 trials for each missing tool number.
+    * The resulting operations will be timed to help determine the upper limit of our capabilities
+    to search for missing tools.
+    * An upper limit will be defined when we are no longer able to achieve 100% certainty of
+    the missing tools given a list of present tools
+    * We will also take notice to any operation that takes more than 1.5 seconds. This is to
+    ensure quick response time of the system.
+Could the database be corrupted if a power failure occurred during a tool check or the registration
+of tools?
+    * If so how can we make sure that this doesnt happen?
