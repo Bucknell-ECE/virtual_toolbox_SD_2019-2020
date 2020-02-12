@@ -16,6 +16,8 @@
 #define VIRTUAL_TOOLBOX_SD_2019_2020_TOOLSCANNER_H
 
 #include <stdio.h>
+#include <vector>
+using namespace std;
 
 /**
  * The ToolScanner class will allow the backend of the virtual toolbox
@@ -54,7 +56,7 @@ public:
      * Each row could have a varied number of columns. Each column should contain
      * a unique ID number stored as an int.
      */
-    int** scanForTools(int numScans);
+     vector<int> scanForTools(int numScans);
 
     /**
      * This is just a placeholder for a setup function.
