@@ -84,7 +84,7 @@ void SQLiteDatabase::findMissingTool(vector<int> toolIDs) {
  * @return
  */
  //Done
-vector<int> SQLiteDatabase::findNewTool(vector<int> toolIDs){
+void SQLiteDatabase::findNewTool(vector<int> toolIDs){
     //If no tool list is provided we need to get it from the user.
     if(toolIDs.size() == 0)
         toolIDs = toolScanner->scanForTools();
@@ -102,18 +102,13 @@ vector<int> SQLiteDatabase::findNewTool(vector<int> toolIDs){
     string cmd = "WITH ids (ID) AS ";
     cmd += valueList;
     cmd += "SELECT * FROM ids WHERE ID NOT IN ( SELECT ID FROM TOOLS );";
-    cout << cmd << endl;
-    printf("HELLO\n");
+
     //Call the command
     char* errMsg;
     int rc = sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void *)"NEW", & errMsg);
 
     vector<int> idxs = getNewIDVec();
-    for(i=0;i<idxs.size();i++){
-        cout<<to_string(idxs[i]) +',';
-    }
-    cout<<endl;
-    return idxs;
+    newIDs = idxs;
 }
 
 //Done
@@ -150,4 +145,8 @@ int SQLiteDatabase::selectData(vector<string> columns, string table) {
 
 vector<int> SQLiteDatabase::getMissingIDs() {
     return missingIDs;
+}
+
+vector<int> SQLiteDatabase::getNewIDs() {
+    return newIDs;
 }

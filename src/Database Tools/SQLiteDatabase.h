@@ -61,9 +61,11 @@ public:
 
     void deleteToolByID(int id);
 
-    vector<int> findNewTool(vector<int> toolIDs = {});
+    void findNewTool(vector<int> toolIDs = {});
 
     vector<int> getMissingIDs();
+
+    vector<int> getNewIDs();
 
 
 };
