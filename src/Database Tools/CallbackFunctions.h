@@ -5,10 +5,10 @@
 #ifndef VIRTUAL_TOOLBOX_SD_2019_2020_CALLBACKFUNCTIONS_H
 #define VIRTUAL_TOOLBOX_SD_2019_2020_CALLBACKFUNCTIONS_H
 
-#include "SQLiteDatabase.h"
+#include <vector>
 #include <iostream>
 #include <string.h>
-
+using namespace std;
 
 
 
@@ -26,6 +26,8 @@
 int callback(void *data, int argc, char **argv, char **columnNames);
 
 string getCallBackResponse();
+
+vector<int> getMissingIDVec();
 
 vector<int> getNewIDVec();
 

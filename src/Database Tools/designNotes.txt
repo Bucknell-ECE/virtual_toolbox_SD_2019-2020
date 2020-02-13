@@ -28,9 +28,13 @@ How many tools if there is a number would cause a problem when we want to search
 tools. This would allow us to determine the upper limit of tools we can support and what degree
 we can guarantee success of our system.
     * Will create databases with varying number of tools. 300, 500, 1000, 10000. Any number of tools
-    is assumed to be out of the scope of this project.
+    is assumed to be out of the scope of this project. DONE
+
     * We will then compute the average time to find one tool, 5 tools, 10 tools and 15 tools, over
     10 trials for each missing tool number.
+    * We will then do the same for the registration. Finding the new tool that has been thrown into the mix
+    over 10 trials for each database.
+
     * The resulting operations will be timed to help determine the upper limit of our capabilities
     to search for missing tools.
     * An upper limit will be defined when we are no longer able to achieve 100% certainty of

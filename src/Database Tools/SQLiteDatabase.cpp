@@ -60,20 +60,21 @@ void SQLiteDatabase::findMissingTool(vector<int> toolIDs) {
     if(toolIDs.size() == 0)
         toolIDs = toolScanner->scanForTools();
     //Build list of ID's to pass to the select command
-    string idList = "(";
+    string idList = "( VALUES";
     int i;
     for(i = 0; i < toolIDs.size(); i++){
         if(i == toolIDs.size() - 1)
-            idList += to_string(toolIDs[i]) + ")";
+            idList += "(" + to_string(toolIDs[i]) + "))";
         else
-            idList += to_string(toolIDs[i]) + ", ";
+            idList += "(" + to_string(toolIDs[i]) + "), ";
     }
     //Build command
+
     string cmd = "SELECT * FROM TOOLS WHERE ID NOT IN " + idList + ";";
     char* errMsg;
     sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void*)"MISS", &errMsg);
     //Get response
-    string resp = getCallBackResponse();
+    missingIDs = getMissingIDVec();
 }
 
 /**
@@ -145,4 +146,8 @@ int SQLiteDatabase::selectData(vector<string> columns, string table) {
     const char* cmd = str.c_str();
     sqlite3_exec(db, cmd, callback, (void*) "SELECT", & errMsg);
     return 0;
+}
+
+vector<int> SQLiteDatabase::getMissingIDs() {
+    return missingIDs;
 }

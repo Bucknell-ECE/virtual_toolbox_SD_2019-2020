@@ -26,6 +26,10 @@ private:
     //Database file
     string dbName;
 
+    vector<int> missingIDs;
+
+    vector<int> newIDs;
+
 public:
     /**
      * Creates/opens a Database Tools depending on the name of the
@@ -59,6 +63,7 @@ public:
 
     vector<int> findNewTool(vector<int> toolIDs = {});
 
+    vector<int> getMissingIDs();
 
 
 };

@@ -3,7 +3,13 @@
 //
 
 #include <iostream>
+#include <random>
 #include "SQLiteDatabase.h"
+#include <ctime>
+#include <chrono>
+
+int checkMissingIDs(vector<int> vec1, vector<int> vec2);
+void printVec(vector<int> vec);
 
 void createDatabaseOfSize(int size, string dbName){
     string dbPath = "C:/Users/MattTurconi/virtual_toolbox_SD_2019-2020/test_databases/" + dbName;
@@ -30,8 +36,119 @@ void createAllTestDatabases(){
     createDatabaseOfSize(10000, "ToolBox10000.db");
 }
 
+vector<int> getUniqueRandIDs(int hi, int lo, int count){
+    vector<int> ids;
+
+    if(hi - lo < count)
+        return ids;
+
+    int i = 0;
+    int j;
+    int val;
+    while(i < count){
+        int k = 0;
+        val = lo + (rand() % (hi - lo + 1));
+        for(j = 0; j<ids.size(); j++){
+            if(ids[j] == val + 100000000){
+                k = 1;
+            }
+        }
+        if(k == 0) {
+            ids.push_back(val + 100000000);
+            i++;
+        }
+    }
+    return ids;
+}
+
+vector<int> getMissingIDListTester(vector<int> missingIDs, int dbSize){
+    vector<int> vec;
+    int i, j;
+    for(i = 0; i < dbSize; i++){
+        int k = 0;
+        for(j = 0; j < missingIDs.size(); j++){
+            if(missingIDs[j] == (i + 100000000)){
+                k = 1;
+            }
+        }
+        if(k == 0){
+           vec.push_back(i + 100000000);
+        }
+    }
+    return vec;
+}
+
+void runMissingToolTest(int numMissing, int dbSize, int trials, SQLiteDatabase* db){
+    srand(time(NULL));
+    printf("Running Missing Test with %d tools, %d trials,"
+           " %d missing tools\n", dbSize, trials, numMissing);
+    int i;
+    vector<int> missingIDs;
+    vector<int> idList;
+    vector<int> retMissingIDs;
+
+    for(i = 1; i <= trials; i++){
+        missingIDs = getUniqueRandIDs(dbSize, 0, numMissing);
+        idList = getMissingIDListTester(missingIDs, dbSize);
+
+        auto start = chrono::high_resolution_clock::now();
+        db->findMissingTool(idList);
+        auto end = chrono::high_resolution_clock::now();
+
+        double time_taken = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+        time_taken *= 1e-9;
+
+        retMissingIDs = db->getMissingIDs();
+        string valid = "True";
+        int res = checkMissingIDs(retMissingIDs, missingIDs);
+        if(res == 0) {
+            printVec(missingIDs);
+            printVec(retMissingIDs);
+            valid = "False";
+        }
+        printf("Trial %d: %.6f secs\t Valid: %s\n", i, time_taken, valid.c_str());
+    }
+}
+
+int checkMissingIDs(vector<int> vec1, vector<int> vec2) {
+    if(vec1.size() != vec2.size()){
+        return 0;
+    }
+    int i,j;
+    for(i = 0; i<vec1.size(); i++){
+        int found = 0;
+        for(j = 0; j<vec2.size(); j++){
+            if(vec1[i] == vec2[j])
+                found = 1;
+        }
+        if(found == 0)
+            return 0;
+    }
+    return 1;
+}
+
+void printVec(vector<int> vec){
+    int i;
+    for(i=0;i<vec.size();i++)
+        cout<<to_string(vec[i]) << ",";
+    cout<<endl;
+}
 
 int main(int argc, char * argv[]) {
+    ToolScanner* tl = new ToolScanner();
+    SQLiteDatabase* db = new SQLiteDatabase(R"(C:\Users\MattTurconi\virtual_toolbox_SD_2019-2020\test_databases\ToolBox300.db)", tl);
 
+    runMissingToolTest(15, 300, 10, db);
+
+
+//    vector<int> missing = getUniqueRandIDs(300, 0, 10);
+//    vector<int> lst = getMissingIDListTester(missing, 300);
+//    printVec(missing);
+//    db->findMissingTool(lst);
+//
+//    cout<<"MISSING RETURNED"<<endl;
+//    vector<int> ret = db->getMissingIDs();
+//    printVec(ret);
+//    cout<<"Check Resp: " << checkMissingIDs(missing,ret) << endl;
 }
 
