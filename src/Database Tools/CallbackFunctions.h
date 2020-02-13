@@ -27,4 +27,6 @@ int callback(void *data, int argc, char **argv, char **columnNames);
 
 string getCallBackResponse();
 
+vector<int> getNewIDVec();
+
 #endif //VIRTUAL_TOOLBOX_SD_2019_2020_CALLBACKFUNCTIONS_H

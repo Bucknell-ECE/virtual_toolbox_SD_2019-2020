@@ -5,11 +5,12 @@
 #include <iostream>
 #include "SQLiteDatabase.h"
 #include "CallbackFunctions.h"
-#include <string.h>
 #include <ctime>
 
-SQLiteDatabase::SQLiteDatabase(std::string dbName){
+SQLiteDatabase::SQLiteDatabase(std::string dbName, ToolScanner* toolScanner){
     this->dbName = dbName;
+    this->toolScanner = toolScanner;
+    //Check if the DB exists, if not create it and set up table
     if(sqlite3_open(dbName.c_str(), & db)){
         //TODO throw an error here
         cout << sqlite3_errmsg(db) << endl;
@@ -51,11 +52,13 @@ void SQLiteDatabase::addTool(int ID, string toolName) {
                  "(" + to_string(ID) + ", '" + toolName + "', '" + curDate + "');";
     char* errMsg;
     sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void*)"INS", &errMsg);
-    cout<<errMsg<<endl;
 }
 
 //Done...
 void SQLiteDatabase::findMissingTool(vector<int> toolIDs) {
+    //If no list was provided we need to get it from teh scanner
+    if(toolIDs.size() == 0)
+        toolIDs = toolScanner->scanForTools();
     //Build list of ID's to pass to the select command
     string idList = "(";
     int i;
@@ -68,11 +71,48 @@ void SQLiteDatabase::findMissingTool(vector<int> toolIDs) {
     //Build command
     string cmd = "SELECT * FROM TOOLS WHERE ID NOT IN " + idList + ";";
     char* errMsg;
-    cout << cmd << endl;
     sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void*)"MISS", &errMsg);
     //Get response
     string resp = getCallBackResponse();
-    cout<<resp<<endl;
+}
+
+/**
+ * WITH ids (ID) AS (VALUES (12554455), (2252252), (52464455), (12665455), (12666555))
+ * SELECT * FROM ids WHERE ID NOT IN ( SELECT ID FROM TOOLS );
+ * @param toolIDs
+ * @return
+ */
+ //Done
+vector<int> SQLiteDatabase::findNewTool(vector<int> toolIDs){
+    //If no tool list is provided we need to get it from the user.
+    if(toolIDs.size() == 0)
+        toolIDs = toolScanner->scanForTools();
+
+    //Build the values list
+    string valueList = "(VALUES ";
+    int i;
+    for(i=0; i<toolIDs.size(); i++){
+        if(i == toolIDs.size() - 1)
+            valueList += "(" + to_string(toolIDs[i]) + ")) ";
+        else
+            valueList += "(" + to_string(toolIDs[i]) + "), ";
+    }
+    //Build the sql command
+    string cmd = "WITH ids (ID) AS ";
+    cmd += valueList;
+    cmd += "SELECT * FROM ids WHERE ID NOT IN ( SELECT ID FROM TOOLS );";
+    cout << cmd << endl;
+    printf("HELLO\n");
+    //Call the command
+    char* errMsg;
+    int rc = sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void *)"NEW", & errMsg);
+
+    vector<int> idxs = getNewIDVec();
+    for(i=0;i<idxs.size();i++){
+        cout<<to_string(idxs[i]) +',';
+    }
+    cout<<endl;
+    return idxs;
 }
 
 //Done
@@ -83,6 +123,11 @@ void SQLiteDatabase::dumpDB() {
     getCallBackResponse();
 }
 
+void SQLiteDatabase::deleteToolByID(int id) {
+    string cmd = "DELETE FROM TOOLS WHERE ID=" + to_string(id);
+    char* errMsg;
+    sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void *)"DELETE", &errMsg);
+}
 
 //As of right now I'm not sure why I would need this but I'm gonna keep it just in case
 int SQLiteDatabase::selectData(vector<string> columns, string table) {
