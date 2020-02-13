@@ -56,7 +56,7 @@ public:
      * Each row could have a varied number of columns. Each column should contain
      * a unique ID number stored as an int.
      */
-     vector<int> scanForTools(int numScans);
+     vector<int> scanForTools();
 
     /**
      * This is just a placeholder for a setup function.

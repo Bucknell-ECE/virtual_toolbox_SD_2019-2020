@@ -12,7 +12,6 @@ TODO:
 Write some functions that will aid in our unit test.
     All that test code that will allow me to run my tests with relative ease
 Write a function that will remove a thing
-NEED TO DO A REGISTRATION FIND NEW TOOL FUNCTION
 
 
 How could the system Fail?

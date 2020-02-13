@@ -49,8 +49,8 @@ ToolScanner::ToolScanner() {
  * Each row could have a varied number of columns. Each column should contain
  * a unique ID number stored as an int.
  */
-vector<int> ToolScanner::scanForTools(int numScans){
-
+vector<int> ToolScanner::scanForTools(){
+    return {1,2,3,4};
 }
 
 /**

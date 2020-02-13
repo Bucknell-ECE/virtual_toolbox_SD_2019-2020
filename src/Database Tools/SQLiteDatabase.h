@@ -8,6 +8,7 @@
 #include "../../sqlite3/sqlite3.h"
 #include <vector>
 #include <string>
+#include "../../HardwareSkeletonCode/ToolScanner.h"
 
 using namespace std;
 
@@ -15,6 +16,12 @@ class SQLiteDatabase {
 private:
     //SQLite Database Tools object
     sqlite3 *db;
+
+    /**
+     * Tool scanner object that will allow us to get info about
+     * the tool tag IDs in the toolbox
+     */
+     ToolScanner* toolScanner;
 
     //Database file
     string dbName;
@@ -26,7 +33,7 @@ public:
      *
      * @param dbName name of a Database Tools .db file
      */
-    SQLiteDatabase(string dbName);
+    SQLiteDatabase(string dbName, ToolScanner* toolScanner);
 
     /**
      * Adds a tool to the Database Tools with a new tool ID and
@@ -44,13 +51,15 @@ public:
 
     int selectData(vector<string> columns, string table = "TOOLS");
 
-    void findMissingTool(vector<int> toolIDs);
+    void findMissingTool(vector<int> toolIDs = {});
 
     void dumpDB();
 
-    int addTool(vector<string> columns, vector<string> values);
+    void deleteToolByID(int id);
 
-    vector<int> findNewTool(vector<int> toolIDs);
+    vector<int> findNewTool(vector<int> toolIDs = {});
+
+
 
 };
 

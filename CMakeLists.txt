@@ -16,4 +16,8 @@ add_executable(DatabaseTester "src/Database Tools/DatabaseTester.cpp"
         "src/Database Tools/SQLiteDatabase.cpp"
         "src/Database Tools/SQLiteDatabase.h"
         sqlite3/sqlite3.c
-        sqlite3/sqlite3.h "src/Database Tools/CallbackFunctions.cpp" "src/Database Tools/CallbackFunctions.h")
+        sqlite3/sqlite3.h
+        "src/Database Tools/CallbackFunctions.cpp"
+        "src/Database Tools/CallbackFunctions.h"
+        HardwareSkeletonCode/ToolScanner.h
+        HardwareSkeletonCode/ToolScanner.cpp)
