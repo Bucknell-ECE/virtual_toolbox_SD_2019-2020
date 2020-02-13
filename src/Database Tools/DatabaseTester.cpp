@@ -12,7 +12,7 @@ int checkMissingIDs(vector<int> vec1, vector<int> vec2);
 void printVec(vector<int> vec);
 
 void createDatabaseOfSize(int size, string dbName){
-    string dbPath = "/test_databases/" + dbName;
+    string dbPath = "test_databases/" + dbName;
     ToolScanner* tl = new ToolScanner();
     SQLiteDatabase* db_tools = new SQLiteDatabase(dbPath, tl);
 
@@ -39,7 +39,7 @@ void createAllTestDatabases(){
 
 vector<int> getUniqueRandIDs(int hi, int lo, int count){
     vector<int> ids;
-
+    hi --;
     if(hi - lo < count)
         return ids;
 
@@ -73,7 +73,7 @@ vector<int> getMissingIDListTester(vector<int> missingIDs, int dbSize){
             }
         }
         if(k == 0){
-           vec.push_back(i + 100000000);
+            vec.push_back(i + 100000000);
         }
     }
     return vec;
@@ -87,6 +87,7 @@ void runMissingToolTest(int numMissing, int dbSize, int trials, SQLiteDatabase* 
     vector<int> missingIDs;
     vector<int> idList;
     vector<int> retMissingIDs;
+    double totTime = 0;
 
     for(i = 1; i <= trials; i++){
         missingIDs = getUniqueRandIDs(dbSize, 0, numMissing);
@@ -108,7 +109,10 @@ void runMissingToolTest(int numMissing, int dbSize, int trials, SQLiteDatabase* 
             valid = "False";
         }
         printf("Trial %d: %.6f secs\t Valid: %s\n", i, time_taken, valid.c_str());
+	totTime += time_taken;
     }
+    printf("Average time: %.6f\n", totTime / trials);
+
 }
 
 int checkMissingIDs(vector<int> vec1, vector<int> vec2) {
@@ -175,8 +179,9 @@ void testNewTools(int dbSize, int trials, SQLiteDatabase* db, int numMissing = 0
 }
 
 int main(int argc, char * argv[]) {
+    int dbsize = 10000;
     ToolScanner* tl = new ToolScanner();
-    SQLiteDatabase* db = new SQLiteDatabase(R"(C:\Users\MattTurconi\virtual_toolbox_SD_2019-2020\test_databases\ToolBox300.db)", tl);
+    SQLiteDatabase* db = new SQLiteDatabase("test_databases/ToolBox" + to_string(dbsize) + ".db", tl);
 
     testNewTools(300, 10, db);
 

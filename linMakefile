@@ -1,0 +1,35 @@
+CC = g++
+CFLAGS = -Wall -g
+SQLFLAGS = -pthread -ldl
+
+OUT = ./out
+SRC = ./src
+BIN = $(OUT)/bin
+OBJ = $(OUT)/obj
+DB_FILES = $(SRC)/Database\ Tools
+SCANNER = ./HardwareSkeletonCode
+
+OBJS1 = $(OBJ)/CallbackFunctions.o $(OBJ)/ToolScanner.o $(OBJ)/sqlite3.o
+OBJS_ALL = $(OBJS1) $(OBJ)/SQLiteDatabase.o
+
+EXECS = databaseTester
+
+
+all: $(EXECS)
+
+$(OBJ)/sqlite3.o: sqlite3/sqlite3.c sqlite3/sqlite3.h
+	gcc -c $(SQLFLAGS) sqlite3/sqlite3.c -o $(OBJ)/sqlite3.o
+
+$(OBJ)/ToolScanner.o: $(SCANNER)/ToolScanner.h $(SCANNER)/ToolScanner.cpp
+	$(CC) $(CFLAGS) -c $(SCANNER)/ToolScanner.cpp -o $(OBJ)/ToolScanner.o
+
+$(OBJ)/CallbackFunctions.o: $(DB_FILES)/CallbackFunctions.cpp $(DB_FILES)/CallbackFunctions.h
+	$(CC) $(CFLAGS) -c $(DB_FILES)/CallbackFunctions.cpp -o $(OBJ)/CallbackFunctions.o
+
+$(OBJ)/SQLiteDatabase.o: $(OBJS1) $(DB_FILES)/SQLiteDatabase.cpp $(DB_FILES)/SQLiteDatabase.h
+	$(CC) $(CFLAGS) -c $(DB_FILES)/SQLiteDatabase.cpp -o $(OBJ)/SQLiteDatabase.o
+	
+
+databaseTester: $(OBJS_ALL) $(DB_FILES)/DatabaseTester.cpp $(OBJ)/SQLiteDatabase.o 
+	$(CC) $(SQLFLAGS) $(CFLAGS) $(OBJS_ALL) $(DB_FILES)/DatabaseTester.cpp -o $(BIN)/databaseTester
+
