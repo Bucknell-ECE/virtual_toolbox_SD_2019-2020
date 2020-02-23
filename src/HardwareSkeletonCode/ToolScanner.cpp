@@ -45,7 +45,7 @@ ToolScanner::ToolScanner() {
     * The returned list is assumed to have a complete and accurate list of tool
     * IDs that are in the physical ToolBox.
     */
-vector<int> ToolScanner::scanForTools(){
+vector<string> ToolScanner::scanForTools(){
 
 }
 

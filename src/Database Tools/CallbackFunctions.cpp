@@ -5,9 +5,12 @@
 
 #include "CallbackFunctions.h"
 
+using namespace std;
+
 string callbackResponse;
-vector<int> newIDs;
-vector<int> missingIDs;
+string selectResponse;
+vector<string> newIDs;
+vector<string> missingIDs;
 
 /**
  * A call back function for the SQL call. This function is called when the SQL call
@@ -40,13 +43,26 @@ int callback(void *data, int argc, char **argv, char **columnNames){
         }
         cout << str << endl;
     }else if(strcmp(cmdtype, "MISS") == 0){
-        missingIDs.push_back(stoi(argv[0]));
+        missingIDs.push_back(argv[0]);
     }else if(strcmp(cmdtype, "EXIST") == 0){
         callbackResponse = argv[0];
     }else if(strcmp(cmdtype, "NEW") == 0){
-        newIDs.push_back(stoi(argv[0]));
+        newIDs.push_back(argv[0]);
+    }else if(strcmp(cmdtype, "SELECT") == 0){
+        int i;
+        for(i = 0; i < argc; i ++){
+            selectResponse += argv[i];
+            if(i != argc - 1 )
+                selectResponse += ", ";
+        }
     }
     return 0;
+}
+
+string getSelectResponse(){
+    string str = selectResponse;
+    selectResponse = "";
+    return str;
 }
 
 
@@ -56,8 +72,8 @@ string getCallBackResponse(){
     return str;
 }
 
-vector<int> getMissingIDVec(){
-    vector<int> idxs = missingIDs;
+vector<string> getMissingIDVec(){
+    vector<string> idxs = missingIDs;
 //    int i;
 //    for(i=0;i<idxs.size();i++){
 //        cout<<to_string(idxs[i]) +',';
@@ -67,8 +83,8 @@ vector<int> getMissingIDVec(){
     return idxs;
 }
 
-vector<int> getNewIDVec(){
-    vector<int> idxs = newIDs;
+vector<string> getNewIDVec(){
+    vector<string> idxs = newIDs;
 //    int i;
 //    for(i=0;i<idxs.size();i++){
 //        cout<<to_string(idxs[i]) +',';

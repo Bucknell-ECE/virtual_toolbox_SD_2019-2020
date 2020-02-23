@@ -4,20 +4,34 @@ project(virtual_toolbox_SD_2019_2020)
 set(CMAKE_CXX_STANDARD 14)
 
 
-add_executable(HardwareSkeletonCode HardwareSkeletonCode/HardwareCodeTester.cpp
-        HardwareSkeletonCode/ToolScanner.cpp
-        HardwareSkeletonCode/ToolScanner.h)
+add_executable(HardwareSkeletonCode
+        src/HardwareSkeletonCode/HardwareCodeTester.cpp
+        src/HardwareSkeletonCode/ToolScanner.cpp
+        src/HardwareSkeletonCode/ToolScanner.h)
 
-add_executable(RFIDDriverCode RFIDDriverCode/RFIDCodeTester.cpp
-        RFIDDriverCode/ToolScanner.cpp
-        RFIDDriverCode/ToolScanner.h)
+add_executable(RFIDDriverCode
+        src/RFIDDriverCode/RFIDCodeTester.cpp
+        src/RFIDDriverCode/ToolScanner.cpp
+        src/RFIDDriverCode/ToolScanner.h)
 
-add_executable(DatabaseTester "src/Database Tools/DatabaseTester.cpp"
+add_executable(DatabaseTester
+        "src/DatabaseTesting/DatabaseTester.cpp"
         "src/Database Tools/SQLiteDatabase.cpp"
         "src/Database Tools/SQLiteDatabase.h"
         sqlite3/sqlite3.c
         sqlite3/sqlite3.h
         "src/Database Tools/CallbackFunctions.cpp"
         "src/Database Tools/CallbackFunctions.h"
-        HardwareSkeletonCode/ToolScanner.h
-        HardwareSkeletonCode/ToolScanner.cpp)
+        src/HardwareSkeletonCode/ToolScanner.h
+        src/HardwareSkeletonCode/ToolScanner.cpp)
+
+add_executable(DatabaseMain
+        src/DatabaseTesting/DatabaseMain.cpp
+        "src/Database Tools/SQLiteDatabase.cpp"
+        "src/Database Tools/SQLiteDatabase.h"
+        sqlite3/sqlite3.c
+        sqlite3/sqlite3.h
+        "src/Database Tools/CallbackFunctions.cpp"
+        "src/Database Tools/CallbackFunctions.h"
+        src/HardwareSkeletonCode/ToolScanner.h
+        src/HardwareSkeletonCode/ToolScanner.cpp)

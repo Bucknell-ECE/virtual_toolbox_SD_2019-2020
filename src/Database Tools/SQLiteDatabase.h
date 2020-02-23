@@ -8,13 +8,15 @@
 #include "../../sqlite3/sqlite3.h"
 #include <vector>
 #include <string>
-#include "../../HardwareSkeletonCode/ToolScanner.h"
+#include "../HardwareSkeletonCode/ToolScanner.h"
 
 using namespace std;
 
 class SQLiteDatabase {
 private:
-    //SQLite Database Tools object
+    /**
+     * A pointer to the sqlite3 database interface
+     */
     sqlite3 *db;
 
     /**
@@ -23,12 +25,20 @@ private:
      */
      ToolScanner* toolScanner;
 
-    //Database file
+    /**
+     * File path name of the database
+     */
     string dbName;
 
-    vector<int> missingIDs;
+    /**
+     * List of missing tool IDs
+     */
+    vector<string> missingIDs;
 
-    vector<int> newIDs;
+    /**
+     * List of new tool IDs
+     */
+    vector<string> newIDs;
 
 public:
     /**
@@ -46,27 +56,85 @@ public:
      * @param tooID an unique tool id integer
      * @param toolName a human readable tool name string.
      */
-    void addTool(int ID, string toolName);
+    void addTool(string ID, string toolName);
 
-    //TODO make sure we close the Database Tools and free the db pointer
+    /**
+     * Closes the database and frees the memory
+     *
+     * @param ptr object to free
+     */
     void operator delete(void *ptr);
 
-    sqlite3* get_db();
+    /**
+     * Selects all the columns for a tool based on the tool ID string
+     *
+     * @param toolID a string representing an ID for a tool
+     * @param table The table we want to select data from
+     * @return the resulting columns from the database
+     */
+    string selectToolByID(string toolID, string table = "TOOLS");
 
-    int selectData(vector<string> columns, string table = "TOOLS");
+    /**
+     * Selects all the columns for a tool based on the tool name string
+     *
+     * @param toolName the name of the tool as a string
+     * @param table the name of the table we want to select data from
+     * @return the resulting columns from the database
+     */
+    string selectToolByName(string toolName, string table = "TOOLS");
 
-    void findMissingTool(vector<int> toolIDs = {});
+    /**
+     * Finds the missing tools from a list provided by the tool scanner object
+     *
+     * If a list of tools are not provided, a list will be requested from the tool
+     * scanner object
+     *
+     * @param toolIDs an optional list of tool IDs
+     */
+    void findMissingTool(vector<string> toolIDs = {});
 
+    /**
+     * Dumps the whole database to the terminal
+     * WARNING
+     * Do not use outside of small scale testing
+     */
     void dumpDB();
 
-    void deleteToolByID(int id);
+    /**
+     * Deletes a tool in the database by the tool id string
+     *
+     * @param id
+     */
+    void deleteToolByID(string id);
 
-    void findNewTool(vector<int> toolIDs = {});
+    /**
+     * Finds a new tool in the toolbox
+     *
+     * If a list of tools are not provided, a list will be requested from the tool
+     * scanner object
+     *
+     * @param toolIDs an optional list of tool IDs
+     */
+    void findNewTool(vector<string> toolIDs = {});
 
-    vector<int> getMissingIDs();
+    /**
+     * Calls the find missing tool function and returns a list of string ids
+     *
+     * @return A vector of string ids
+     */
+    vector<string> getMissingIDs();
 
-    vector<int> getNewIDs();
+    /**
+     * Calls the find ne tool function and returns a list of new string ids
+     *
+     * @return A vector of new string ids
+     */
+    vector<string> getNewIDs();
 
+    /**
+     * Getter for the sqlite3 database
+     */
+     sqlite3* get_db();
 
 };
 

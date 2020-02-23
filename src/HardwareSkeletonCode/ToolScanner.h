@@ -16,6 +16,7 @@
 #define VIRTUAL_TOOLBOX_SD_2019_2020_TOOLSCANNER_H
 
 #include <stdio.h>
+#include <string>
 #include <vector>
 using namespace std;
 
@@ -45,14 +46,14 @@ public:
     ToolScanner();
 
     /**
-    * Scans the physical tool box for present tools.
-    *
-    * @return a list of integers representing the ID's that are in the ToolBox
-    *
-    * The returned list is assumed to have a complete and accurate list of tool
-    * IDs that are in the physical ToolBox.
-    */
-     vector<int> scanForTools();
+     * Scans the physical tool box for present tools.
+     *
+     * @return a list of integers representing the ID's that are in the ToolBox
+     *
+     * The returned list is assumed to have a complete and accurate list of tool
+     * IDs that are in the physical ToolBox.
+     */
+     vector<string> scanForTools();
 
     /**
      * This is just a placeholder for a setup function.

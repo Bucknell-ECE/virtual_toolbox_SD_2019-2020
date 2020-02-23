@@ -8,6 +8,7 @@
 #include <vector>
 #include <iostream>
 #include <string.h>
+#include <string>
 using namespace std;
 
 
@@ -27,8 +28,10 @@ int callback(void *data, int argc, char **argv, char **columnNames);
 
 string getCallBackResponse();
 
-vector<int> getMissingIDVec();
+string getSelectResponse();
 
-vector<int> getNewIDVec();
+vector<string> getMissingIDVec();
+
+vector<string> getNewIDVec();
 
 #endif //VIRTUAL_TOOLBOX_SD_2019_2020_CALLBACKFUNCTIONS_H

@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <random>
-#include "SQLiteDatabase.h"
+#include "../Database Tools/SQLiteDatabase.h"
 #include <ctime>
 #include <chrono>
 
@@ -20,7 +20,7 @@ void createDatabaseOfSize(int size, string dbName){
     cout<<"Creating db of size " + to_string(size) << endl;
     int i;
     for(i=0;i<size;i++){
-        db_tools->addTool(i + 100000000, "Tool" + to_string(i));
+        db_tools->addTool(to_string(i + 100000000), "Tool" + to_string(i));
         if(i % interval == 0)
             cout<<"Added " + to_string(i) + " so far."<<endl;
     }
@@ -37,7 +37,7 @@ void createAllTestDatabases(){
     createDatabaseOfSize(10000, "ToolBox10000.db");
 }
 
-vector<int> getUniqueRandIDs(int hi, int lo, int count){
+vector<string> getUniqueRandIDs(int hi, int lo, int count){
     vector<int> ids;
     hi --;
     if(hi - lo < count)
@@ -62,8 +62,8 @@ vector<int> getUniqueRandIDs(int hi, int lo, int count){
     return ids;
 }
 
-vector<int> getMissingIDListTester(vector<int> missingIDs, int dbSize){
-    vector<int> vec;
+vector<string> getMissingIDListTester(vector<int> missingIDs, int dbSize){
+    vector<string> vec;
     int i, j;
     for(i = 0; i < dbSize; i++){
         int k = 0;
@@ -73,7 +73,7 @@ vector<int> getMissingIDListTester(vector<int> missingIDs, int dbSize){
             }
         }
         if(k == 0){
-            vec.push_back(i + 100000000);
+            vec.push_back(to_string(i + 100000000));
         }
     }
     return vec;
@@ -84,9 +84,9 @@ void runMissingToolTest(int numMissing, int dbSize, int trials, SQLiteDatabase* 
     printf("Running Missing Test with %d tools, %d trials,"
            " %d missing tools\n", dbSize, trials, numMissing);
     int i;
-    vector<int> missingIDs;
-    vector<int> idList;
-    vector<int> retMissingIDs;
+    vector<string> missingIDs;
+    vector<string> idList;
+    vector<string> retMissingIDs;
     double totTime = 0;
 
     for(i = 1; i <= trials; i++){

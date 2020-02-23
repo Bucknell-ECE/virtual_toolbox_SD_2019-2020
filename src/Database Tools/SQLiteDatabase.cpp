@@ -25,7 +25,7 @@ SQLiteDatabase::SQLiteDatabase(std::string dbName, ToolScanner* toolScanner){
         if(getCallBackResponse() == "0"){
             //Make a new table in the db
             const char* cmd = "CREATE TABLE TOOLS("
-                              "ID INT PRIMARY KEY,"
+                              "ID TEXT PRIMARY KEY,"
                               "NAME TEXT NOT NULL,"
                               "REG_DATE TEXT NOT NULL);";
             sqlite3_exec(db, cmd, callback, (void*)"CREATE", & errMsg);
@@ -44,18 +44,18 @@ sqlite3* SQLiteDatabase::get_db(){
 }
 
 //Done...
-void SQLiteDatabase::addTool(int ID, string toolName) {
+void SQLiteDatabase::addTool(string ID, string toolName) {
     time_t now = time(0);
     string curDate = ctime(&now);
     curDate = curDate.substr(0,curDate.size() - 1);
     string cmd = "INSERT INTO TOOLS (ID, NAME, REG_DATE) VALUES"
-                 "(" + to_string(ID) + ", '" + toolName + "', '" + curDate + "');";
+                 "(" + ID + ", '" + toolName + "', '" + curDate + "');";
     char* errMsg;
     sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void*)"INS", &errMsg);
 }
 
 //Done...
-void SQLiteDatabase::findMissingTool(vector<int> toolIDs) {
+void SQLiteDatabase::findMissingTool(vector<string> toolIDs) {
     //If no list was provided we need to get it from teh scanner
     if(toolIDs.size() == 0)
         toolIDs = toolScanner->scanForTools();
@@ -64,9 +64,9 @@ void SQLiteDatabase::findMissingTool(vector<int> toolIDs) {
     int i;
     for(i = 0; i < toolIDs.size(); i++){
         if(i == toolIDs.size() - 1)
-            idList += "(" + to_string(toolIDs[i]) + "))";
+            idList += "(" + toolIDs[i] + "))";
         else
-            idList += "(" + to_string(toolIDs[i]) + "), ";
+            idList += "(" + toolIDs[i] + "), ";
     }
     //Build command
 
@@ -84,7 +84,7 @@ void SQLiteDatabase::findMissingTool(vector<int> toolIDs) {
  * @return
  */
  //Done
-void SQLiteDatabase::findNewTool(vector<int> toolIDs){
+void SQLiteDatabase::findNewTool(vector<string> toolIDs){
     //If no tool list is provided we need to get it from the user.
     if(toolIDs.size() == 0)
         toolIDs = toolScanner->scanForTools();
@@ -94,9 +94,9 @@ void SQLiteDatabase::findNewTool(vector<int> toolIDs){
     int i;
     for(i=0; i<toolIDs.size(); i++){
         if(i == toolIDs.size() - 1)
-            valueList += "(" + to_string(toolIDs[i]) + ")) ";
+            valueList += "(" + toolIDs[i] + ")) ";
         else
-            valueList += "(" + to_string(toolIDs[i]) + "), ";
+            valueList += "(" + toolIDs[i] + "), ";
     }
     //Build the sql command
     string cmd = "WITH ids (ID) AS ";
@@ -107,7 +107,7 @@ void SQLiteDatabase::findNewTool(vector<int> toolIDs){
     char* errMsg;
     int rc = sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void *)"NEW", & errMsg);
 
-    vector<int> idxs = getNewIDVec();
+    vector<string> idxs = getNewIDVec();
     newIDs = idxs;
 }
 
@@ -119,34 +119,35 @@ void SQLiteDatabase::dumpDB() {
     getCallBackResponse();
 }
 
-void SQLiteDatabase::deleteToolByID(int id) {
-    string cmd = "DELETE FROM TOOLS WHERE ID=" + to_string(id);
+void SQLiteDatabase::deleteToolByID(string id) {
+    string cmd = "DELETE FROM TOOLS WHERE ID=" + id;
     char* errMsg;
     sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void *)"DELETE", &errMsg);
 }
 
 //As of right now I'm not sure why I would need this but I'm gonna keep it just in case
-int SQLiteDatabase::selectData(vector<string> columns, string table) {
-    //Need to format the string to send to the exec function
-    string str = "SELECT ";
+string SQLiteDatabase::selectToolByID(string toolID, string table) {
+    string str = "SELECT * ";
     char* errMsg;
-    int i;
-    for(i = 0; i < columns.size(); i ++){
-        if(i == columns.size() - 1)
-            str += columns[i] + " ";
-        else
-            str += columns[i] + ", ";
-    }
-    str += "FROM " + table + ";";
+    str += "FROM " + table + " WHERE ID = " + toolID + ";";
     const char* cmd = str.c_str();
     sqlite3_exec(db, cmd, callback, (void*) "SELECT", & errMsg);
-    return 0;
+    return getSelectResponse();
 }
 
-vector<int> SQLiteDatabase::getMissingIDs() {
+string SQLiteDatabase::selectToolByName(string toolName, string table) {
+    string str = "SELECT * ";
+    char* errMsg;
+    str += "FROM " + table + " WHERE NAME = '" + toolName + "';";
+    const char* cmd = str.c_str();
+    sqlite3_exec(db, cmd, callback, (void*) "SELECT", & errMsg);
+    return getSelectResponse();
+}
+
+vector<string> SQLiteDatabase::getMissingIDs() {
     return missingIDs;
 }
 
-vector<int> SQLiteDatabase::getNewIDs() {
+vector<string> SQLiteDatabase::getNewIDs() {
     return newIDs;
 }
