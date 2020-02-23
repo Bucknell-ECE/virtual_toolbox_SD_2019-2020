@@ -183,9 +183,9 @@ int main(int argc, char * argv[]) {
     ToolScanner* tl = new ToolScanner();
     SQLiteDatabase* db = new SQLiteDatabase("test_databases/ToolBox" + to_string(dbsize) + ".db", tl);
 
-    testNewTools(300, 10, db);
+    testNewTools(dbsize, 100, db);
 
-    //runMissingToolTest(15, 300, 10, db);
+    //runMissingToolTest(15, dbsize, 100, db);
 
 
 
