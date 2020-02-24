@@ -4,9 +4,14 @@
 
 QT += widgets
 QT += testlib
+QT += sql
 TEMPLATE = app
-TARGET = src
+TARGET = VirtualToolbox
 INCLUDEPATH += $$PWD
+LIBS += -ldl
+LIBS += -pthread
+#QMAKE_CFLAGS += -ldl -pthread
+#LIBS += QtSql.lib
 
 # You can make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -20,10 +25,15 @@ HEADERS += FrontEnd/missing_model.h \
            FrontEnd/registerwidget.h \
 	   FrontEnd/mainwidget.h \
 	   DatabaseTools/SQLiteDatabase.h \
-	   ../HardwareSkeletonCode/ToolScanner.h
+	   ../HardwareSkeletonCode/ToolScanner.h \
+	   ../sqlite3/sqlite3.h \
+	   DatabaseTools/CallbackFunctions.cpp
+	   #dlfcn.h	   
 	   
 SOURCES += mvc.cpp \
            FrontEnd/registerwidget.cpp \
 	   FrontEnd/mainwidget.cpp \
 	   DatabaseTools/SQLiteDatabase.cpp \
-	   ../HardwareSkeletonCode/ToolScanner.cpp
+	   ../HardwareSkeletonCode/ToolScanner.cpp \
+	   ../sqlite3/sqlite3.c \
+	   DatabaseTools/CallbackFunctions.cpp

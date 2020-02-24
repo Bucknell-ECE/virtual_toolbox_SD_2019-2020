@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <QTest>
 #include <QElapsedTimer>
+#include <QtSql>
 using namespace std;
 #include <QtWidgets>
 #include "FrontEnd/missing_model.h"
@@ -19,10 +20,6 @@ int main(int argc, char *argv[])
     Missing_Model model;
     QApplication app(argc, argv);
 
-    int dbsize = 10000;
-    ToolScanner* tl = new ToolScanner();
-    SQLiteDatabase* db_tools = new SQLiteDatabase("test_databases/ToolBox" + to_string(dbsize) + ".db", tl);
-
     QWidget window;
     window.resize(600, 300);
     window.setWindowTitle
@@ -31,21 +28,31 @@ int main(int argc, char *argv[])
 
     vector<int> missing;
     QStringList output;
+    
+    cout << "xxxx";
 
-    RegisterWidget *regwidget = new RegisterWidget(&window);
-    regwidget->move(400, 150);
-    regwidget->show();
-
+    ToolScanner* tl = new ToolScanner();
+    SQLiteDatabase* db_tools = new SQLiteDatabase("ToolBox.db", tl);
+    
+    cout << "abcd";
+    
     missing = db_tools->getMissingIDs();
-
+    cout << missing.size();
     for (int i = 0; i < missing.size(); i++){
+        cout << missing[i];
         output.append(missing[i] + "");
     }
 
     MissingWidget *widget = new MissingWidget(&window);
     widget->show();
+    
+    //all that is needed for reloading data
     widget->SetData(output);
     widget->loadView();
+    
+    RegisterWidget *regwidget = new RegisterWidget(&window);
+    regwidget->move(400, 150);
+    regwidget->show();
 
     return app.exec();
 
