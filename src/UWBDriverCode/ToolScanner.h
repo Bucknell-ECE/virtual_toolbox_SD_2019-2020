@@ -18,6 +18,12 @@
 #include <stdio.h>
 #include <string>
 #include <vector>
+#include <stdlib.h>
+#include <errno.h>
+#include <wiringPi.h>
+#include <wiringSerial.h>
+#include <map>
+#include <cstring>
 using namespace std;
 
 /**
@@ -33,6 +39,16 @@ class ToolScanner {
 private:
     //TODO Define any attributes that this class will have specific to your implementation
     //TODO Define any class constants here
+    int fd;
+    char ch;
+    char str[33];
+    char* tok;
+    
+    int tag_name;
+    int tag_x;
+    int tag_y;
+    int tag_z;
+    int tag_quality;
 
     /**
      * This is where functions that are able to be called on your object are specified

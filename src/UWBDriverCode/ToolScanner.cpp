@@ -65,7 +65,24 @@ vector<string> ToolScanner::scanForTools(){
  * the scanner is not physically connected to the PI correctly.
  */
 void ToolScanner::setupScanner(){
+    // Setup UART and wiringPi
+    if ((fd = serialOpen("/dev/serial0",115200))<0){
+        fprintf(stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
+        // return 1 ;
+    }
+    if (wiringPiSetup () == -1) {
+        fprintf (stdout, "Unable to start wiringPi: %s\n", strerror (errno)) ;
+        // return 1 ;
+    }
 
+    // Enter UART shell mode
+	serialPrintf(fd,"\r\r");
+    delay(1000);
+    // Activate listener mode
+    serialPrintf(fd,"lec\r");
+    delay(100);
+    serialPrintf(fd,"lep\r");
+    delay(100);
 }
 
 //TODO Write any getters and setters
