@@ -234,9 +234,9 @@ SQLITE_API int sqlite3_threadsafe(void);
 
 /*
 ** CAPI3REF: Database Connection Handle
-** KEYWORDS: {Database Tools connection} {Database Tools connections}
+** KEYWORDS: {database connection} {database connections}
 **
-** Each open SQLite Database Tools is represented by a pointer to an instance of
+** Each open SQLite database is represented by a pointer to an instance of
 ** the opaque structure named "sqlite3".  It is useful to think of an sqlite3
 ** pointer as an object.  The [sqlite3_open()], [sqlite3_open16()], and
 ** [sqlite3_open_v2()] interfaces are its constructors, and [sqlite3_close()]
@@ -299,11 +299,11 @@ typedef sqlite_uint64 sqlite3_uint64;
 ** the [sqlite3] object is successfully destroyed and all associated
 ** resources are deallocated.
 **
-** ^If the Database Tools connection is associated with unfinalized prepared
+** ^If the database connection is associated with unfinalized prepared
 ** statements or unfinished sqlite3_backup objects then sqlite3_close()
-** will leave the Database Tools connection open and return [SQLITE_BUSY].
+** will leave the database connection open and return [SQLITE_BUSY].
 ** ^If sqlite3_close_v2() is called with unfinalized prepared statements
-** and/or unfinished sqlite3_backups, then the Database Tools connection becomes
+** and/or unfinished sqlite3_backups, then the database connection becomes
 ** an unusable "zombie" which will automatically be deallocated when the
 ** last prepared statement is finalized or the last sqlite3_backup is
 ** finished.  The sqlite3_close_v2() interface is intended for use with
@@ -314,7 +314,7 @@ typedef sqlite_uint64 sqlite3_uint64;
 ** [sqlite3_blob_close | close] all [BLOB handles], and 
 ** [sqlite3_backup_finish | finish] all [sqlite3_backup] objects associated
 ** with the [sqlite3] object prior to attempting to close the object.  ^If
-** sqlite3_close_v2() is called on a [Database Tools connection] that still has
+** sqlite3_close_v2() is called on a [database connection] that still has
 ** outstanding [prepared statements], [BLOB handles], and/or
 ** [sqlite3_backup] objects then it returns [SQLITE_OK] and the deallocation
 ** of resources is deferred until all [prepared statements], [BLOB handles],
@@ -352,7 +352,7 @@ typedef int (*sqlite3_callback)(void*,int,char**, char**);
 **
 ** ^The sqlite3_exec() interface runs zero or more UTF-8 encoded,
 ** semicolon-separate SQL statements passed into its 2nd argument,
-** in the context of the [Database Tools connection] passed in as its 1st
+** in the context of the [database connection] passed in as its 1st
 ** argument.  ^If the callback function of the 3rd argument to
 ** sqlite3_exec() is not NULL, then it is invoked for each result row
 ** coming out of the evaluated SQL statements.  ^The 4th argument to
@@ -389,22 +389,22 @@ typedef int (*sqlite3_callback)(void*,int,char**, char**);
 **
 ** ^If the 2nd parameter to sqlite3_exec() is a NULL pointer, a pointer
 ** to an empty string, or a pointer that contains only whitespace and/or 
-** SQL comments, then no SQL statements are evaluated and the Database Tools
+** SQL comments, then no SQL statements are evaluated and the database
 ** is not changed.
 **
 ** Restrictions:
 **
 ** <ul>
 ** <li> The application must ensure that the 1st parameter to sqlite3_exec()
-**      is a valid and open [Database Tools connection].
-** <li> The application must not close the [Database Tools connection] specified by
+**      is a valid and open [database connection].
+** <li> The application must not close the [database connection] specified by
 **      the 1st parameter to sqlite3_exec() while sqlite3_exec() is running.
 ** <li> The application must not modify the SQL statement text passed into
 **      the 2nd parameter of sqlite3_exec() while sqlite3_exec() is running.
 ** </ul>
 */
 SQLITE_API int sqlite3_exec(
-  sqlite3*,                                  /* An open Database Tools */
+  sqlite3*,                                  /* An open database */
   const char *sql,                           /* SQL to be evaluated */
   int (*callback)(void*,int,char**,char**),  /* Callback function */
   void *,                                    /* 1st argument to callback */
@@ -428,19 +428,19 @@ SQLITE_API int sqlite3_exec(
 #define SQLITE_INTERNAL     2   /* Internal logic error in SQLite */
 #define SQLITE_PERM         3   /* Access permission denied */
 #define SQLITE_ABORT        4   /* Callback routine requested an abort */
-#define SQLITE_BUSY         5   /* The Database Tools file is locked */
-#define SQLITE_LOCKED       6   /* A table in the Database Tools is locked */
+#define SQLITE_BUSY         5   /* The database file is locked */
+#define SQLITE_LOCKED       6   /* A table in the database is locked */
 #define SQLITE_NOMEM        7   /* A malloc() failed */
-#define SQLITE_READONLY     8   /* Attempt to write a readonly Database Tools */
+#define SQLITE_READONLY     8   /* Attempt to write a readonly database */
 #define SQLITE_INTERRUPT    9   /* Operation terminated by sqlite3_interrupt()*/
 #define SQLITE_IOERR       10   /* Some kind of disk I/O error occurred */
-#define SQLITE_CORRUPT     11   /* The Database Tools disk image is malformed */
+#define SQLITE_CORRUPT     11   /* The database disk image is malformed */
 #define SQLITE_NOTFOUND    12   /* Unknown opcode in sqlite3_file_control() */
-#define SQLITE_FULL        13   /* Insertion failed because Database Tools is full */
-#define SQLITE_CANTOPEN    14   /* Unable to open the Database Tools file */
+#define SQLITE_FULL        13   /* Insertion failed because database is full */
+#define SQLITE_CANTOPEN    14   /* Unable to open the database file */
 #define SQLITE_PROTOCOL    15   /* Database lock protocol error */
 #define SQLITE_EMPTY       16   /* Internal use only */
-#define SQLITE_SCHEMA      17   /* The Database Tools schema changed */
+#define SQLITE_SCHEMA      17   /* The database schema changed */
 #define SQLITE_TOOBIG      18   /* String or BLOB exceeds size limit */
 #define SQLITE_CONSTRAINT  19   /* Abort due to constraint violation */
 #define SQLITE_MISMATCH    20   /* Data type mismatch */
@@ -449,7 +449,7 @@ SQLITE_API int sqlite3_exec(
 #define SQLITE_AUTH        23   /* Authorization denied */
 #define SQLITE_FORMAT      24   /* Not used */
 #define SQLITE_RANGE       25   /* 2nd parameter to sqlite3_bind out of range */
-#define SQLITE_NOTADB      26   /* File opened that is not a Database Tools file */
+#define SQLITE_NOTADB      26   /* File opened that is not a database file */
 #define SQLITE_NOTICE      27   /* Notifications from sqlite3_log() */
 #define SQLITE_WARNING     28   /* Warnings from sqlite3_log() */
 #define SQLITE_ROW         100  /* sqlite3_step() has another row ready */
@@ -468,7 +468,7 @@ SQLITE_API int sqlite3_exec(
 ** and later) include
 ** support for additional result codes that provide more detailed information
 ** about errors. These [extended result codes] are enabled or disabled
-** on a per Database Tools connection basis using the
+** on a per database connection basis using the
 ** [sqlite3_extended_result_codes()] API.  Or, the extended code for
 ** the most recent error can be obtained using
 ** [sqlite3_extended_errcode()].
@@ -714,7 +714,7 @@ struct sqlite3_file {
 ** <li> [SQLITE_LOCK_EXCLUSIVE].
 ** </ul>
 ** xLock() increases the lock. xUnlock() decreases the lock.
-** The xCheckReservedLock() method checks whether any Database Tools connection,
+** The xCheckReservedLock() method checks whether any database connection,
 ** either in this process or in some other process, is holding a RESERVED,
 ** PENDING, or EXCLUSIVE lock on the file.  It returns true
 ** if such a lock exists and false otherwise.
@@ -775,7 +775,7 @@ struct sqlite3_file {
 ** in the unread portions of the buffer with zeros.  A VFS that
 ** fails to zero-fill short reads might seem to work.  However,
 ** failure to zero-fill short reads will eventually lead to
-** Database Tools corruption.
+** database corruption.
 */
 typedef struct sqlite3_io_methods sqlite3_io_methods;
 struct sqlite3_io_methods {
@@ -824,39 +824,39 @@ struct sqlite3_io_methods {
 **
 ** <li>[[SQLITE_FCNTL_SIZE_HINT]]
 ** The [SQLITE_FCNTL_SIZE_HINT] opcode is used by SQLite to give the VFS
-** layer a hint of how large the Database Tools file will grow to be during the
+** layer a hint of how large the database file will grow to be during the
 ** current transaction.  This hint is not guaranteed to be accurate but it
-** is often close.  The underlying VFS might choose to preallocate Database Tools
-** file space based on this hint in order to help writes to the Database Tools
+** is often close.  The underlying VFS might choose to preallocate database
+** file space based on this hint in order to help writes to the database
 ** file run faster.
 **
 ** <li>[[SQLITE_FCNTL_SIZE_LIMIT]]
 ** The [SQLITE_FCNTL_SIZE_LIMIT] opcode is used by in-memory VFS that
 ** implements [sqlite3_deserialize()] to set an upper bound on the size
-** of the in-memory Database Tools.  The argument is a pointer to a [sqlite3_int64].
+** of the in-memory database.  The argument is a pointer to a [sqlite3_int64].
 ** If the integer pointed to is negative, then it is filled in with the
 ** current limit.  Otherwise the limit is set to the larger of the value
-** of the integer pointed to and the current Database Tools size.  The integer
+** of the integer pointed to and the current database size.  The integer
 ** pointed to is set to the new limit.
 **
 ** <li>[[SQLITE_FCNTL_CHUNK_SIZE]]
 ** The [SQLITE_FCNTL_CHUNK_SIZE] opcode is used to request that the VFS
-** extends and truncates the Database Tools file in chunks of a size specified
+** extends and truncates the database file in chunks of a size specified
 ** by the user. The fourth argument to [sqlite3_file_control()] should 
 ** point to an integer (type int) containing the new chunk-size to use
-** for the nominated Database Tools. Allocating Database Tools file space in large
+** for the nominated database. Allocating database file space in large
 ** chunks (say 1MB at a time), may reduce file-system fragmentation and
 ** improve performance on some systems.
 **
 ** <li>[[SQLITE_FCNTL_FILE_POINTER]]
 ** The [SQLITE_FCNTL_FILE_POINTER] opcode is used to obtain a pointer
-** to the [sqlite3_file] object associated with a particular Database Tools
+** to the [sqlite3_file] object associated with a particular database
 ** connection.  See also [SQLITE_FCNTL_JOURNAL_POINTER].
 **
 ** <li>[[SQLITE_FCNTL_JOURNAL_POINTER]]
 ** The [SQLITE_FCNTL_JOURNAL_POINTER] opcode is used to obtain a pointer
 ** to the [sqlite3_file] object associated with the journal file (either
-** the [rollback journal] or the [write-ahead log]) for a particular Database Tools
+** the [rollback journal] or the [write-ahead log]) for a particular database
 ** connection.  See also [SQLITE_FCNTL_FILE_POINTER].
 **
 ** <li>[[SQLITE_FCNTL_SYNC_OMITTED]]
@@ -865,12 +865,12 @@ struct sqlite3_io_methods {
 ** <li>[[SQLITE_FCNTL_SYNC]]
 ** The [SQLITE_FCNTL_SYNC] opcode is generated internally by SQLite and
 ** sent to the VFS immediately before the xSync method is invoked on a
-** Database Tools file descriptor. Or, if the xSync method is not invoked
+** database file descriptor. Or, if the xSync method is not invoked 
 ** because the user has configured SQLite with 
 ** [PRAGMA synchronous | PRAGMA synchronous=OFF] it is invoked in place 
 ** of the xSync method. In most cases, the pointer argument passed with
-** this file-control is NULL. However, if the Database Tools file is being synced
-** as part of a multi-Database Tools commit, the argument points to a nul-terminated
+** this file-control is NULL. However, if the database file is being synced
+** as part of a multi-database commit, the argument points to a nul-terminated
 ** string containing the transactions master-journal file name. VFSes that 
 ** do not need this signal should silently ignore this opcode. Applications 
 ** should not call [sqlite3_file_control()] with this opcode as doing so may 
@@ -879,7 +879,7 @@ struct sqlite3_io_methods {
 ** <li>[[SQLITE_FCNTL_COMMIT_PHASETWO]]
 ** The [SQLITE_FCNTL_COMMIT_PHASETWO] opcode is generated internally by SQLite
 ** and sent to the VFS after a transaction has been committed immediately
-** but before the Database Tools is unlocked. VFSes that do not need this signal
+** but before the database is unlocked. VFSes that do not need this signal
 ** should silently ignore this opcode. Applications should not call
 ** [sqlite3_file_control()] with this opcode as doing so may disrupt the 
 ** operation of the specialized VFSes that do require it.  
@@ -893,7 +893,7 @@ struct sqlite3_io_methods {
 ** of 25 milliseconds before the first retry and with the delay increasing
 ** by an additional 25 milliseconds with each subsequent retry.  This
 ** opcode allows these two values (10 retries and 25 milliseconds of delay)
-** to be adjusted.  The values are changed for all Database Tools connections
+** to be adjusted.  The values are changed for all database connections
 ** within the same process.  The argument is a pointer to an array of two
 ** integers where the first integer is the new retry count and the second
 ** integer is the delay.  If either integer is negative, then the setting
@@ -906,12 +906,12 @@ struct sqlite3_io_methods {
 ** persistent [WAL | Write Ahead Log] setting.  By default, the auxiliary
 ** write ahead log ([WAL file]) and shared memory
 ** files used for transaction control
-** are automatically deleted when the latest connection to the Database Tools
+** are automatically deleted when the latest connection to the database
 ** closes.  Setting persistent WAL mode causes those files to persist after
 ** close.  Persisting the files is useful when other processes that do not
-** have write permission on the directory containing the Database Tools file want
-** to read the Database Tools file, as the WAL and shared memory files must exist
-** in order for the Database Tools to be readable.  The fourth parameter to
+** have write permission on the directory containing the database file want
+** to read the database file, as the WAL and shared memory files must exist
+** in order for the database to be readable.  The fourth parameter to
 ** [sqlite3_file_control()] for this opcode should be a pointer to an integer.
 ** That integer is 0 to disable persistent WAL mode or 1 to enable persistent
 ** WAL mode.  If the integer is -1, then it is overwritten with the current
@@ -930,7 +930,7 @@ struct sqlite3_io_methods {
 ** <li>[[SQLITE_FCNTL_OVERWRITE]]
 ** ^The [SQLITE_FCNTL_OVERWRITE] opcode is invoked by SQLite after opening
 ** a write transaction to indicate that, unless it is rolled back for some
-** reason, the entire Database Tools file will be overwritten by the current
+** reason, the entire database file will be overwritten by the current 
 ** transaction. This is used by VACUUM operations.
 **
 ** <li>[[SQLITE_FCNTL_VFSNAME]]
@@ -957,7 +957,7 @@ struct sqlite3_io_methods {
 ** <li>[[SQLITE_FCNTL_PRAGMA]]
 ** ^Whenever a [PRAGMA] statement is parsed, an [SQLITE_FCNTL_PRAGMA] 
 ** file control is sent to the open [sqlite3_file] object corresponding
-** to the Database Tools file to which the pragma statement refers. ^The argument
+** to the database file to which the pragma statement refers. ^The argument
 ** to the [SQLITE_FCNTL_PRAGMA] file control is an array of
 ** pointers to strings (char**) in which the second element of the array
 ** is the name of the pragma and the third element is the argument to the
@@ -981,7 +981,7 @@ struct sqlite3_io_methods {
 **
 ** <li>[[SQLITE_FCNTL_BUSYHANDLER]]
 ** ^The [SQLITE_FCNTL_BUSYHANDLER]
-** file-control may be invoked by SQLite on the Database Tools file handle
+** file-control may be invoked by SQLite on the database file handle
 ** shortly after it is opened in order to provide a custom VFS with access
 ** to the connection's busy-handler callback. The argument is of type (void**)
 ** - an array of two (void *) values. The first (void *) actually points
@@ -1094,28 +1094,28 @@ struct sqlite3_io_methods {
 **
 ** <li>[[SQLITE_FCNTL_DATA_VERSION]]
 ** The [SQLITE_FCNTL_DATA_VERSION] opcode is used to detect changes to
-** a Database Tools file.  The argument is a pointer to a 32-bit unsigned integer.
+** a database file.  The argument is a pointer to a 32-bit unsigned integer.
 ** The "data version" for the pager is written into the pointer.  The
 ** "data version" changes whenever any change occurs to the corresponding
-** Database Tools file, either through SQL statements on the same Database Tools
-** connection or through transactions committed by separate Database Tools
+** database file, either through SQL statements on the same database
+** connection or through transactions committed by separate database
 ** connections possibly in other processes. The [sqlite3_total_changes()]
-** interface can be used to find if any Database Tools on the connection has changed,
+** interface can be used to find if any database on the connection has changed,
 ** but that interface responds to changes on TEMP as well as MAIN and does
 ** not provide a mechanism to detect changes to MAIN only.  Also, the
 ** [sqlite3_total_changes()] interface responds to internal changes only and
-** omits changes made by other Database Tools connections.  The
+** omits changes made by other database connections.  The
 ** [PRAGMA data_version] command provides a mechanism to detect changes to
-** a single attached Database Tools that occur due to other Database Tools connections,
-** but omits changes implemented by the Database Tools connection on which it is
+** a single attached database that occur due to other database connections,
+** but omits changes implemented by the database connection on which it is
 ** called.  This file control is the only mechanism to detect changes that
 ** happen either internally or externally and that are associated with
-** a particular attached Database Tools.
+** a particular attached database.
 **
 ** <li>[[SQLITE_FCNTL_CKPT_DONE]]
 ** The [SQLITE_FCNTL_CKPT_DONE] opcode is invoked from within a checkpoint
 ** in wal mode after the client has finished copying pages from the wal
-** file to the Database Tools file, but before the *-shm file is updated to
+** file to the database file, but before the *-shm file is updated to
 ** record the fact that the pages have been checkpointed.
 ** </ul>
 */
@@ -1268,7 +1268,7 @@ typedef struct sqlite3_api_routines sqlite3_api_routines;
 ** that does not care about crash recovery or rollback might make
 ** the open of a journal file a no-op.  Writes to this journal would
 ** also be no-ops, and any attempt to read the journal would return
-** SQLITE_IOERR.  Or the implementation might recognize that a Database Tools
+** SQLITE_IOERR.  Or the implementation might recognize that a database
 ** file will be doing page-aligned sector reads and writes in a random
 ** order and set up its I/O subsystem accordingly.
 **
@@ -1281,8 +1281,8 @@ typedef struct sqlite3_api_routines sqlite3_api_routines;
 **
 ** The [SQLITE_OPEN_DELETEONCLOSE] flag means the file should be
 ** deleted when it is closed.  ^The [SQLITE_OPEN_DELETEONCLOSE]
-** will be set for TEMP test_databases and their journals, transient
-** test_databases, and subjournals.
+** will be set for TEMP databases and their journals, transient
+** databases, and subjournals.
 **
 ** ^The [SQLITE_OPEN_EXCLUSIVE] flag is always used in conjunction
 ** with the [SQLITE_OPEN_CREATE] flag, which are both directly
@@ -1480,7 +1480,7 @@ struct sqlite3_vfs {
 **
 ** The sqlite3_initialize() interface is threadsafe, but sqlite3_shutdown()
 ** is not.  The sqlite3_shutdown() interface must only be called from a
-** single thread.  All open [Database Tools connections] must be closed and all
+** single thread.  All open [database connections] must be closed and all
 ** other SQLite resources must be deallocated prior to invoking
 ** sqlite3_shutdown().
 **
@@ -1570,17 +1570,17 @@ SQLITE_API int sqlite3_os_end(void);
 SQLITE_API int sqlite3_config(int, ...);
 
 /*
-** CAPI3REF: Configure Database Tools connections
+** CAPI3REF: Configure database connections
 ** METHOD: sqlite3
 **
 ** The sqlite3_db_config() interface is used to make configuration
-** changes to a [Database Tools connection].  The interface is similar to
+** changes to a [database connection].  The interface is similar to
 ** [sqlite3_config()] except that the changes apply to a single
-** [Database Tools connection] (specified in the first argument).
+** [database connection] (specified in the first argument).
 **
 ** The second argument to sqlite3_db_config(D,V,...)  is the
 ** [SQLITE_DBCONFIG_LOOKASIDE | configuration verb] - an integer code 
-** that indicates what aspect of the [Database Tools connection] is being configured.
+** that indicates what aspect of the [database connection] is being configured.
 ** Subsequent arguments vary depending on the configuration verb.
 **
 ** ^Calls to sqlite3_db_config() return SQLITE_OK if and only if
@@ -1692,12 +1692,12 @@ struct sqlite3_mem_methods {
 ** [[SQLITE_CONFIG_MULTITHREAD]] <dt>SQLITE_CONFIG_MULTITHREAD</dt>
 ** <dd>There are no arguments to this option.  ^This option sets the
 ** [threading mode] to Multi-thread.  In other words, it disables
-** mutexing on [Database Tools connection] and [prepared statement] objects.
+** mutexing on [database connection] and [prepared statement] objects.
 ** The application is responsible for serializing access to
-** [Database Tools connections] and [prepared statements].  But other mutexes
+** [database connections] and [prepared statements].  But other mutexes
 ** are enabled so that SQLite will be safe to use in a multi-threaded
 ** environment as long as no two threads attempt to use the same
-** [Database Tools connection] at the same time.  ^If SQLite is compiled with
+** [database connection] at the same time.  ^If SQLite is compiled with
 ** the [SQLITE_THREADSAFE | SQLITE_THREADSAFE=0] compile-time option then
 ** it is not possible to set the Multi-thread [threading mode] and
 ** [sqlite3_config()] will return [SQLITE_ERROR] if called with the
@@ -1707,11 +1707,11 @@ struct sqlite3_mem_methods {
 ** <dd>There are no arguments to this option.  ^This option sets the
 ** [threading mode] to Serialized. In other words, this option enables
 ** all mutexes including the recursive
-** mutexes on [Database Tools connection] and [prepared statement] objects.
+** mutexes on [database connection] and [prepared statement] objects.
 ** In this mode (which is the default when SQLite is compiled with
 ** [SQLITE_THREADSAFE=1]) the SQLite library will itself serialize access
-** to [Database Tools connections] and [prepared statements] so that the
-** application is free to use the same [Database Tools connection] or the
+** to [database connections] and [prepared statements] so that the
+** application is free to use the same [database connection] or the
 ** same [prepared statement] in different threads at the same time.
 ** ^If SQLite is compiled with
 ** the [SQLITE_THREADSAFE | SQLITE_THREADSAFE=0] compile-time option then
@@ -1770,14 +1770,14 @@ struct sqlite3_mem_methods {
 **
 ** [[SQLITE_CONFIG_PAGECACHE]] <dt>SQLITE_CONFIG_PAGECACHE</dt>
 ** <dd> ^The SQLITE_CONFIG_PAGECACHE option specifies a memory pool
-** that SQLite can use for the Database Tools page cache with the default page
+** that SQLite can use for the database page cache with the default page
 ** cache implementation.  
 ** This configuration option is a no-op if an application-defined page
 ** cache implementation is loaded using the [SQLITE_CONFIG_PCACHE2].
 ** ^There are three arguments to SQLITE_CONFIG_PAGECACHE: A pointer to
 ** 8-byte aligned memory (pMem), the size of each page cache line (sz),
 ** and the number of cache lines (N).
-** The sz argument should be the size of the largest Database Tools page
+** The sz argument should be the size of the largest database page
 ** (a power of two between 512 and 65536) plus some extra bytes for each
 ** page header.  ^The number of extra bytes needed by the page header
 ** can be determined using [SQLITE_CONFIG_PCACHE_HDRSZ].
@@ -1790,7 +1790,7 @@ struct sqlite3_mem_methods {
 ** to satisfy page cache needs, falling back to [sqlite3_malloc()] if
 ** a page cache line is larger than sz bytes or if all of the pMem buffer
 ** is exhausted.
-** ^If pMem is NULL and N is non-zero, then each Database Tools connection
+** ^If pMem is NULL and N is non-zero, then each database connection
 ** does an initial bulk allocation for page cache memory
 ** from [sqlite3_malloc()] sufficient for N cache lines if N is positive or
 ** of -1024*N bytes if N is negative, . ^If additional
@@ -1845,10 +1845,10 @@ struct sqlite3_mem_methods {
 **
 ** [[SQLITE_CONFIG_LOOKASIDE]] <dt>SQLITE_CONFIG_LOOKASIDE</dt>
 ** <dd> ^(The SQLITE_CONFIG_LOOKASIDE option takes two arguments that determine
-** the default size of lookaside memory on each [Database Tools connection].
+** the default size of lookaside memory on each [database connection].
 ** The first argument is the
 ** size of each lookaside buffer slot and the second is the number of
-** slots allocated to each Database Tools connection.)^  ^(SQLITE_CONFIG_LOOKASIDE
+** slots allocated to each database connection.)^  ^(SQLITE_CONFIG_LOOKASIDE
 ** sets the <i>default</i> lookaside size. The [SQLITE_DBCONFIG_LOOKASIDE]
 ** option to [sqlite3_db_config()] can be used to change the lookaside
 ** configuration on individual connections.)^ </dd>
@@ -1891,10 +1891,10 @@ struct sqlite3_mem_methods {
 ** enabled, all filenames passed to [sqlite3_open()], [sqlite3_open_v2()],
 ** [sqlite3_open16()] or
 ** specified as part of [ATTACH] commands are interpreted as URIs, regardless
-** of whether or not the [SQLITE_OPEN_URI] flag is set when the Database Tools
+** of whether or not the [SQLITE_OPEN_URI] flag is set when the database
 ** connection is opened. ^If it is globally disabled, filenames are
 ** only interpreted as URIs if the SQLITE_OPEN_URI flag is set when the
-** Database Tools connection is opened. ^(By default, URI handling is globally
+** database connection is opened. ^(By default, URI handling is globally
 ** disabled. The default value may be changed by compiling with the
 ** [SQLITE_USE_URI] symbol defined.)^
 **
@@ -1924,9 +1924,9 @@ struct sqlite3_mem_methods {
 ** be a pointer to a function of type void(*)(void*,sqlite3*,const char*, int).
 ** The second should be of type (void*). The callback is invoked by the library
 ** in three separate circumstances, identified by the value passed as the
-** fourth parameter. If the fourth parameter is 0, then the Database Tools connection
+** fourth parameter. If the fourth parameter is 0, then the database connection
 ** passed as the second argument has just been opened. The third argument
-** points to a buffer containing the name of the main Database Tools file. If the
+** points to a buffer containing the name of the main database file. If the
 ** fourth parameter is 1, then the SQL statement that the third parameter
 ** points to has just been executed. Or, if the fourth parameter is 2, then
 ** the connection being passed as the second parameter is being closed. The
@@ -1939,7 +1939,7 @@ struct sqlite3_mem_methods {
 ** <dd>^SQLITE_CONFIG_MMAP_SIZE takes two 64-bit integer (sqlite3_int64) values
 ** that are the default mmap size limit (the default setting for
 ** [PRAGMA mmap_size]) and the maximum allowed mmap size limit.
-** ^The default setting can be overridden by each Database Tools connection using
+** ^The default setting can be overridden by each database connection using
 ** either the [PRAGMA mmap_size] command, or by using the
 ** [SQLITE_FCNTL_MMAP_SIZE] file control.  ^(The maximum allowed mmap size
 ** will be silently truncated if necessary so that it does not exceed the
@@ -1998,7 +1998,7 @@ struct sqlite3_mem_methods {
 ** of a table column that its values are likely to be very large - larger
 ** than the configured sorter-reference size threshold - then a reference
 ** is stored in each sorted record and the required column values loaded
-** from the Database Tools as records are returned in sorted order. The default
+** from the database as records are returned in sorted order. The default
 ** value for this option is to never use this optimization. Specifying a 
 ** negative value for this option restores the default behaviour.
 ** This option is only available if SQLite is compiled with the
@@ -2008,8 +2008,8 @@ struct sqlite3_mem_methods {
 ** <dt>SQLITE_CONFIG_MEMDB_MAXSIZE
 ** <dd>The SQLITE_CONFIG_MEMDB_MAXSIZE option accepts a single parameter
 ** [sqlite3_int64] parameter which is the default maximum size for an in-memory
-** Database Tools created using [sqlite3_deserialize()].  This default maximum
-** size can be adjusted up or down for individual test_databases using the
+** database created using [sqlite3_deserialize()].  This default maximum
+** size can be adjusted up or down for individual databases using the
 ** [SQLITE_FCNTL_SIZE_LIMIT] [sqlite3_file_control|file-control].  If this
 ** configuration setting is never used, then the default maximum is determined
 ** by the [SQLITE_MEMDB_DEFAULT_MAXSIZE] compile-time option.  If that
@@ -2063,7 +2063,7 @@ struct sqlite3_mem_methods {
 ** [[SQLITE_DBCONFIG_LOOKASIDE]]
 ** <dt>SQLITE_DBCONFIG_LOOKASIDE</dt>
 ** <dd> ^This option takes three additional arguments that determine the 
-** [lookaside memory allocator] configuration for the [Database Tools connection].
+** [lookaside memory allocator] configuration for the [database connection].
 ** ^The first argument (the third parameter to [sqlite3_db_config()] is a
 ** pointer to a memory buffer to use for lookaside memory.
 ** ^The first argument after the SQLITE_DBCONFIG_LOOKASIDE verb
@@ -2075,7 +2075,7 @@ struct sqlite3_mem_methods {
 ** must be aligned to an 8-byte boundary.  ^If the second argument to
 ** SQLITE_DBCONFIG_LOOKASIDE is not a multiple of 8, it is internally
 ** rounded down to the next smaller multiple of 8.  ^(The lookaside memory
-** configuration for a Database Tools connection can only be changed when that
+** configuration for a database connection can only be changed when that
 ** connection is not currently using lookaside memory, or in other words
 ** when the "current value" returned by
 ** [sqlite3_db_status](D,[SQLITE_CONFIG_LOOKASIDE],...) is zero.
@@ -2149,19 +2149,19 @@ struct sqlite3_mem_methods {
 ** </dd>
 **
 ** [[SQLITE_DBCONFIG_MAINDBNAME]] <dt>SQLITE_DBCONFIG_MAINDBNAME</dt>
-** <dd> ^This option is used to change the name of the "main" Database Tools
+** <dd> ^This option is used to change the name of the "main" database
 ** schema.  ^The sole argument is a pointer to a constant UTF8 string
 ** which will become the new schema name in place of "main".  ^SQLite
 ** does not make a copy of the new main schema name string, so the application
 ** must ensure that the argument passed into this DBCONFIG option is unchanged
-** until after the Database Tools connection closes.
+** until after the database connection closes.
 ** </dd>
 **
 ** [[SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE]] 
 ** <dt>SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE</dt>
-** <dd> Usually, when a Database Tools in wal mode is closed or detached from a
-** Database Tools handle, SQLite checks if this will mean that there are now no
-** connections at all to the Database Tools. If so, it performs a checkpoint
+** <dd> Usually, when a database in wal mode is closed or detached from a 
+** database handle, SQLite checks if this will mean that there are now no 
+** connections at all to the database. If so, it performs a checkpoint 
 ** operation before closing the connection. This option may be used to
 ** override this behaviour. The first parameter passed to this operation
 ** is an integer - positive to disable checkpoints-on-close, or zero (the
@@ -2201,29 +2201,29 @@ struct sqlite3_mem_methods {
 **
 ** [[SQLITE_DBCONFIG_RESET_DATABASE]] <dt>SQLITE_DBCONFIG_RESET_DATABASE</dt>
 ** <dd> Set the SQLITE_DBCONFIG_RESET_DATABASE flag and then run
-** [VACUUM] in order to reset a Database Tools back to an empty Database Tools
+** [VACUUM] in order to reset a database back to an empty database
 ** with no schema and no content. The following process works even for
-** a badly corrupted Database Tools file:
+** a badly corrupted database file:
 ** <ol>
-** <li> If the Database Tools connection is newly opened, make sure it has read the
-**      Database Tools schema by preparing then discarding some query against the
-**      Database Tools, or calling sqlite3_table_column_metadata(), ignoring any
+** <li> If the database connection is newly opened, make sure it has read the
+**      database schema by preparing then discarding some query against the
+**      database, or calling sqlite3_table_column_metadata(), ignoring any
 **      errors.  This step is only necessary if the application desires to keep
-**      the Database Tools in WAL mode after the reset if it was in WAL mode before
+**      the database in WAL mode after the reset if it was in WAL mode before
 **      the reset.  
 ** <li> sqlite3_db_config(db, SQLITE_DBCONFIG_RESET_DATABASE, 1, 0);
 ** <li> [sqlite3_exec](db, "[VACUUM]", 0, 0, 0);
 ** <li> sqlite3_db_config(db, SQLITE_DBCONFIG_RESET_DATABASE, 0, 0);
 ** </ol>
-** Because resetting a Database Tools is destructive and irreversible, the
+** Because resetting a database is destructive and irreversible, the
 ** process requires the use of this obscure API and multiple steps to help
 ** ensure that it does not happen by accident.
 **
 ** [[SQLITE_DBCONFIG_DEFENSIVE]] <dt>SQLITE_DBCONFIG_DEFENSIVE</dt>
 ** <dd>The SQLITE_DBCONFIG_DEFENSIVE option activates or deactivates the
-** "defensive" flag for a Database Tools connection.  When the defensive
+** "defensive" flag for a database connection.  When the defensive
 ** flag is enabled, language features that allow ordinary SQL to 
-** deliberately corrupt the Database Tools file are disabled.  The disabled
+** deliberately corrupt the database file are disabled.  The disabled
 ** features include but are not limited to the following:
 ** <ul>
 ** <li> The [PRAGMA writable_schema=ON] statement.
@@ -2275,7 +2275,7 @@ struct sqlite3_mem_methods {
 ** [[SQLITE_DBCONFIG_TRUSTED_SCHEMA]]
 ** <dt>SQLITE_DBCONFIG_TRUSTED_SCHEMA</td>
 ** <dd>The SQLITE_DBCONFIG_TRUSTED_SCHEMA option tells SQLite to
-** assume that Database Tools schemas (the contents of the [sqlite_master] tables)
+** assume that database schemas (the contents of the [sqlite_master] tables)
 ** are untainted by malicious content.
 ** When the SQLITE_DBCONFIG_TRUSTED_SCHEMA option is disabled, SQLite
 ** takes additional defensive steps to protect the application from harm
@@ -2297,16 +2297,16 @@ struct sqlite3_mem_methods {
 ** <dt>SQLITE_DBCONFIG_LEGACY_FILE_FORMAT</td>
 ** <dd>The SQLITE_DBCONFIG_LEGACY_FILE_FORMAT option activates or deactivates
 ** the legacy file format flag.  When activated, this flag causes all newly
-** created Database Tools file to have a schema format version number (the 4-byte
-** integer found at offset 44 into the Database Tools header) of 1.  This in turn
-** means that the resulting Database Tools file will be readable and writable by
+** created database file to have a schema format version number (the 4-byte
+** integer found at offset 44 into the database header) of 1.  This in turn
+** means that the resulting database file will be readable and writable by
 ** any SQLite version back to 3.0.0 ([dateof:3.0.0]).  Without this setting,
-** newly created test_databases are generally not understandable by SQLite versions
+** newly created databases are generally not understandable by SQLite versions
 ** prior to 3.3.0 ([dateof:3.3.0]).  As these words are written, there
-** is now scarcely any need to generated Database Tools files that are compatible
+** is now scarcely any need to generated database files that are compatible 
 ** all the way back to version 3.0.0, and so this setting is of little
 ** practical use, but is provided so that SQLite can continue to claim the
-** ability to generate new Database Tools files that are compatible with  version
+** ability to generate new database files that are compatible with  version
 ** 3.0.0.
 ** <p>Note that when the SQLITE_DBCONFIG_LEGACY_FILE_FORMAT setting is on,
 ** the [VACUUM] command will fail with an obscure error when attempting to
@@ -2360,12 +2360,12 @@ SQLITE_API int sqlite3_extended_result_codes(sqlite3*, int onoff);
 **
 ** ^The sqlite3_last_insert_rowid(D) interface usually returns the [rowid] of
 ** the most recent successful [INSERT] into a rowid table or [virtual table]
-** on Database Tools connection D. ^Inserts into [WITHOUT ROWID] tables are not
+** on database connection D. ^Inserts into [WITHOUT ROWID] tables are not
 ** recorded. ^If no successful [INSERT]s into rowid tables have ever occurred 
-** on the Database Tools connection D, then sqlite3_last_insert_rowid(D) returns
+** on the database connection D, then sqlite3_last_insert_rowid(D) returns 
 ** zero.
 **
-** As well as being set automatically as rows are inserted into Database Tools
+** As well as being set automatically as rows are inserted into database
 ** tables, the value returned by this function may be set explicitly by
 ** [sqlite3_set_last_insert_rowid()]
 **
@@ -2400,7 +2400,7 @@ SQLITE_API int sqlite3_extended_result_codes(sqlite3*, int onoff);
 ** [last_insert_rowid() SQL function].
 **
 ** If a separate thread performs a new [INSERT] on the same
-** Database Tools connection while the [sqlite3_last_insert_rowid()]
+** database connection while the [sqlite3_last_insert_rowid()]
 ** function is running and thus changes the last insert [rowid],
 ** then the value returned by [sqlite3_last_insert_rowid()] is
 ** unpredictable and might not equal either the old or the new
@@ -2414,7 +2414,7 @@ SQLITE_API sqlite3_int64 sqlite3_last_insert_rowid(sqlite3*);
 **
 ** The sqlite3_set_last_insert_rowid(D, R) method allows the application to
 ** set the value returned by calling sqlite3_last_insert_rowid(D) to R 
-** without inserting a row into the Database Tools.
+** without inserting a row into the database.
 */
 SQLITE_API void sqlite3_set_last_insert_rowid(sqlite3*,sqlite3_int64);
 
@@ -2424,7 +2424,7 @@ SQLITE_API void sqlite3_set_last_insert_rowid(sqlite3*,sqlite3_int64);
 **
 ** ^This function returns the number of rows modified, inserted or
 ** deleted by the most recently completed INSERT, UPDATE or DELETE
-** statement on the Database Tools connection specified by the only parameter.
+** statement on the database connection specified by the only parameter.
 ** ^Executing any other type of SQL statement does not modify the value
 ** returned by this function.
 **
@@ -2462,7 +2462,7 @@ SQLITE_API void sqlite3_set_last_insert_rowid(sqlite3*,sqlite3_int64);
 ** program, the value returned reflects the number of rows modified by the 
 ** previous INSERT, UPDATE or DELETE statement within the same trigger.
 **
-** If a separate thread makes changes on the same Database Tools connection
+** If a separate thread makes changes on the same database connection
 ** while [sqlite3_changes()] is running then the value returned
 ** is unpredictable and not meaningful.
 **
@@ -2482,7 +2482,7 @@ SQLITE_API int sqlite3_changes(sqlite3*);
 **
 ** ^This function returns the total number of rows inserted, modified or
 ** deleted by all [INSERT], [UPDATE] or [DELETE] statements completed
-** since the Database Tools connection was opened, including those executed as
+** since the database connection was opened, including those executed as
 ** part of trigger programs. ^Executing any other type of SQL statement
 ** does not affect the value returned by sqlite3_total_changes().
 ** 
@@ -2492,13 +2492,13 @@ SQLITE_API int sqlite3_changes(sqlite3*);
 ** are not counted.
 **
 ** The [sqlite3_total_changes(D)] interface only reports the number
-** of rows that changed due to SQL statement run against Database Tools
-** connection D.  Any changes by other Database Tools connections are ignored.
-** To detect changes against a Database Tools file from other Database Tools
+** of rows that changed due to SQL statement run against database
+** connection D.  Any changes by other database connections are ignored.
+** To detect changes against a database file from other database
 ** connections use the [PRAGMA data_version] command or the
 ** [SQLITE_FCNTL_DATA_VERSION] [file control].
 ** 
-** If a separate thread makes changes on the same Database Tools connection
+** If a separate thread makes changes on the same database connection
 ** while [sqlite3_total_changes()] is running then the value
 ** returned is unpredictable and not meaningful.
 **
@@ -2517,15 +2517,15 @@ SQLITE_API int sqlite3_total_changes(sqlite3*);
 ** CAPI3REF: Interrupt A Long-Running Query
 ** METHOD: sqlite3
 **
-** ^This function causes any pending Database Tools operation to abort and
+** ^This function causes any pending database operation to abort and
 ** return at its earliest opportunity. This routine is typically
 ** called in response to a user action such as pressing "Cancel"
 ** or Ctrl-C where the user wants a long query operation to halt
 ** immediately.
 **
 ** ^It is safe to call this routine from a thread different from the
-** thread that is currently running the Database Tools operation.  But it
-** is not safe to call this routine with a [Database Tools connection] that
+** thread that is currently running the database operation.  But it
+** is not safe to call this routine with a [database connection] that
 ** is closed or might close before sqlite3_interrupt() returns.
 **
 ** ^If an SQL operation is very nearly finished at the time when
@@ -2538,7 +2538,7 @@ SQLITE_API int sqlite3_total_changes(sqlite3*);
 ** will be rolled back automatically.
 **
 ** ^The sqlite3_interrupt(D) call is in effect until all currently running
-** SQL statements on [Database Tools connection] D complete.  ^Any new SQL statements
+** SQL statements on [database connection] D complete.  ^Any new SQL statements
 ** that are started after the sqlite3_interrupt() call and before the 
 ** running statement count reaches zero are interrupted as if they had been
 ** running prior to the sqlite3_interrupt() call.  ^New SQL statements
@@ -2593,8 +2593,8 @@ SQLITE_API int sqlite3_complete16(const void *sql);
 **
 ** ^The sqlite3_busy_handler(D,X,P) routine sets a callback function X
 ** that might be invoked with argument P whenever
-** an attempt is made to access a Database Tools table associated with
-** [Database Tools connection] D when another thread
+** an attempt is made to access a database table associated with
+** [database connection] D when another thread
 ** or process has the table locked.
 ** The sqlite3_busy_handler() interface is used to implement
 ** [sqlite3_busy_timeout()] and [PRAGMA busy_timeout].
@@ -2608,10 +2608,10 @@ SQLITE_API int sqlite3_complete16(const void *sql);
 ** the busy handler callback is the number of times that the busy handler has
 ** been invoked previously for the same locking event.  ^If the
 ** busy callback returns 0, then no additional attempts are made to
-** access the Database Tools and [SQLITE_BUSY] is returned
+** access the database and [SQLITE_BUSY] is returned
 ** to the application.
 ** ^If the callback returns non-zero, then another attempt
-** is made to access the Database Tools and the cycle repeats.
+** is made to access the database and the cycle repeats.
 **
 ** The presence of a busy handler does not guarantee that it will be invoked
 ** when there is lock contention. ^If SQLite determines that invoking the busy
@@ -2632,17 +2632,17 @@ SQLITE_API int sqlite3_complete16(const void *sql);
 ** ^The default busy callback is NULL.
 **
 ** ^(There can only be a single busy handler defined for each
-** [Database Tools connection].  Setting a new busy handler clears any
+** [database connection].  Setting a new busy handler clears any
 ** previously set handler.)^  ^Note that calling [sqlite3_busy_timeout()]
 ** or evaluating [PRAGMA busy_timeout=N] will change the
 ** busy handler and thus clear any previously set busy handler.
 **
 ** The busy callback should not take any actions which modify the
-** Database Tools connection that invoked the busy handler.  In other words,
+** database connection that invoked the busy handler.  In other words,
 ** the busy handler is not reentrant.  Any such actions
 ** result in undefined behavior.
 ** 
-** A busy handler must not close the Database Tools connection
+** A busy handler must not close the database connection
 ** or [prepared statement] that invoked the busy handler.
 */
 SQLITE_API int sqlite3_busy_handler(sqlite3*,int(*)(void*,int),void*);
@@ -2662,7 +2662,7 @@ SQLITE_API int sqlite3_busy_handler(sqlite3*,int(*)(void*,int),void*);
 ** turns off all busy handlers.
 **
 ** ^(There can only be a single busy handler for a particular
-** [Database Tools connection] at any given moment.  If another busy handler
+** [database connection] at any given moment.  If another busy handler
 ** was defined  (using [sqlite3_busy_handler()]) prior to calling
 ** this routine, that other busy handler is cleared.)^
 **
@@ -2744,7 +2744,7 @@ SQLITE_API int sqlite3_busy_timeout(sqlite3*, int ms);
 ** [sqlite3_errmsg()].
 */
 SQLITE_API int sqlite3_get_table(
-  sqlite3 *db,          /* An open Database Tools */
+  sqlite3 *db,          /* An open database */
   const char *zSql,     /* SQL to be evaluated */
   char ***pazResult,    /* Results of the query */
   int *pnRow,           /* Number of result rows written here */
@@ -2935,7 +2935,7 @@ SQLITE_API void sqlite3_randomness(int N, void *P);
 ** KEYWORDS: {authorizer callback}
 **
 ** ^This routine registers an authorizer callback with a particular
-** [Database Tools connection], supplied in the first argument.
+** [database connection], supplied in the first argument.
 ** ^The authorizer callback is invoked as SQL statements are being compiled
 ** by [sqlite3_prepare()] or its variants [sqlite3_prepare_v2()],
 ** [sqlite3_prepare_v3()], [sqlite3_prepare16()], [sqlite3_prepare16_v2()],
@@ -2984,28 +2984,28 @@ SQLITE_API void sqlite3_randomness(int N, void *P);
 ** An authorizer is used when [sqlite3_prepare | preparing]
 ** SQL statements from an untrusted source, to ensure that the SQL statements
 ** do not try to access data they are not allowed to see, or that they do not
-** try to execute malicious statements that damage the Database Tools.  For
+** try to execute malicious statements that damage the database.  For
 ** example, an application may allow a user to enter arbitrary
-** SQL queries for evaluation by a Database Tools.  But the application does
+** SQL queries for evaluation by a database.  But the application does
 ** not want the user to be able to make arbitrary changes to the
-** Database Tools.  An authorizer could then be put in place while the
+** database.  An authorizer could then be put in place while the
 ** user-entered SQL is being [sqlite3_prepare | prepared] that
 ** disallows everything except [SELECT] statements.
 **
 ** Applications that need to process SQL from untrusted sources
 ** might also consider lowering resource limits using [sqlite3_limit()]
-** and limiting Database Tools size using the [max_page_count] [PRAGMA]
+** and limiting database size using the [max_page_count] [PRAGMA]
 ** in addition to using an authorizer.
 **
-** ^(Only a single authorizer can be in place on a Database Tools connection
+** ^(Only a single authorizer can be in place on a database connection
 ** at a time.  Each call to sqlite3_set_authorizer overrides the
 ** previous call.)^  ^Disable the authorizer by installing a NULL callback.
 ** The authorizer is disabled by default.
 **
 ** The authorizer callback must not do anything that will modify
-** the Database Tools connection that invoked the authorizer callback.
+** the database connection that invoked the authorizer callback.
 ** Note that [sqlite3_prepare_v2()] and [sqlite3_step()] both modify their
-** Database Tools connections for the meaning of "modify" in this paragraph.
+** database connections for the meaning of "modify" in this paragraph.
 **
 ** ^When [sqlite3_prepare_v2()] is used to prepare a statement, the
 ** statement might be re-prepared during [sqlite3_step()] due to a 
@@ -3052,7 +3052,7 @@ SQLITE_API int sqlite3_set_authorizer(
 ** authorized.  The 3rd and 4th parameters to the authorization
 ** callback function will be parameters or NULL depending on which of these
 ** codes is used as the second parameter.  ^(The 5th parameter to the
-** authorizer callback is the name of the Database Tools ("main", "temp",
+** authorizer callback is the name of the database ("main", "temp",
 ** etc.) if applicable.)^  ^The 6th parameter to the authorizer callback
 ** is the name of the inner-most trigger or view that is responsible for
 ** the access attempt or NULL if this access attempt is directly from
@@ -3177,9 +3177,9 @@ SQLITE_API SQLITE_DEPRECATED void *sqlite3_profile(sqlite3*,
 ** X argument is unused.
 **
 ** [[SQLITE_TRACE_CLOSE]] <dt>SQLITE_TRACE_CLOSE</dt>
-** <dd>^An SQLITE_TRACE_CLOSE callback is invoked when a Database Tools
+** <dd>^An SQLITE_TRACE_CLOSE callback is invoked when a database
 ** connection closes.
-** ^The P argument is a pointer to the [Database Tools connection] object
+** ^The P argument is a pointer to the [database connection] object
 ** and the X argument is unused.
 ** </dl>
 */
@@ -3193,7 +3193,7 @@ SQLITE_API SQLITE_DEPRECATED void *sqlite3_profile(sqlite3*,
 ** METHOD: sqlite3
 **
 ** ^The sqlite3_trace_v2(D,M,X,P) interface registers a trace callback
-** function X against [Database Tools connection] D, using property mask M
+** function X against [database connection] D, using property mask M
 ** and context pointer P.  ^If the X callback is
 ** NULL or if the M mask is zero, then tracing is disabled.  The
 ** M argument should be the bitwise OR-ed combination of
@@ -3231,7 +3231,7 @@ SQLITE_API int sqlite3_trace_v2(
 ** ^The sqlite3_progress_handler(D,N,X,P) interface causes the callback
 ** function X to be invoked periodically during long running calls to
 ** [sqlite3_exec()], [sqlite3_step()] and [sqlite3_get_table()] for
-** Database Tools connection D.  An example use for this
+** database connection D.  An example use for this
 ** interface is to keep a GUI updated during a large query.
 **
 ** ^The parameter P is passed through as the only parameter to the 
@@ -3241,7 +3241,7 @@ SQLITE_API int sqlite3_trace_v2(
 ** handler is disabled.
 **
 ** ^Only a single progress handler may be defined at one time per
-** [Database Tools connection]; setting a new progress handler cancels the
+** [database connection]; setting a new progress handler cancels the
 ** old one.  ^Setting parameter X to NULL disables the progress handler.
 ** ^The progress handler is also disabled by setting N to a value less
 ** than 1.
@@ -3251,9 +3251,9 @@ SQLITE_API int sqlite3_trace_v2(
 ** "Cancel" button on a GUI progress dialog box.
 **
 ** The progress handler callback must not do anything that will modify
-** the Database Tools connection that invoked the progress handler.
+** the database connection that invoked the progress handler.
 ** Note that [sqlite3_prepare_v2()] and [sqlite3_step()] both modify their
-** Database Tools connections for the meaning of "modify" in this paragraph.
+** database connections for the meaning of "modify" in this paragraph.
 **
 */
 SQLITE_API void sqlite3_progress_handler(sqlite3*, int, int(*)(void*), void*);
@@ -3262,45 +3262,45 @@ SQLITE_API void sqlite3_progress_handler(sqlite3*, int, int(*)(void*), void*);
 ** CAPI3REF: Opening A New Database Connection
 ** CONSTRUCTOR: sqlite3
 **
-** ^These routines open an SQLite Database Tools file as specified by the
+** ^These routines open an SQLite database file as specified by the 
 ** filename argument. ^The filename argument is interpreted as UTF-8 for
 ** sqlite3_open() and sqlite3_open_v2() and as UTF-16 in the native byte
-** order for sqlite3_open16(). ^(A [Database Tools connection] handle is usually
+** order for sqlite3_open16(). ^(A [database connection] handle is usually
 ** returned in *ppDb, even if an error occurs.  The only exception is that
 ** if SQLite is unable to allocate memory to hold the [sqlite3] object,
 ** a NULL will be written into *ppDb instead of a pointer to the [sqlite3]
-** object.)^ ^(If the Database Tools is opened (and/or created) successfully, then
+** object.)^ ^(If the database is opened (and/or created) successfully, then
 ** [SQLITE_OK] is returned.  Otherwise an [error code] is returned.)^ ^The
 ** [sqlite3_errmsg()] or [sqlite3_errmsg16()] routines can be used to obtain
 ** an English language description of the error following a failure of any
 ** of the sqlite3_open() routines.
 **
-** ^The default encoding will be UTF-8 for test_databases created using
-** sqlite3_open() or sqlite3_open_v2().  ^The default encoding for test_databases
+** ^The default encoding will be UTF-8 for databases created using
+** sqlite3_open() or sqlite3_open_v2().  ^The default encoding for databases
 ** created using sqlite3_open16() will be UTF-16 in the native byte order.
 **
 ** Whether or not an error occurs when it is opened, resources
-** associated with the [Database Tools connection] handle should be released by
+** associated with the [database connection] handle should be released by
 ** passing it to [sqlite3_close()] when it is no longer required.
 **
 ** The sqlite3_open_v2() interface works like sqlite3_open()
 ** except that it accepts two additional parameters for additional control
-** over the new Database Tools connection.  ^(The flags parameter to
+** over the new database connection.  ^(The flags parameter to
 ** sqlite3_open_v2() must include, at a minimum, one of the following
 ** three flag combinations:)^
 **
 ** <dl>
 ** ^(<dt>[SQLITE_OPEN_READONLY]</dt>
-** <dd>The Database Tools is opened in read-only mode.  If the Database Tools does not
+** <dd>The database is opened in read-only mode.  If the database does not
 ** already exist, an error is returned.</dd>)^
 **
 ** ^(<dt>[SQLITE_OPEN_READWRITE]</dt>
-** <dd>The Database Tools is opened for reading and writing if possible, or reading
+** <dd>The database is opened for reading and writing if possible, or reading
 ** only if the file is write protected by the operating system.  In either
-** case the Database Tools must already exist, otherwise an error is returned.</dd>)^
+** case the database must already exist, otherwise an error is returned.</dd>)^
 **
 ** ^(<dt>[SQLITE_OPEN_READWRITE] | [SQLITE_OPEN_CREATE]</dt>
-** <dd>The Database Tools is opened for reading and writing, and is created if
+** <dd>The database is opened for reading and writing, and is created if
 ** it does not already exist. This is the behavior that is always used for
 ** sqlite3_open() and sqlite3_open16().</dd>)^
 ** </dl>
@@ -3313,36 +3313,36 @@ SQLITE_API void sqlite3_progress_handler(sqlite3*, int, int(*)(void*), void*);
 ** <dd>The filename can be interpreted as a URI if this flag is set.</dd>)^
 **
 ** ^(<dt>[SQLITE_OPEN_MEMORY]</dt>
-** <dd>The Database Tools will be opened as an in-memory Database Tools.  The Database Tools
+** <dd>The database will be opened as an in-memory database.  The database
 ** is named by the "filename" argument for the purposes of cache-sharing,
 ** if shared cache mode is enabled, but the "filename" is otherwise ignored.
 ** </dd>)^
 **
 ** ^(<dt>[SQLITE_OPEN_NOMUTEX]</dt>
-** <dd>The new Database Tools connection will use the "multi-thread"
+** <dd>The new database connection will use the "multi-thread"
 ** [threading mode].)^  This means that separate threads are allowed
 ** to use SQLite at the same time, as long as each thread is using
-** a different [Database Tools connection].
+** a different [database connection].
 **
 ** ^(<dt>[SQLITE_OPEN_FULLMUTEX]</dt>
-** <dd>The new Database Tools connection will use the "serialized"
+** <dd>The new database connection will use the "serialized"
 ** [threading mode].)^  This means the multiple threads can safely
-** attempt to use the same Database Tools connection at the same time.
+** attempt to use the same database connection at the same time.
 ** (Mutexes will block any actual concurrency, but in this mode
 ** there is no harm in trying.)
 **
 ** ^(<dt>[SQLITE_OPEN_SHAREDCACHE]</dt>
-** <dd>The Database Tools is opened [shared cache] enabled, overriding
+** <dd>The database is opened [shared cache] enabled, overriding
 ** the default shared cache setting provided by
 ** [sqlite3_enable_shared_cache()].)^
 **
 ** ^(<dt>[SQLITE_OPEN_PRIVATECACHE]</dt>
-** <dd>The Database Tools is opened [shared cache] disabled, overriding
+** <dd>The database is opened [shared cache] disabled, overriding
 ** the default shared cache setting provided by
 ** [sqlite3_enable_shared_cache()].)^
 **
 ** [[OPEN_NOFOLLOW]] ^(<dt>[SQLITE_OPEN_NOFOLLOW]</dt>
-** <dd>The Database Tools filename is not allowed to be a symbolic link</dd>
+** <dd>The database filename is not allowed to be a symbolic link</dd>
 ** </dl>)^
 **
 ** If the 3rd parameter to sqlite3_open_v2() is not one of the
@@ -3352,20 +3352,20 @@ SQLITE_API void sqlite3_progress_handler(sqlite3*, int, int(*)(void*), void*);
 **
 ** ^The fourth parameter to sqlite3_open_v2() is the name of the
 ** [sqlite3_vfs] object that defines the operating system interface that
-** the new Database Tools connection should use.  ^If the fourth parameter is
+** the new database connection should use.  ^If the fourth parameter is
 ** a NULL pointer then the default [sqlite3_vfs] object is used.
 **
-** ^If the filename is ":memory:", then a private, temporary in-memory Database Tools
-** is created for the connection.  ^This in-memory Database Tools will vanish when
-** the Database Tools connection is closed.  Future versions of SQLite might
+** ^If the filename is ":memory:", then a private, temporary in-memory database
+** is created for the connection.  ^This in-memory database will vanish when
+** the database connection is closed.  Future versions of SQLite might
 ** make use of additional special filenames that begin with the ":" character.
-** It is recommended that when a Database Tools filename actually does begin with
+** It is recommended that when a database filename actually does begin with
 ** a ":" character you should prefix the filename with a pathname such as
 ** "./" to avoid ambiguity.
 **
 ** ^If the filename is an empty string, then a private, temporary
-** on-disk Database Tools will be created.  ^This private Database Tools will be
-** automatically deleted as soon as the Database Tools connection is closed.
+** on-disk database will be created.  ^This private database will be
+** automatically deleted as soon as the database connection is closed.
 **
 ** [[URI filenames in sqlite3_open()]] <h3>URI Filenames</h3>
 **
@@ -3387,7 +3387,7 @@ SQLITE_API void sqlite3_progress_handler(sqlite3*, int, int(*)(void*), void*);
 ** present, is ignored.
 **
 ** ^SQLite uses the path component of the URI as the name of the disk file
-** which contains the Database Tools. ^If the path begins with a '/' character,
+** which contains the database. ^If the path begins with a '/' character, 
 ** then it is interpreted as an absolute path. ^If the path does not begin 
 ** with a '/' (meaning that the authority section is omitted from the URI)
 ** then the path is interpreted as a relative path. 
@@ -3403,7 +3403,7 @@ SQLITE_API void sqlite3_progress_handler(sqlite3*, int, int(*)(void*), void*);
 ** <ul>
 **   <li> <b>vfs</b>: ^The "vfs" parameter may be used to specify the name of
 **     a VFS object that provides the operating system interface that should
-**     be used to access the Database Tools file on disk. ^If this option is set to
+**     be used to access the database file on disk. ^If this option is set to
 **     an empty string the default VFS object is used. ^Specifying an unknown
 **     VFS is an error. ^If sqlite3_open_v2() is used and the vfs option is
 **     present, then the VFS specified by the option takes precedence over
@@ -3412,14 +3412,14 @@ SQLITE_API void sqlite3_progress_handler(sqlite3*, int, int(*)(void*), void*);
 **   <li> <b>mode</b>: ^(The mode parameter may be set to either "ro", "rw",
 **     "rwc", or "memory". Attempting to set it to any other value is
 **     an error)^. 
-**     ^If "ro" is specified, then the Database Tools is opened for read-only
+**     ^If "ro" is specified, then the database is opened for read-only 
 **     access, just as if the [SQLITE_OPEN_READONLY] flag had been set in the 
 **     third argument to sqlite3_open_v2(). ^If the mode option is set to 
-**     "rw", then the Database Tools is opened for read-write (but not create)
+**     "rw", then the database is opened for read-write (but not create) 
 **     access, as if SQLITE_OPEN_READWRITE (but not SQLITE_OPEN_CREATE) had 
 **     been set. ^Value "rwc" is equivalent to setting both 
 **     SQLITE_OPEN_READWRITE and SQLITE_OPEN_CREATE.  ^If the mode option is
-**     set to "memory" then a pure [in-memory Database Tools] that never reads
+**     set to "memory" then a pure [in-memory database] that never reads
 **     or writes from disk is used. ^It is an error to specify a value for
 **     the mode parameter that is less restrictive than that specified by
 **     the flags passed in the third parameter to sqlite3_open_v2().
@@ -3435,22 +3435,22 @@ SQLITE_API void sqlite3_progress_handler(sqlite3*, int, int(*)(void*), void*);
 **
 **  <li> <b>psow</b>: ^The psow parameter indicates whether or not the
 **     [powersafe overwrite] property does or does not apply to the
-**     storage media on which the Database Tools file resides.
+**     storage media on which the database file resides.
 **
 **  <li> <b>nolock</b>: ^The nolock parameter is a boolean query parameter
 **     which if set disables file locking in rollback journal modes.  This
-**     is useful for accessing a Database Tools on a filesystem that does not
+**     is useful for accessing a database on a filesystem that does not
 **     support locking.  Caution:  Database corruption might result if two
-**     or more processes write to the same Database Tools and any one of those
+**     or more processes write to the same database and any one of those
 **     processes uses nolock=1.
 **
 **  <li> <b>immutable</b>: ^The immutable parameter is a boolean query
-**     parameter that indicates that the Database Tools file is stored on
+**     parameter that indicates that the database file is stored on
 **     read-only media.  ^When immutable is set, SQLite assumes that the
-**     Database Tools file cannot be changed, even by a process with higher
-**     privilege, and so the Database Tools is opened read-only and all locking
+**     database file cannot be changed, even by a process with higher
+**     privilege, and so the database is opened read-only and all locking
 **     and change detection is disabled.  Caution: Setting the immutable
-**     property on a Database Tools file that does in fact change can result
+**     property on a database file that does in fact change can result
 **     in incorrect query results and/or [SQLITE_CORRUPT] errors.
 **     See also: [SQLITE_IOCAP_IMMUTABLE].
 **       
@@ -3470,7 +3470,7 @@ SQLITE_API void sqlite3_progress_handler(sqlite3*, int, int(*)(void*), void*);
 ** <tr><td> file:/home/fred/data.db<br>
 **          file:///home/fred/data.db <br> 
 **          file://localhost/home/fred/data.db <br> <td> 
-**          Open the Database Tools file "/home/fred/data.db".
+**          Open the database file "/home/fred/data.db".
 ** <tr><td> file://darkstar/home/fred/data.db <td> 
 **          An error. "darkstar" is not a recognized authority.
 ** <tr><td style="white-space:nowrap"> 
@@ -3500,7 +3500,7 @@ SQLITE_API void sqlite3_progress_handler(sqlite3*, int, int(*)(void*), void*);
 ** the results are undefined.
 **
 ** <b>Note to Windows users:</b>  The encoding used for the filename argument
-** of 0) and sqlite3_open_v2() must be UTF-8, not whatever
+** of sqlite3_open() and sqlite3_open_v2() must be UTF-8, not whatever
 ** codepage is currently defined.  Filenames containing international
 ** characters must be converted to UTF-8 prior to passing them into
 ** sqlite3_open() or sqlite3_open_v2().
@@ -3530,10 +3530,10 @@ SQLITE_API int sqlite3_open_v2(
 ** CAPI3REF: Obtain Values For URI Parameters
 **
 ** These are utility routines, useful to [VFS|custom VFS implementations],
-** that check if a Database Tools file was a URI that contained a specific query
+** that check if a database file was a URI that contained a specific query 
 ** parameter, and if so obtains the value of that query parameter.
 **
-** If F is the Database Tools filename pointer passed into the xOpen() method of
+** If F is the database filename pointer passed into the xOpen() method of 
 ** a VFS implementation or it is the return value of [sqlite3_db_filename()]
 ** and if P is the name of the query parameter, then
 ** sqlite3_uri_parameter(F,P) returns the value of the P
@@ -3567,17 +3567,17 @@ SQLITE_API int sqlite3_open_v2(
 ** 
 ** If F is a NULL pointer, then sqlite3_uri_parameter(F,P) returns NULL and
 ** sqlite3_uri_boolean(F,P,B) returns B.  If F is not a NULL pointer and
-** is not a Database Tools file pathname pointer that the SQLite core passed
+** is not a database file pathname pointer that the SQLite core passed
 ** into the xOpen VFS method, then the behavior of this routine is undefined
 ** and probably undesirable.
 **
 ** Beginning with SQLite [version 3.31.0] ([dateof:3.31.0]) the input F
 ** parameter can also be the name of a rollback journal file or WAL file
-** in addition to the main Database Tools file.  Prior to version 3.31.0, these
-** routines would only work if F was the name of the main Database Tools file.
+** in addition to the main database file.  Prior to version 3.31.0, these
+** routines would only work if F was the name of the main database file.
 ** When the F parameter is the name of the rollback journal or WAL file,
 ** it has access to all the same query parameters as were found on the
-** main Database Tools file.
+** main database file.
 **
 ** See the [URI filename] documentation for additional information.
 */
@@ -3590,25 +3590,25 @@ SQLITE_API const char *sqlite3_uri_key(const char *zFilename, int N);
 ** CAPI3REF:  Translate filenames
 **
 ** These routines are available to [VFS|custom VFS implementations] for
-** translating filenames between the main Database Tools file, the journal file,
+** translating filenames between the main database file, the journal file,
 ** and the WAL file.
 **
-** If F is the name of an sqlite Database Tools file, journal file, or WAL file
+** If F is the name of an sqlite database file, journal file, or WAL file
 ** passed by the SQLite core into the VFS, then sqlite3_filename_database(F)
-** returns the name of the corresponding Database Tools file.
+** returns the name of the corresponding database file.
 **
-** If F is the name of an sqlite Database Tools file, journal file, or WAL file
-** passed by the SQLite core into the VFS, or if F is a Database Tools filename
+** If F is the name of an sqlite database file, journal file, or WAL file
+** passed by the SQLite core into the VFS, or if F is a database filename
 ** obtained from [sqlite3_db_filename()], then sqlite3_filename_journal(F)
 ** returns the name of the corresponding rollback journal file.
 **
-** If F is the name of an sqlite Database Tools file, journal file, or WAL file
-** that was passed by the SQLite core into the VFS, or if F is a Database Tools
+** If F is the name of an sqlite database file, journal file, or WAL file
+** that was passed by the SQLite core into the VFS, or if F is a database
 ** filename obtained from [sqlite3_db_filename()], then
 ** sqlite3_filename_wal(F) returns the name of the corresponding
 ** WAL file.
 **
-** In all of the above, if F is not the name of a Database Tools, journal or WAL
+** In all of the above, if F is not the name of a database, journal or WAL
 ** filename passed into the VFS from the SQLite core and F is not the
 ** return value from [sqlite3_db_filename()], then the result is
 ** undefined and is likely a memory access violation.
@@ -3623,7 +3623,7 @@ SQLITE_API const char *sqlite3_filename_wal(const char*);
 ** METHOD: sqlite3
 **
 ** ^If the most recent sqlite3_* API call associated with 
-** [Database Tools connection] D failed, then the sqlite3_errcode(D) interface
+** [database connection] D failed, then the sqlite3_errcode(D) interface
 ** returns the numeric [result code] or [extended result code] for that
 ** API call.
 ** ^The sqlite3_extended_errcode()
@@ -3661,7 +3661,7 @@ SQLITE_API const char *sqlite3_filename_wal(const char*);
 ** the time of the first error and the call to these interfaces.
 ** When that happens, the second error will be reported since these
 ** interfaces always report the most recent result.  To avoid
-** this, each thread can obtain exclusive use of the [Database Tools connection] D
+** this, each thread can obtain exclusive use of the [database connection] D
 ** by invoking [sqlite3_mutex_enter]([sqlite3_db_mutex](D)) before beginning
 ** to use D and invoking [sqlite3_mutex_leave]([sqlite3_db_mutex](D)) after
 ** all calls to the interfaces listed here are completed.
@@ -3708,7 +3708,7 @@ typedef struct sqlite3_stmt sqlite3_stmt;
 **
 ** ^(This interface allows the size of various constructs to be limited
 ** on a connection by connection basis.  The first parameter is the
-** [Database Tools connection] whose limit is to be set or queried.  The
+** [database connection] whose limit is to be set or queried.  The
 ** second parameter is one of the [limit categories] that define a
 ** class of constructs to be size limited.  The third parameter is the
 ** new limit for that construct.)^
@@ -3728,15 +3728,15 @@ typedef struct sqlite3_stmt sqlite3_stmt;
 ** simply invoke this interface with the third parameter set to -1.
 **
 ** Run-time limits are intended for use in applications that manage
-** both their own internal Database Tools and also test_databases that are controlled
+** both their own internal database and also databases that are controlled
 ** by untrusted external sources.  An example application might be a
-** web browser that has its own test_databases for storing history and
-** separate test_databases controlled by JavaScript applications downloaded
-** off the Internet.  The internal test_databases can be given the
+** web browser that has its own databases for storing history and
+** separate databases controlled by JavaScript applications downloaded
+** off the Internet.  The internal databases can be given the
 ** large, default limits.  Databases managed by external sources can
 ** be given much smaller limits designed to prevent a denial of service
 ** attack.  Developers might also want to use the [sqlite3_set_authorizer()]
-** interface to further control untrusted SQL.  The size of the Database Tools
+** interface to further control untrusted SQL.  The size of the database
 ** created by an untrusted script can be contained using the
 ** [max_page_count] [PRAGMA].
 **
@@ -3781,7 +3781,7 @@ SQLITE_API int sqlite3_limit(sqlite3*, int id, int newVal);
 ** <dd>The maximum number of arguments on a function.</dd>)^
 **
 ** [[SQLITE_LIMIT_ATTACHED]] ^(<dt>SQLITE_LIMIT_ATTACHED</dt>
-** <dd>The maximum number of [ATTACH | attached test_databases].)^</dd>
+** <dd>The maximum number of [ATTACH | attached databases].)^</dd>
 **
 ** [[SQLITE_LIMIT_LIKE_PATTERN_LENGTH]]
 ** ^(<dt>SQLITE_LIMIT_LIKE_PATTERN_LENGTH</dt>
@@ -3872,9 +3872,9 @@ SQLITE_API int sqlite3_limit(sqlite3*, int id, int newVal);
 ** as a convenience.  The UTF-16 interfaces work by converting the
 ** input text into UTF-8, then invoking the corresponding UTF-8 interface.
 **
-** The first argument, "db", is a [Database Tools connection] obtained from a
+** The first argument, "db", is a [database connection] obtained from a
 ** prior successful call to [sqlite3_open()], [sqlite3_open_v2()] or
-** [sqlite3_open16()].  The Database Tools connection must not have been closed.
+** [sqlite3_open16()].  The database connection must not have been closed.
 **
 ** The second argument, "zSql", is the statement to be compiled, encoded
 ** as either UTF-8 or UTF-16.  The sqlite3_prepare(), sqlite3_prepare_v2(),
@@ -3918,7 +3918,7 @@ SQLITE_API int sqlite3_limit(sqlite3*, int id, int newVal);
 **
 ** <ol>
 ** <li>
-** ^If the Database Tools schema changes, instead of returning [SQLITE_SCHEMA] as it
+** ^If the database schema changes, instead of returning [SQLITE_SCHEMA] as it
 ** always used to do, [sqlite3_step()] will automatically recompile the SQL
 ** statement and try to run it again. As many as [SQLITE_MAX_SCHEMA_RETRY]
 ** retries will occur before sqlite3_step() gives up and returns an error.
@@ -4045,32 +4045,32 @@ SQLITE_API const char *sqlite3_normalized_sql(sqlite3_stmt *pStmt);
 **
 ** ^The sqlite3_stmt_readonly(X) interface returns true (non-zero) if
 ** and only if the [prepared statement] X makes no direct changes to
-** the content of the Database Tools file.
+** the content of the database file.
 **
 ** Note that [application-defined SQL functions] or
-** [virtual tables] might change the Database Tools indirectly as a side effect.
+** [virtual tables] might change the database indirectly as a side effect.  
 ** ^(For example, if an application defines a function "eval()" that 
 ** calls [sqlite3_exec()], then the following SQL statement would
-** change the Database Tools file through side-effects:
+** change the database file through side-effects:
 **
 ** <blockquote><pre>
 **    SELECT eval('DELETE FROM t1') FROM t2;
 ** </pre></blockquote>
 **
-** But because the [SELECT] statement does not change the Database Tools file
+** But because the [SELECT] statement does not change the database file
 ** directly, sqlite3_stmt_readonly() would still return true.)^
 **
 ** ^Transaction control statements such as [BEGIN], [COMMIT], [ROLLBACK],
 ** [SAVEPOINT], and [RELEASE] cause sqlite3_stmt_readonly() to return true,
-** since the statements themselves do not actually modify the Database Tools but
+** since the statements themselves do not actually modify the database but
 ** rather they control the timing of when other statements modify the 
-** Database Tools.  ^The [ATTACH] and [DETACH] statements also cause
+** database.  ^The [ATTACH] and [DETACH] statements also cause
 ** sqlite3_stmt_readonly() to return true since, while those statements
-** change the configuration of a Database Tools connection, they do not make
-** changes to the content of the Database Tools files on disk.
+** change the configuration of a database connection, they do not make 
+** changes to the content of the database files on disk.
 ** ^The sqlite3_stmt_readonly() interface returns true for [BEGIN] since
 ** [BEGIN] merely sets internal flags, but the [BEGIN|BEGIN IMMEDIATE] and
-** [BEGIN|BEGIN EXCLUSIVE] commands do touch the Database Tools and so
+** [BEGIN|BEGIN EXCLUSIVE] commands do touch the database and so
 ** sqlite3_stmt_readonly() returns false for those commands.
 */
 SQLITE_API int sqlite3_stmt_readonly(sqlite3_stmt *pStmt);
@@ -4101,7 +4101,7 @@ SQLITE_API int sqlite3_stmt_isexplain(sqlite3_stmt *pStmt);
 ** object, then the behavior is undefined and probably undesirable.
 **
 ** This interface can be used in combination [sqlite3_next_stmt()]
-** to locate all prepared statements associated with a Database Tools
+** to locate all prepared statements associated with a database 
 ** connection that are in need of being reset.  This can be used,
 ** for example, in diagnostic routines to search for prepared 
 ** statements that are holding a transaction open.
@@ -4113,7 +4113,7 @@ SQLITE_API int sqlite3_stmt_busy(sqlite3_stmt*);
 ** KEYWORDS: {protected sqlite3_value} {unprotected sqlite3_value}
 **
 ** SQLite uses the sqlite3_value object to represent all values
-** that can be stored in a Database Tools table. SQLite uses dynamic typing
+** that can be stored in a database table. SQLite uses dynamic typing
 ** for the values it stores.  ^Values stored in sqlite3_value objects
 ** can be integers, floating point values, strings, BLOBs, or NULL.
 **
@@ -4425,12 +4425,12 @@ SQLITE_API const void *sqlite3_column_name16(sqlite3_stmt*, int N);
 ** CAPI3REF: Source Of Data In A Query Result
 ** METHOD: sqlite3_stmt
 **
-** ^These routines provide a means to determine the Database Tools, table, and
+** ^These routines provide a means to determine the database, table, and
 ** table column that is the origin of a particular result column in
 ** [SELECT] statement.
-** ^The name of the Database Tools or table or column can be returned as
+** ^The name of the database or table or column can be returned as
 ** either a UTF-8 or UTF-16 string.  ^The _database_ routines return
-** the Database Tools name, the _table_ routines return the table name, and
+** the database name, the _table_ routines return the table name, and
 ** the origin_ routines return the column name.
 ** ^The returned string is valid until the [prepared statement] is destroyed
 ** using [sqlite3_finalize()] or until the statement is automatically
@@ -4439,7 +4439,7 @@ SQLITE_API const void *sqlite3_column_name16(sqlite3_stmt*, int N);
 ** again in a different encoding.
 **
 ** ^The names returned are the original un-aliased names of the
-** Database Tools, table, and column.
+** database, table, and column.
 **
 ** ^The first argument to these interfaces is a [prepared statement].
 ** ^These functions return information about the Nth result column returned by
@@ -4449,7 +4449,7 @@ SQLITE_API const void *sqlite3_column_name16(sqlite3_stmt*, int N);
 ** ^If the Nth column returned by the statement is an expression or
 ** subquery and is not a column value, then all of these functions return
 ** NULL.  ^These routines might also return NULL if a memory allocation error
-** occurs.  ^Otherwise, they return the name of the attached Database Tools, table,
+** occurs.  ^Otherwise, they return the name of the attached database, table,
 ** or column that query result column was extracted from.
 **
 ** ^As with all other SQLite APIs, those whose names end with "16" return
@@ -4482,7 +4482,7 @@ SQLITE_API const void *sqlite3_column_origin_name16(sqlite3_stmt*,int);
 ** expression or subquery, then a NULL pointer is returned.
 ** ^The returned string is always UTF-8 encoded.
 **
-** ^(For example, given the Database Tools schema:
+** ^(For example, given the database schema:
 **
 ** CREATE TABLE t1(c1 VARIANT);
 **
@@ -4526,8 +4526,8 @@ SQLITE_API const void *sqlite3_column_decltype16(sqlite3_stmt*,int);
 ** ^With the "v2" interface, any of the other [result codes] or
 ** [extended result codes] might be returned as well.
 **
-** ^[SQLITE_BUSY] means that the Database Tools engine was unable to acquire the
-** Database Tools locks it needs to do its job.  ^If the statement is a [COMMIT]
+** ^[SQLITE_BUSY] means that the database engine was unable to acquire the
+** database locks it needs to do its job.  ^If the statement is a [COMMIT]
 ** or occurs outside of an explicit transaction, then you can retry the
 ** statement.  If the statement is not a [COMMIT] and occurs within an
 ** explicit transaction then you should rollback the transaction before
@@ -4556,7 +4556,7 @@ SQLITE_API const void *sqlite3_column_decltype16(sqlite3_stmt*,int);
 ** Perhaps it was called on a [prepared statement] that has
 ** already been [sqlite3_finalize | finalized] or on one that had
 ** previously returned [SQLITE_ERROR] or [SQLITE_DONE].  Or it could
-** be the case that the same Database Tools connection is being used by two or
+** be the case that the same database connection is being used by two or
 ** more threads at the same moment in time.
 **
 ** For all versions of SQLite up to and including 3.6.23.1, a call to
@@ -4847,7 +4847,7 @@ SQLITE_API int sqlite3_data_count(sqlite3_stmt *pStmt);
 ** Valid SQL NULL returns can be distinguished from out-of-memory errors
 ** by invoking the [sqlite3_errcode()] immediately after the suspect
 ** return value is obtained and before any
-** other SQLite interface is called on the same [Database Tools connection].
+** other SQLite interface is called on the same [database connection].
 */
 SQLITE_API const void *sqlite3_column_blob(sqlite3_stmt*, int iCol);
 SQLITE_API double sqlite3_column_double(sqlite3_stmt*, int iCol);
@@ -4930,10 +4930,10 @@ SQLITE_API int sqlite3_reset(sqlite3_stmt *pStmt);
 ** is similar, but allows the user to supply the extra callback functions
 ** needed by [aggregate window functions].
 **
-** ^The first parameter is the [Database Tools connection] to which the SQL
-** function is to be added.  ^If an application uses more than one Database Tools
+** ^The first parameter is the [database connection] to which the SQL
+** function is to be added.  ^If an application uses more than one database
 ** connection then application-defined SQL functions must be added
-** to each Database Tools connection separately.
+** to each database connection separately.
 **
 ** ^The second parameter is the name of the SQL function to be created or
 ** redefined.  ^The length of the name is limited to 255 bytes in a UTF-8
@@ -4980,12 +4980,12 @@ SQLITE_API int sqlite3_reset(sqlite3_stmt *pStmt);
 ** For best security, the [SQLITE_DIRECTONLY] flag is recommended for
 ** all application-defined SQL functions that do not need to be
 ** used inside of triggers, view, CHECK constraints, or other elements of
-** the Database Tools schema.  This flags is especially recommended for SQL
+** the database schema.  This flags is especially recommended for SQL 
 ** functions that have side effects or reveal internal application state.
 ** Without this flag, an attacker might be able to modify the schema of
-** a Database Tools file to include invocations of the function with parameters
+** a database file to include invocations of the function with parameters
 ** chosen by the attacker, which the application will then execute when
-** the Database Tools file is opened and read.
+** the database file is opened and read.
 ** </span>
 **
 ** ^(The fifth parameter is an arbitrary pointer.  The implementation of the
@@ -5014,7 +5014,7 @@ SQLITE_API int sqlite3_reset(sqlite3_stmt *pStmt);
 ** ^(If the final parameter to sqlite3_create_function_v2() or
 ** sqlite3_create_window_function() is not NULL, then it is destructor for
 ** the application data pointer. The destructor is invoked when the function 
-** is deleted, either by being overloaded or when the Database Tools connection
+** is deleted, either by being overloaded or when the database connection 
 ** closes.)^ ^The destructor is also invoked if the call to 
 ** sqlite3_create_function_v2() fails.  ^When the destructor callback is
 ** invoked, it is passed a single argument which is a copy of the application
@@ -5027,7 +5027,7 @@ SQLITE_API int sqlite3_reset(sqlite3_stmt *pStmt);
 ** SQL function is used.  ^A function implementation with a non-negative
 ** nArg parameter is a better match than a function implementation with
 ** a negative nArg.  ^A function where the preferred text encoding
-** matches the Database Tools encoding is a better
+** matches the database encoding is a better
 ** match than a function where the encoding is different.  
 ** ^A function where the encoding difference is between UTF16le and UTF16be
 ** is a closer match than a function where the encoding difference is
@@ -5037,7 +5037,7 @@ SQLITE_API int sqlite3_reset(sqlite3_stmt *pStmt);
 **
 ** ^An application-defined function is permitted to call other
 ** SQLite interfaces.  However, such calls must not
-** close the Database Tools connection nor finalize or reset the prepared
+** close the database connection nor finalize or reset the prepared
 ** statement in which the function is running.
 */
 SQLITE_API int sqlite3_create_function(
@@ -5313,7 +5313,7 @@ SQLITE_API SQLITE_DEPRECATED int sqlite3_memory_alarm(void(*)(void*,sqlite3_int6
 ** Valid SQL NULL returns can be distinguished from out-of-memory errors
 ** by invoking the [sqlite3_errcode()] immediately after the suspect
 ** return value is obtained and before any
-** other SQLite interface is called on the same [Database Tools connection].
+** other SQLite interface is called on the same [database connection].
 */
 SQLITE_API const void *sqlite3_value_blob(sqlite3_value*);
 SQLITE_API double sqlite3_value_double(sqlite3_value*);
@@ -5425,7 +5425,7 @@ SQLITE_API void *sqlite3_user_data(sqlite3_context*);
 ** METHOD: sqlite3_context
 **
 ** ^The sqlite3_context_db_handle() interface returns a copy of
-** the pointer to the [Database Tools connection] (the 1st parameter)
+** the pointer to the [database connection] (the 1st parameter)
 ** of the [sqlite3_create_function()]
 ** and [sqlite3_create_function16()] routines that originally
 ** registered the application defined function.
@@ -5680,7 +5680,7 @@ SQLITE_API void sqlite3_result_subtype(sqlite3_context*,unsigned int);
 ** METHOD: sqlite3
 **
 ** ^These functions add, remove, or modify a [collation] associated
-** with the [Database Tools connection] specified as the first argument.
+** with the [database connection] specified as the first argument.
 **
 ** ^The name of the collation is a UTF-8 string
 ** for sqlite3_create_collation() and sqlite3_create_collation_v2()
@@ -5743,7 +5743,7 @@ SQLITE_API void sqlite3_result_subtype(sqlite3_context*,unsigned int);
 ** the collating function is deleted.
 ** ^Collating functions are deleted when they are overridden by later
 ** calls to the collation creation functions or when the
-** [Database Tools connection] is closed using [sqlite3_close()].
+** [database connection] is closed using [sqlite3_close()].
 **
 ** ^The xDestroy callback is <u>not</u> called if the 
 ** sqlite3_create_collation_v2() function fails.  Applications that invoke
@@ -5783,9 +5783,9 @@ SQLITE_API int sqlite3_create_collation16(
 ** CAPI3REF: Collation Needed Callbacks
 ** METHOD: sqlite3
 **
-** ^To avoid having to register all collation sequences before a Database Tools
+** ^To avoid having to register all collation sequences before a database
 ** can be used, a single callback function may be registered with the
-** [Database Tools connection] to be invoked whenever an undefined collation
+** [database connection] to be invoked whenever an undefined collation
 ** sequence is required.
 **
 ** ^If the function is registered using the sqlite3_collation_needed() API,
@@ -5796,7 +5796,7 @@ SQLITE_API int sqlite3_create_collation16(
 **
 ** ^(When the callback is invoked, the first argument passed is a copy
 ** of the second argument to sqlite3_collation_needed() or
-** sqlite3_collation_needed16().  The second argument is the Database Tools
+** sqlite3_collation_needed16().  The second argument is the database
 ** connection.  The third argument is one of [SQLITE_UTF8], [SQLITE_UTF16BE],
 ** or [SQLITE_UTF16LE], indicating the most desirable form of the collation
 ** sequence function required.  The fourth parameter is the name of the
@@ -5819,7 +5819,7 @@ SQLITE_API int sqlite3_collation_needed16(
 
 #ifdef SQLITE_HAS_CODEC
 /*
-** Specify the key for an encrypted Database Tools.  This routine should be
+** Specify the key for an encrypted database.  This routine should be
 ** called right after sqlite3_open().
 **
 ** The code to implement this API is not available in the public release
@@ -5831,14 +5831,14 @@ SQLITE_API int sqlite3_key(
 );
 SQLITE_API int sqlite3_key_v2(
   sqlite3 *db,                   /* Database to be rekeyed */
-  const char *zDbName,           /* Name of the Database Tools */
+  const char *zDbName,           /* Name of the database */
   const void *pKey, int nKey     /* The key */
 );
 
 /*
-** Change the key on an open Database Tools.  If the current Database Tools is not
+** Change the key on an open database.  If the current database is not
 ** encrypted, this routine will encrypt it.  If pNew==0 or nNew==0, the
-** Database Tools is decrypted.
+** database is decrypted.
 **
 ** The code to implement this API is not available in the public release
 ** of SQLite.
@@ -5849,12 +5849,12 @@ SQLITE_API int sqlite3_rekey(
 );
 SQLITE_API int sqlite3_rekey_v2(
   sqlite3 *db,                   /* Database to be rekeyed */
-  const char *zDbName,           /* Name of the Database Tools */
+  const char *zDbName,           /* Name of the database */
   const void *pKey, int nKey     /* The new key */
 );
 
 /*
-** Specify the activation key for a SEE Database Tools.  Unless
+** Specify the activation key for a SEE database.  Unless 
 ** activated, none of the SEE routines will work.
 */
 SQLITE_API void sqlite3_activate_see(
@@ -5864,7 +5864,7 @@ SQLITE_API void sqlite3_activate_see(
 
 #ifdef SQLITE_ENABLE_CEROD
 /*
-** Specify the activation key for a CEROD Database Tools.  Unless
+** Specify the activation key for a CEROD database.  Unless 
 ** activated, none of the CEROD routines will work.
 */
 SQLITE_API void sqlite3_activate_cerod(
@@ -5910,7 +5910,7 @@ SQLITE_API int sqlite3_sleep(int);
 **
 ** It is not safe to read or modify this variable in more than one
 ** thread at a time.  It is not safe to read or modify this variable
-** if a [Database Tools connection] is being used at the same time in a separate
+** if a [database connection] is being used at the same time in a separate
 ** thread.
 ** It is intended that this variable be set once
 ** as part of process initialization and before any SQLite interface
@@ -5929,7 +5929,7 @@ SQLITE_API int sqlite3_sleep(int);
 ** Except when requested by the [temp_store_directory pragma], SQLite
 ** does not free the memory that sqlite3_temp_directory points to.  If
 ** the application wants that memory to be freed, it must do
-** so itself, taking care to only do so after all [Database Tools connection]
+** so itself, taking care to only do so after all [database connection]
 ** objects have been destroyed.
 **
 ** <b>Note to Windows Runtime users:</b>  The temporary directory must be set
@@ -5953,21 +5953,21 @@ SQLITE_API SQLITE_EXTERN char *sqlite3_temp_directory;
 ** CAPI3REF: Name Of The Folder Holding Database Files
 **
 ** ^(If this global variable is made to point to a string which is
-** the name of a folder (a.k.a. directory), then all Database Tools files
+** the name of a folder (a.k.a. directory), then all database files
 ** specified with a relative pathname and created or accessed by
 ** SQLite when using a built-in windows [sqlite3_vfs | VFS] will be assumed
 ** to be relative to that directory.)^ ^If this variable is a NULL
-** pointer, then SQLite assumes that all Database Tools files specified
+** pointer, then SQLite assumes that all database files specified
 ** with a relative pathname are relative to the current directory
 ** for the process.  Only the windows VFS makes use of this global
 ** variable; it is ignored by the unix VFS.
 **
-** Changing the value of this variable while a Database Tools connection is
-** open can result in a corrupt Database Tools.
+** Changing the value of this variable while a database connection is
+** open can result in a corrupt database.
 **
 ** It is not safe to read or modify this variable in more than one
 ** thread at a time.  It is not safe to read or modify this variable
-** if a [Database Tools connection] is being used at the same time in a separate
+** if a [database connection] is being used at the same time in a separate
 ** thread.
 ** It is intended that this variable be set once
 ** as part of process initialization and before any SQLite interface
@@ -6027,7 +6027,7 @@ SQLITE_API int sqlite3_win32_set_directory16(unsigned long type, const void *zVa
 ** METHOD: sqlite3
 **
 ** ^The sqlite3_get_autocommit() interface returns non-zero or
-** zero if the given Database Tools connection is or is not in autocommit mode,
+** zero if the given database connection is or is not in autocommit mode,
 ** respectively.  ^Autocommit mode is on by default.
 ** ^Autocommit mode is disabled by a [BEGIN] statement.
 ** ^Autocommit mode is re-enabled by a [COMMIT] or [ROLLBACK].
@@ -6039,7 +6039,7 @@ SQLITE_API int sqlite3_win32_set_directory16(unsigned long type, const void *zVa
 ** find out whether SQLite automatically rolled back the transaction after
 ** an error is to use this function.
 **
-** If another thread changes the autocommit status of the Database Tools
+** If another thread changes the autocommit status of the database
 ** connection while this routine is running, then the return value
 ** is undefined.
 */
@@ -6049,9 +6049,9 @@ SQLITE_API int sqlite3_get_autocommit(sqlite3*);
 ** CAPI3REF: Find The Database Handle Of A Prepared Statement
 ** METHOD: sqlite3_stmt
 **
-** ^The sqlite3_db_handle interface returns the [Database Tools connection] handle
-** to which a [prepared statement] belongs.  ^The [Database Tools connection]
-** returned by sqlite3_db_handle is the same [Database Tools connection]
+** ^The sqlite3_db_handle interface returns the [database connection] handle
+** to which a [prepared statement] belongs.  ^The [database connection]
+** returned by sqlite3_db_handle is the same [database connection]
 ** that was the first argument
 ** to the [sqlite3_prepare_v2()] call (or its variants) that was used to
 ** create the statement in the first place.
@@ -6063,19 +6063,19 @@ SQLITE_API sqlite3 *sqlite3_db_handle(sqlite3_stmt*);
 ** METHOD: sqlite3
 **
 ** ^The sqlite3_db_filename(D,N) interface returns a pointer to the filename
-** associated with Database Tools N of connection D.
-** ^If there is no attached Database Tools N on the Database Tools
-** connection D, or if Database Tools N is a temporary or in-memory Database Tools, then
+** associated with database N of connection D.
+** ^If there is no attached database N on the database
+** connection D, or if database N is a temporary or in-memory database, then
 ** this function will return either a NULL pointer or an empty string.
 **
 ** ^The string value returned by this routine is owned and managed by
-** the Database Tools connection.  ^The value will be valid until the Database Tools N
-** is [DETACH]-ed or until the Database Tools connection closes.
+** the database connection.  ^The value will be valid until the database N
+** is [DETACH]-ed or until the database connection closes.
 **
 ** ^The filename returned by this function is the output of the
 ** xFullPathname method of the [VFS].  ^In other words, the filename
 ** will be an absolute pathname, even if the filename used
-** to open the Database Tools originally was a URI or relative pathname.
+** to open the database originally was a URI or relative pathname.
 **
 ** If the filename pointer returned by this routine is not NULL, then it
 ** can be used as the filename input parameter to these routines:
@@ -6091,12 +6091,12 @@ SQLITE_API sqlite3 *sqlite3_db_handle(sqlite3_stmt*);
 SQLITE_API const char *sqlite3_db_filename(sqlite3 *db, const char *zDbName);
 
 /*
-** CAPI3REF: Determine if a Database Tools is read-only
+** CAPI3REF: Determine if a database is read-only
 ** METHOD: sqlite3
 **
-** ^The sqlite3_db_readonly(D,N) interface returns 1 if the Database Tools N
+** ^The sqlite3_db_readonly(D,N) interface returns 1 if the database N
 ** of connection D is read-only, 0 if it is read/write, or -1 if N is not
-** the name of a Database Tools on connection D.
+** the name of a database on connection D.
 */
 SQLITE_API int sqlite3_db_readonly(sqlite3 *db, const char *zDbName);
 
@@ -6105,13 +6105,13 @@ SQLITE_API int sqlite3_db_readonly(sqlite3 *db, const char *zDbName);
 ** METHOD: sqlite3
 **
 ** ^This interface returns a pointer to the next [prepared statement] after
-** pStmt associated with the [Database Tools connection] pDb.  ^If pStmt is NULL
+** pStmt associated with the [database connection] pDb.  ^If pStmt is NULL
 ** then this interface returns a pointer to the first prepared statement
-** associated with the Database Tools connection pDb.  ^If no prepared statement
+** associated with the database connection pDb.  ^If no prepared statement
 ** satisfies the conditions of this routine, it returns NULL.
 **
-** The [Database Tools connection] pointer D in a call to
-** [sqlite3_next_stmt(D,S)] must refer to an open Database Tools
+** The [database connection] pointer D in a call to
+** [sqlite3_next_stmt(D,S)] must refer to an open database
 ** connection and in particular must not be a NULL pointer.
 */
 SQLITE_API sqlite3_stmt *sqlite3_next_stmt(sqlite3 *pDb, sqlite3_stmt *pStmt);
@@ -6123,29 +6123,29 @@ SQLITE_API sqlite3_stmt *sqlite3_next_stmt(sqlite3 *pDb, sqlite3_stmt *pStmt);
 ** ^The sqlite3_commit_hook() interface registers a callback
 ** function to be invoked whenever a transaction is [COMMIT | committed].
 ** ^Any callback set by a previous call to sqlite3_commit_hook()
-** for the same Database Tools connection is overridden.
+** for the same database connection is overridden.
 ** ^The sqlite3_rollback_hook() interface registers a callback
 ** function to be invoked whenever a transaction is [ROLLBACK | rolled back].
 ** ^Any callback set by a previous call to sqlite3_rollback_hook()
-** for the same Database Tools connection is overridden.
+** for the same database connection is overridden.
 ** ^The pArg argument is passed through to the callback.
 ** ^If the callback on a commit hook function returns non-zero,
 ** then the commit is converted into a rollback.
 **
 ** ^The sqlite3_commit_hook(D,C,P) and sqlite3_rollback_hook(D,C,P) functions
 ** return the P argument from the previous call of the same function
-** on the same [Database Tools connection] D, or NULL for
+** on the same [database connection] D, or NULL for
 ** the first call for each function on D.
 **
 ** The commit and rollback hook callbacks are not reentrant.
 ** The callback implementation must not do anything that will modify
-** the Database Tools connection that invoked the callback.  Any actions
-** to modify the Database Tools connection must be deferred until after the
+** the database connection that invoked the callback.  Any actions
+** to modify the database connection must be deferred until after the
 ** completion of the [sqlite3_step()] call that triggered the commit
 ** or rollback hook in the first place.
 ** Note that running any other SQL statements, including SELECT statements,
 ** or merely calling [sqlite3_prepare_v2()] and [sqlite3_step()] will modify
-** the Database Tools connections for the meaning of "modify" in this paragraph.
+** the database connections for the meaning of "modify" in this paragraph.
 **
 ** ^Registering a NULL function disables the callback.
 **
@@ -6159,7 +6159,7 @@ SQLITE_API sqlite3_stmt *sqlite3_next_stmt(sqlite3 *pDb, sqlite3_stmt *pStmt);
 ** rolled back if an explicit "ROLLBACK" statement is executed, or
 ** an error or constraint causes an implicit rollback to occur.
 ** ^The rollback callback is not invoked if a transaction is
-** automatically rolled back because the Database Tools connection is closed.
+** automatically rolled back because the database connection is closed.
 **
 ** See also the [sqlite3_update_hook()] interface.
 */
@@ -6171,11 +6171,11 @@ SQLITE_API void *sqlite3_rollback_hook(sqlite3*, void(*)(void *), void*);
 ** METHOD: sqlite3
 **
 ** ^The sqlite3_update_hook() interface registers a callback function
-** with the [Database Tools connection] identified by the first argument
+** with the [database connection] identified by the first argument
 ** to be invoked whenever a row is updated, inserted or deleted in
 ** a [rowid table].
 ** ^Any callback set by a previous call to this function
-** for the same Database Tools connection is overridden.
+** for the same database connection is overridden.
 **
 ** ^The second argument is a pointer to the function to invoke when a
 ** row is updated, inserted or deleted in a rowid table.
@@ -6185,7 +6185,7 @@ SQLITE_API void *sqlite3_rollback_hook(sqlite3*, void(*)(void *), void*);
 ** or [SQLITE_UPDATE], depending on the operation that caused the callback
 ** to be invoked.
 ** ^The third and fourth arguments to the callback contain pointers to the
-** Database Tools and table name containing the affected row.
+** database and table name containing the affected row.
 ** ^The final callback parameter is the [rowid] of the row.
 ** ^In the case of an update, this is the [rowid] after the update takes place.
 **
@@ -6201,15 +6201,15 @@ SQLITE_API void *sqlite3_rollback_hook(sqlite3*, void(*)(void *), void*);
 ** release of SQLite.
 **
 ** The update hook implementation must not do anything that will modify
-** the Database Tools connection that invoked the update hook.  Any actions
-** to modify the Database Tools connection must be deferred until after the
+** the database connection that invoked the update hook.  Any actions
+** to modify the database connection must be deferred until after the
 ** completion of the [sqlite3_step()] call that triggered the update hook.
 ** Note that [sqlite3_prepare_v2()] and [sqlite3_step()] both modify their
-** Database Tools connections for the meaning of "modify" in this paragraph.
+** database connections for the meaning of "modify" in this paragraph.
 **
 ** ^The sqlite3_update_hook(D,C,P) function
 ** returns the P argument from the previous call
-** on the same [Database Tools connection] D, or NULL for
+** on the same [database connection] D, or NULL for
 ** the first call on D.
 **
 ** See also the [sqlite3_commit_hook()], [sqlite3_rollback_hook()],
@@ -6224,9 +6224,9 @@ SQLITE_API void *sqlite3_update_hook(
 /*
 ** CAPI3REF: Enable Or Disable Shared Pager Cache
 **
-** ^(This routine enables or disables the sharing of the Database Tools cache
-** and schema data structures between [Database Tools connection | connections]
-** to the same Database Tools. Sharing is enabled if the argument is true
+** ^(This routine enables or disables the sharing of the database cache
+** and schema data structures between [database connection | connections]
+** to the same database. Sharing is enabled if the argument is true
 ** and disabled if the argument is false.)^
 **
 ** ^Cache sharing is enabled and disabled for an entire process.
@@ -6236,7 +6236,7 @@ SQLITE_API void *sqlite3_update_hook(
 **
 ** ^(The cache sharing mode set by this interface effects all subsequent
 ** calls to [sqlite3_open()], [sqlite3_open_v2()], and [sqlite3_open16()].
-** Existing Database Tools connections continue to use the sharing mode
+** Existing database connections continue to use the sharing mode
 ** that was in effect at the time they were opened.)^
 **
 ** ^(This routine returns [SQLITE_OK] if shared cache was enabled or disabled
@@ -6247,12 +6247,12 @@ SQLITE_API void *sqlite3_update_hook(
 ** continues to be provided for historical compatibility, but its use is
 ** discouraged.  Any use of shared cache is discouraged.  If shared cache
 ** must be used, it is recommended that shared cache only be enabled for
-** individual Database Tools connections using the [sqlite3_open_v2()] interface
+** individual database connections using the [sqlite3_open_v2()] interface
 ** with the [SQLITE_OPEN_SHAREDCACHE] flag.
 **
 ** Note: This method is disabled on MacOS X 10.7 and iOS version 5.0
 ** and will always return SQLITE_MISUSE. On those systems, 
-** shared cache mode should be enabled per-Database Tools connection via
+** shared cache mode should be enabled per-database connection via 
 ** [sqlite3_open_v2()] with [SQLITE_OPEN_SHAREDCACHE].
 **
 ** This interface is threadsafe on processors where writing a
@@ -6267,7 +6267,7 @@ SQLITE_API int sqlite3_enable_shared_cache(int);
 **
 ** ^The sqlite3_release_memory() interface attempts to free N bytes
 ** of heap memory by deallocating non-essential memory allocations
-** held by the Database Tools library.   Memory used to cache Database Tools
+** held by the database library.   Memory used to cache database
 ** pages to improve performance is an example of non-essential memory.
 ** ^sqlite3_release_memory() returns the number of bytes actually freed,
 ** which might be more or less than the amount requested.
@@ -6283,7 +6283,7 @@ SQLITE_API int sqlite3_release_memory(int);
 ** METHOD: sqlite3
 **
 ** ^The sqlite3_db_release_memory(D) interface attempts to free as much heap
-** memory as possible from Database Tools connection D. Unlike the
+** memory as possible from database connection D. Unlike the
 ** [sqlite3_release_memory()] interface, this interface is in effect even
 ** when the [SQLITE_ENABLE_MEMORY_MANAGEMENT] compile-time option is
 ** omitted.
@@ -6296,7 +6296,7 @@ SQLITE_API int sqlite3_db_release_memory(sqlite3*);
 ** CAPI3REF: Impose A Limit On Heap Size
 **
 ** These interfaces impose limits on the amount of heap memory that will be
-** by all Database Tools connections within a single process.
+** by all database connections within a single process.
 **
 ** ^The sqlite3_soft_heap_limit64() interface sets and/or queries the
 ** soft limit on the amount of heap memory that may be allocated by SQLite.
@@ -6376,8 +6376,8 @@ SQLITE_API SQLITE_DEPRECATED void sqlite3_soft_heap_limit(int N);
 ** METHOD: sqlite3
 **
 ** ^(The sqlite3_table_column_metadata(X,D,T,C,....) routine returns
-** information about column C of table T in Database Tools D
-** on [Database Tools connection] X.)^  ^The sqlite3_table_column_metadata()
+** information about column C of table T in database D
+** on [database connection] X.)^  ^The sqlite3_table_column_metadata()
 ** interface returns SQLITE_OK and fills in the non-NULL pointers in
 ** the final five arguments with appropriate values if the specified
 ** column exists.  ^The sqlite3_table_column_metadata() interface returns
@@ -6390,10 +6390,10 @@ SQLITE_API SQLITE_DEPRECATED void sqlite3_soft_heap_limit(int N);
 ** undefined behavior.
 **
 ** ^The column is identified by the second, third and fourth parameters to
-** this function. ^(The second parameter is either the name of the Database Tools
-** (i.e. "main", "temp", or an attached Database Tools) containing the specified
-** table or NULL.)^ ^If it is NULL, then all attached test_databases are searched
-** for the table using the same algorithm used by the Database Tools engine to
+** this function. ^(The second parameter is either the name of the database
+** (i.e. "main", "temp", or an attached database) containing the specified
+** table or NULL.)^ ^If it is NULL, then all attached databases are searched
+** for the table using the same algorithm used by the database engine to
 ** resolve unqualified table references.
 **
 ** ^The third and fourth parameters to this function are the table and column
@@ -6436,7 +6436,7 @@ SQLITE_API SQLITE_DEPRECATED void sqlite3_soft_heap_limit(int N);
 **     auto increment: 0
 ** </pre>)^
 **
-** ^This function causes all Database Tools schemas to be read from disk and
+** ^This function causes all database schemas to be read from disk and
 ** parsed, if that has not already been done, and returns an error if
 ** any errors are encountered while loading the schema.
 */
@@ -6497,7 +6497,7 @@ SQLITE_API int sqlite3_table_column_metadata(
 ** See also the [load_extension() SQL function].
 */
 SQLITE_API int sqlite3_load_extension(
-  sqlite3 *db,          /* Load the extension into this Database Tools connection */
+  sqlite3 *db,          /* Load the extension into this database connection */
   const char *zFile,    /* Name of the shared library containing extension */
   const char *zProc,    /* Entry point.  Derived from zFile if 0 */
   char **pzErrMsg       /* Put error message here if not 0 */
@@ -6534,9 +6534,9 @@ SQLITE_API int sqlite3_enable_load_extension(sqlite3 *db, int onoff);
 ** CAPI3REF: Automatically Load Statically Linked Extensions
 **
 ** ^This interface causes the xEntryPoint() function to be invoked for
-** each new [Database Tools connection] that is created.  The idea here is that
+** each new [database connection] that is created.  The idea here is that
 ** xEntryPoint() is the entry point for a statically linked [SQLite extension]
-** that is to be automatically loaded into all new Database Tools connections.
+** that is to be automatically loaded into all new database connections.
 **
 ** ^(Even though the function prototype shows that xEntryPoint() takes
 ** no arguments and returns void, SQLite invokes xEntryPoint() with three
@@ -6561,7 +6561,7 @@ SQLITE_API int sqlite3_enable_load_extension(sqlite3 *db, int onoff);
 **
 ** ^Calling sqlite3_auto_extension(X) with an entry point X that is already
 ** on the list of automatic extensions is a harmless no-op. ^No entry point
-** will be called more than once for each Database Tools connection that is opened.
+** will be called more than once for each database connection that is opened.
 **
 ** See also: [sqlite3_reset_auto_extension()]
 ** and [sqlite3_cancel_auto_extension()]
@@ -6617,9 +6617,9 @@ typedef struct sqlite3_module sqlite3_module;
 ** instance of this structure and passing a pointer to that instance
 ** to [sqlite3_create_module()] or [sqlite3_create_module_v2()].
 ** ^The registration remains valid until it is replaced by a different
-** module or until the [Database Tools connection] closes.  The content
+** module or until the [database connection] closes.  The content
 ** of this structure must not change while it is registered with
-** any Database Tools connection.
+** any database connection.
 */
 struct sqlite3_module {
   int iVersion;
@@ -6742,10 +6742,10 @@ struct sqlite3_module {
 ** SQLite also assumes that if a call to the xUpdate() method is made as
 ** part of the same statement to delete or update a virtual table row and the
 ** implementation returns SQLITE_CONSTRAINT, then there is no need to rollback
-** any Database Tools changes. In other words, if the xUpdate() returns
-** SQLITE_CONSTRAINT, the Database Tools contents must be exactly as they were
+** any database changes. In other words, if the xUpdate() returns
+** SQLITE_CONSTRAINT, the database contents must be exactly as they were
 ** before xUpdate was called. By contrast, if SQLITE_INDEX_SCAN_UNIQUE is not
-** set and xUpdate returns SQLITE_CONSTRAINT, any Database Tools changes made by
+** set and xUpdate returns SQLITE_CONSTRAINT, any database changes made by
 ** the xUpdate method are automatically rolled back by SQLite.
 **
 ** IMPORTANT: The estimatedRows field was added to the sqlite3_index_info
@@ -6835,7 +6835,7 @@ struct sqlite3_index_info {
 ** creating a new [virtual table] using the module and before using a
 ** preexisting [virtual table] for the module.
 **
-** ^The module name is registered on the [Database Tools connection] specified
+** ^The module name is registered on the [database connection] specified
 ** by the first parameter.  ^The name of the module is given by the 
 ** second parameter.  ^The third parameter is a pointer to
 ** the implementation of the [virtual table module].   ^The fourth
@@ -6877,7 +6877,7 @@ SQLITE_API int sqlite3_create_module_v2(
 ** METHOD: sqlite3
 **
 ** ^The sqlite3_drop_modules(D,L) interface removes all virtual
-** table modules from Database Tools connection D except those named on list L.
+** table modules from database connection D except those named on list L.
 ** The L parameter must be either NULL or a pointer to an array of pointers
 ** to strings where the array is terminated by a single NULL pointer.
 ** ^If the L parameter is NULL, then all virtual table modules are removed.
@@ -6995,18 +6995,18 @@ typedef struct sqlite3_blob sqlite3_blob;
 ** CONSTRUCTOR: sqlite3_blob
 **
 ** ^(This interfaces opens a [BLOB handle | handle] to the BLOB located
-** in row iRow, column zColumn, table zTable in Database Tools zDb;
+** in row iRow, column zColumn, table zTable in database zDb;
 ** in other words, the same BLOB that would be selected by:
 **
 ** <pre>
 **     SELECT zColumn FROM zDb.zTable WHERE [rowid] = iRow;
 ** </pre>)^
 **
-** ^(Parameter zDb is not the filename that contains the Database Tools, but
-** rather the symbolic name of the Database Tools. For attached test_databases, this is
+** ^(Parameter zDb is not the filename that contains the database, but 
+** rather the symbolic name of the database. For attached databases, this is
 ** the name that appears after the AS keyword in the [ATTACH] statement.
-** For the main Database Tools file, the Database Tools name is "main". For TEMP
-** tables, the Database Tools name is "temp".)^
+** For the main database file, the database name is "main". For TEMP
+** tables, the database name is "temp".)^
 **
 ** ^If the flags parameter is non-zero, then the BLOB is opened for read
 ** and write access. ^If the flags parameter is zero, the BLOB is opened for
@@ -7021,7 +7021,7 @@ typedef struct sqlite3_blob sqlite3_blob;
 ** This function fails with SQLITE_ERROR if any of the following are true:
 ** <ul>
 **   <li> ^(Database zDb does not exist)^, 
-**   <li> ^(Table zTable does not exist within Database Tools zDb)^,
+**   <li> ^(Table zTable does not exist within database zDb)^, 
 **   <li> ^(Table zTable is a WITHOUT ROWID table)^, 
 **   <li> ^(Column zColumn does not exist)^,
 **   <li> ^(Row iRow is not present in the table)^,
@@ -7035,14 +7035,14 @@ typedef struct sqlite3_blob sqlite3_blob;
 ** </ul>
 **
 ** ^Unless it returns SQLITE_MISUSE, this function sets the 
-** [Database Tools connection] error code and message accessible via
+** [database connection] error code and message accessible via 
 ** [sqlite3_errcode()] and [sqlite3_errmsg()] and related functions. 
 **
 ** A BLOB referenced by sqlite3_blob_open() may be read using the
 ** [sqlite3_blob_read()] interface and modified by using
 ** [sqlite3_blob_write()].  The [BLOB handle] can be moved to a
 ** different row of the same table using the [sqlite3_blob_reopen()]
-** interface.  However, the column, table, or Database Tools of a [BLOB handle]
+** interface.  However, the column, table, or database of a [BLOB handle]
 ** cannot be changed after the [BLOB handle] is opened.
 **
 ** ^(If the row that a BLOB handle points to is modified by an
@@ -7087,9 +7087,9 @@ SQLITE_API int sqlite3_blob_open(
 ** METHOD: sqlite3_blob
 **
 ** ^This function is used to move an existing [BLOB handle] so that it points
-** to a different row of the same Database Tools table. ^The new row is identified
+** to a different row of the same database table. ^The new row is identified
 ** by the rowid value passed as the second argument. Only the row can be
-** changed. ^The Database Tools, table and column on which the blob handle is open
+** changed. ^The database, table and column on which the blob handle is open
 ** remain the same. Moving an existing [BLOB handle] to a new row is
 ** faster than closing the existing handle and opening a new one.
 **
@@ -7103,7 +7103,7 @@ SQLITE_API int sqlite3_blob_open(
 ** SQLITE_ABORT. ^Calling [sqlite3_blob_bytes()] on an aborted blob handle
 ** always returns zero.
 **
-** ^This function sets the Database Tools handle error code and message.
+** ^This function sets the database handle error code and message.
 */
 SQLITE_API int sqlite3_blob_reopen(sqlite3_blob *, sqlite3_int64);
 
@@ -7116,7 +7116,7 @@ SQLITE_API int sqlite3_blob_reopen(sqlite3_blob *, sqlite3_int64);
 ** handle is still closed.)^
 **
 ** ^If the blob handle being closed was opened for read-write access, and if
-** the Database Tools is in auto-commit mode and there are no other open read-write
+** the database is in auto-commit mode and there are no other open read-write
 ** blob handles or active write statements, the current transaction is
 ** committed. ^If an error occurs while committing the transaction, an error
 ** code is returned and the transaction rolled back.
@@ -7186,7 +7186,7 @@ SQLITE_API int sqlite3_blob_read(sqlite3_blob *, void *Z, int N, int iOffset);
 ** ^(On success, sqlite3_blob_write() returns SQLITE_OK.
 ** Otherwise, an  [error code] or an [extended error code] is returned.)^
 ** ^Unless SQLITE_MISUSE is returned, this function sets the 
-** [Database Tools connection] error code and message accessible via
+** [database connection] error code and message accessible via 
 ** [sqlite3_errcode()] and [sqlite3_errmsg()] and related functions. 
 **
 ** ^If the [BLOB handle] passed as the first argument was not opened for
@@ -7510,11 +7510,11 @@ SQLITE_API int sqlite3_mutex_notheld(sqlite3_mutex*);
 #define SQLITE_MUTEX_STATIC_VFS3     13  /* For use by application VFS */
 
 /*
-** CAPI3REF: Retrieve the mutex for a Database Tools connection
+** CAPI3REF: Retrieve the mutex for a database connection
 ** METHOD: sqlite3
 **
 ** ^This interface returns a pointer the [sqlite3_mutex] object that 
-** serializes access to the [Database Tools connection] given in the argument
+** serializes access to the [database connection] given in the argument
 ** when the [threading mode] is Serialized.
 ** ^If the [threading mode] is Single-thread or Multi-thread then this
 ** routine returns a NULL pointer.
@@ -7528,12 +7528,12 @@ SQLITE_API sqlite3_mutex *sqlite3_db_mutex(sqlite3*);
 **
 ** ^The [sqlite3_file_control()] interface makes a direct call to the
 ** xFileControl method for the [sqlite3_io_methods] object associated
-** with a particular Database Tools identified by the second argument. ^The
-** name of the Database Tools is "main" for the main Database Tools or "temp" for the
-** TEMP Database Tools, or the name that appears after the AS keyword for
-** test_databases that are added using the [ATTACH] SQL command.
+** with a particular database identified by the second argument. ^The
+** name of the database is "main" for the main database or "temp" for the
+** TEMP database, or the name that appears after the AS keyword for
+** databases that are added using the [ATTACH] SQL command.
 ** ^A NULL pointer can be used in place of "main" to refer to the
-** main Database Tools file.
+** main database file.
 ** ^The third and fourth parameters to this routine
 ** are passed directly through to the second and third parameters of
 ** the xFileControl method.  ^The return value of the xFileControl
@@ -7547,13 +7547,13 @@ SQLITE_API sqlite3_mutex *sqlite3_db_mutex(sqlite3*);
 ** the space pointed to by the 4th parameter.  The
 ** [SQLITE_FCNTL_JOURNAL_POINTER] works similarly except that it returns
 ** the [sqlite3_file] object associated with the journal file instead of
-** the main Database Tools.  The [SQLITE_FCNTL_VFS_POINTER] opcode returns
+** the main database.  The [SQLITE_FCNTL_VFS_POINTER] opcode returns
 ** a pointer to the underlying [sqlite3_vfs] object for the file.
 ** The [SQLITE_FCNTL_DATA_VERSION] returns the data version counter
 ** from the pager.
 **
 ** ^If the second parameter (zDbName) does not match the name of any
-** open Database Tools file, then SQLITE_ERROR is returned.  ^This error
+** open database file, then SQLITE_ERROR is returned.  ^This error
 ** code is not remembered and will not be recalled by [sqlite3_errcode()]
 ** or [sqlite3_errmsg()].  The underlying xFileControl method might
 ** also return SQLITE_ERROR.  There is no way to distinguish between
@@ -7925,8 +7925,8 @@ SQLITE_API int sqlite3_status64(
 ** METHOD: sqlite3
 **
 ** ^This interface is used to retrieve runtime status information 
-** about a single [Database Tools connection].  ^The first argument is the
-** Database Tools connection object to be interrogated.  ^The second argument
+** about a single [database connection].  ^The first argument is the
+** database connection object to be interrogated.  ^The second argument
 ** is an integer constant, taken from the set of
 ** [SQLITE_DBSTATUS options], that
 ** determines the parameter to interrogate.  The set of 
@@ -7946,7 +7946,7 @@ SQLITE_API int sqlite3_status64(
 SQLITE_API int sqlite3_db_status(sqlite3*, int op, int *pCur, int *pHiwtr, int resetFlg);
 
 /*
-** CAPI3REF: Status Parameters for Database Tools connections
+** CAPI3REF: Status Parameters for database connections
 ** KEYWORDS: {SQLITE_DBSTATUS options}
 **
 ** These constants are the available integer "verbs" that can be passed as
@@ -7986,7 +7986,7 @@ SQLITE_API int sqlite3_db_status(sqlite3*, int op, int *pCur, int *pHiwtr, int r
 **
 ** [[SQLITE_DBSTATUS_CACHE_USED]] ^(<dt>SQLITE_DBSTATUS_CACHE_USED</dt>
 ** <dd>This parameter returns the approximate number of bytes of heap
-** memory used by all pager caches associated with the Database Tools connection.)^
+** memory used by all pager caches associated with the database connection.)^
 ** ^The highwater mark associated with SQLITE_DBSTATUS_CACHE_USED is always 0.
 **
 ** [[SQLITE_DBSTATUS_CACHE_USED_SHARED]] 
@@ -7995,7 +7995,7 @@ SQLITE_API int sqlite3_db_status(sqlite3*, int op, int *pCur, int *pHiwtr, int r
 ** pager cache is shared between two or more connections the bytes of heap
 ** memory used by that pager cache is divided evenly between the attached
 ** connections.)^  In other words, if none of the pager caches associated
-** with the Database Tools connection are shared, this request returns the same
+** with the database connection are shared, this request returns the same
 ** value as DBSTATUS_CACHE_USED. Or, if one or more or the pager caches are
 ** shared, the value returned by this call will be smaller than that returned
 ** by DBSTATUS_CACHE_USED. ^The highwater mark associated with
@@ -8003,17 +8003,17 @@ SQLITE_API int sqlite3_db_status(sqlite3*, int op, int *pCur, int *pHiwtr, int r
 **
 ** [[SQLITE_DBSTATUS_SCHEMA_USED]] ^(<dt>SQLITE_DBSTATUS_SCHEMA_USED</dt>
 ** <dd>This parameter returns the approximate number of bytes of heap
-** memory used to store the schema for all test_databases associated
-** with the connection - main, temp, and any [ATTACH]-ed test_databases.)^
+** memory used to store the schema for all databases associated
+** with the connection - main, temp, and any [ATTACH]-ed databases.)^ 
 ** ^The full amount of memory used by the schemas is reported, even if the
-** schema memory is shared with other Database Tools connections due to
+** schema memory is shared with other database connections due to
 ** [shared cache mode] being enabled.
 ** ^The highwater mark associated with SQLITE_DBSTATUS_SCHEMA_USED is always 0.
 **
 ** [[SQLITE_DBSTATUS_STMT_USED]] ^(<dt>SQLITE_DBSTATUS_STMT_USED</dt>
 ** <dd>This parameter returns the approximate number of bytes of heap
 ** and lookaside memory used by all prepared statements associated with
-** the Database Tools connection.)^
+** the database connection.)^
 ** ^The highwater mark associated with SQLITE_DBSTATUS_STMT_USED is always 0.
 ** </dd>
 **
@@ -8032,9 +8032,9 @@ SQLITE_API int sqlite3_db_status(sqlite3*, int op, int *pCur, int *pHiwtr, int r
 ** [[SQLITE_DBSTATUS_CACHE_WRITE]] ^(<dt>SQLITE_DBSTATUS_CACHE_WRITE</dt>
 ** <dd>This parameter returns the number of dirty cache entries that have
 ** been written to disk. Specifically, the number of pages written to the
-** wal file in wal mode test_databases, or the number of pages written to the
-** Database Tools file in rollback mode test_databases. Any pages written as part of
-** transaction rollback or Database Tools recovery operations are not included.
+** wal file in wal mode databases, or the number of pages written to the
+** database file in rollback mode databases. Any pages written as part of
+** transaction rollback or database recovery operations are not included.
 ** If an IO or other error occurs while writing a page to disk, the effect
 ** on subsequent SQLITE_DBSTATUS_CACHE_WRITE requests is undefined.)^ ^The
 ** highwater mark associated with SQLITE_DBSTATUS_CACHE_WRITE is always 0.
@@ -8203,7 +8203,7 @@ struct sqlite3_pcache_page {
 ** custom page cache using this API, an application can better control
 ** the amount of memory consumed by SQLite, the way in which 
 ** that memory is allocated and released, and the policies used to 
-** determine exactly which parts of a Database Tools file are cached and for
+** determine exactly which parts of a database file are cached and for 
 ** how long.
 **
 ** The alternative page cache mechanism is an
@@ -8243,7 +8243,7 @@ struct sqlite3_pcache_page {
 **
 ** [[the xCreate() page cache methods]]
 ** ^SQLite invokes the xCreate() method to construct a new cache instance.
-** SQLite will typically create one cache instance for each open Database Tools file,
+** SQLite will typically create one cache instance for each open database file,
 ** though this is not guaranteed. ^The
 ** first parameter, szPage, is the size in bytes of the pages that must
 ** be allocated by the cache.  ^szPage will always a power of two.  ^The
@@ -8251,11 +8251,11 @@ struct sqlite3_pcache_page {
 ** associated with each page cache entry.  ^The szExtra parameter will
 ** a number less than 250.  SQLite will use the
 ** extra szExtra bytes on each page to store metadata about the underlying
-** Database Tools page on disk.  The value passed into szExtra depends
+** database page on disk.  The value passed into szExtra depends
 ** on the SQLite version, the target platform, and how SQLite was compiled.
 ** ^The third argument to xCreate(), bPurgeable, is true if the cache being
-** created will be used to cache Database Tools pages of a file stored on disk, or
-** false if it is used for an in-memory Database Tools. The cache implementation
+** created will be used to cache database pages of a file stored on disk, or
+** false if it is used for an in-memory database. The cache implementation
 ** does not have to do anything special based with the value of bPurgeable;
 ** it is purely advisory.  ^On a cache where bPurgeable is false, SQLite will
 ** never invoke xUnpin() except to deliberately delete a page.
@@ -8281,7 +8281,7 @@ struct sqlite3_pcache_page {
 ** an sqlite3_pcache_page object associated with that page, or a NULL pointer.
 ** The pBuf element of the returned sqlite3_pcache_page object will be a
 ** pointer to a buffer of szPage bytes used to store the content of a 
-** single Database Tools page.  The pExtra element of sqlite3_pcache_page will be
+** single database page.  The pExtra element of sqlite3_pcache_page will be
 ** a pointer to the szExtra bytes of extra storage that SQLite has requested
 ** for each entry in the page cache.
 **
@@ -8403,26 +8403,26 @@ typedef struct sqlite3_backup sqlite3_backup;
 /*
 ** CAPI3REF: Online Backup API.
 **
-** The backup API copies the content of one Database Tools into another.
-** It is useful either for creating backups of test_databases or
-** for copying in-memory test_databases to or from persistent files.
+** The backup API copies the content of one database into another.
+** It is useful either for creating backups of databases or
+** for copying in-memory databases to or from persistent files. 
 **
 ** See Also: [Using the SQLite Online Backup API]
 **
-** ^SQLite holds a write transaction open on the destination Database Tools file
+** ^SQLite holds a write transaction open on the destination database file
 ** for the duration of the backup operation.
-** ^The source Database Tools is read-locked only while it is being read;
+** ^The source database is read-locked only while it is being read;
 ** it is not locked continuously for the entire backup operation.
-** ^Thus, the backup may be performed on a live source Database Tools without
-** preventing other Database Tools connections from
-** reading or writing to the source Database Tools while the backup is underway.
+** ^Thus, the backup may be performed on a live source database without
+** preventing other database connections from
+** reading or writing to the source database while the backup is underway.
 ** 
 ** ^(To perform a backup operation: 
 **   <ol>
 **     <li><b>sqlite3_backup_init()</b> is called once to initialize the
 **         backup, 
 **     <li><b>sqlite3_backup_step()</b> is called one or more times to transfer 
-**         the data between the two test_databases, and finally
+**         the data between the two databases, and finally
 **     <li><b>sqlite3_backup_finish()</b> is called to release all resources 
 **         associated with the backup operation. 
 **   </ol>)^
@@ -8432,25 +8432,25 @@ typedef struct sqlite3_backup sqlite3_backup;
 ** [[sqlite3_backup_init()]] <b>sqlite3_backup_init()</b>
 **
 ** ^The D and N arguments to sqlite3_backup_init(D,N,S,M) are the 
-** [Database Tools connection] associated with the destination Database Tools
-** and the Database Tools name, respectively.
-** ^The Database Tools name is "main" for the main Database Tools, "temp" for the
-** temporary Database Tools, or the name specified after the AS keyword in
-** an [ATTACH] statement for an attached Database Tools.
+** [database connection] associated with the destination database 
+** and the database name, respectively.
+** ^The database name is "main" for the main database, "temp" for the
+** temporary database, or the name specified after the AS keyword in
+** an [ATTACH] statement for an attached database.
 ** ^The S and M arguments passed to 
-** sqlite3_backup_init(D,N,S,M) identify the [Database Tools connection]
-** and Database Tools name of the source Database Tools, respectively.
-** ^The source and destination [Database Tools connections] (parameters S and D)
+** sqlite3_backup_init(D,N,S,M) identify the [database connection]
+** and database name of the source database, respectively.
+** ^The source and destination [database connections] (parameters S and D)
 ** must be different or else sqlite3_backup_init(D,N,S,M) will fail with
 ** an error.
 **
 ** ^A call to sqlite3_backup_init() will fail, returning NULL, if 
 ** there is already a read or read-write transaction open on the 
-** destination Database Tools.
+** destination database.
 **
 ** ^If an error occurs within sqlite3_backup_init(D,N,S,M), then NULL is
 ** returned and an error code and error message are stored in the
-** destination [Database Tools connection] D.
+** destination [database connection] D.
 ** ^The error code and message for the failed call to sqlite3_backup_init()
 ** can be retrieved using the [sqlite3_errcode()], [sqlite3_errmsg()], and/or
 ** [sqlite3_errmsg16()] functions.
@@ -8463,7 +8463,7 @@ typedef struct sqlite3_backup sqlite3_backup;
 ** [[sqlite3_backup_step()]] <b>sqlite3_backup_step()</b>
 **
 ** ^Function sqlite3_backup_step(B,N) will copy up to N pages between 
-** the source and destination test_databases specified by [sqlite3_backup] object B.
+** the source and destination databases specified by [sqlite3_backup] object B.
 ** ^If N is negative, all remaining source pages are copied. 
 ** ^If sqlite3_backup_step(B,N) successfully copies N pages and there
 ** are still more pages to be copied, then the function returns [SQLITE_OK].
@@ -8477,10 +8477,10 @@ typedef struct sqlite3_backup sqlite3_backup;
 **
 ** ^(The sqlite3_backup_step() might return [SQLITE_READONLY] if
 ** <ol>
-** <li> the destination Database Tools was opened read-only, or
-** <li> the destination Database Tools is using write-ahead-log journaling
+** <li> the destination database was opened read-only, or
+** <li> the destination database is using write-ahead-log journaling
 ** and the destination and source page sizes differ, or
-** <li> the destination Database Tools is an in-memory Database Tools and the
+** <li> the destination database is an in-memory database and the
 ** destination and source page sizes differ.
 ** </ol>)^
 **
@@ -8490,8 +8490,8 @@ typedef struct sqlite3_backup sqlite3_backup;
 ** busy-handler returns non-zero before the lock is available, then 
 ** [SQLITE_BUSY] is returned to the caller. ^In this case the call to
 ** sqlite3_backup_step() can be retried later. ^If the source
-** [Database Tools connection]
-** is being used to write to the source Database Tools when sqlite3_backup_step()
+** [database connection]
+** is being used to write to the source database when sqlite3_backup_step()
 ** is called, then [SQLITE_LOCKED] is returned immediately. ^Again, in this
 ** case the call to sqlite3_backup_step() can be retried later on. ^(If
 ** [SQLITE_IOERR_ACCESS | SQLITE_IOERR_XXX], [SQLITE_NOMEM], or
@@ -8505,16 +8505,16 @@ typedef struct sqlite3_backup sqlite3_backup;
 ** on the destination file. ^The exclusive lock is not released until either 
 ** sqlite3_backup_finish() is called or the backup operation is complete 
 ** and sqlite3_backup_step() returns [SQLITE_DONE].  ^Every call to
-** sqlite3_backup_step() obtains a [shared lock] on the source Database Tools that
+** sqlite3_backup_step() obtains a [shared lock] on the source database that
 ** lasts for the duration of the sqlite3_backup_step() call.
-** ^Because the source Database Tools is not locked between calls to
-** sqlite3_backup_step(), the source Database Tools may be modified mid-way
-** through the backup process.  ^If the source Database Tools is modified by an
-** external process or via a Database Tools connection other than the one being
+** ^Because the source database is not locked between calls to
+** sqlite3_backup_step(), the source database may be modified mid-way
+** through the backup process.  ^If the source database is modified by an
+** external process or via a database connection other than the one being
 ** used by the backup operation, then the backup will be automatically
 ** restarted by the next call to sqlite3_backup_step(). ^If the source 
-** Database Tools is modified by the using the same Database Tools connection as is used
-** by the backup operation, then the backup Database Tools is automatically
+** database is modified by the using the same database connection as is used
+** by the backup operation, then the backup database is automatically
 ** updated at the same time.
 **
 ** [[sqlite3_backup_finish()]] <b>sqlite3_backup_finish()</b>
@@ -8525,7 +8525,7 @@ typedef struct sqlite3_backup sqlite3_backup;
 ** ^The sqlite3_backup_finish() interfaces releases all
 ** resources associated with the [sqlite3_backup] object. 
 ** ^If sqlite3_backup_step() has not yet returned [SQLITE_DONE], then any
-** active write-transaction on the destination Database Tools is rolled back.
+** active write-transaction on the destination database is rolled back.
 ** The [sqlite3_backup] object is invalid
 ** and may not be used following a call to sqlite3_backup_finish().
 **
@@ -8546,34 +8546,34 @@ typedef struct sqlite3_backup sqlite3_backup;
 ** ^The sqlite3_backup_remaining() routine returns the number of pages still
 ** to be backed up at the conclusion of the most recent sqlite3_backup_step().
 ** ^The sqlite3_backup_pagecount() routine returns the total number of pages
-** in the source Database Tools at the conclusion of the most recent
+** in the source database at the conclusion of the most recent
 ** sqlite3_backup_step().
 ** ^(The values returned by these functions are only updated by
-** sqlite3_backup_step(). If the source Database Tools is modified in a way that
-** changes the size of the source Database Tools or the number of pages remaining,
+** sqlite3_backup_step(). If the source database is modified in a way that
+** changes the size of the source database or the number of pages remaining,
 ** those changes are not reflected in the output of sqlite3_backup_pagecount()
 ** and sqlite3_backup_remaining() until after the next
 ** sqlite3_backup_step().)^
 **
 ** <b>Concurrent Usage of Database Handles</b>
 **
-** ^The source [Database Tools connection] may be used by the application for other
+** ^The source [database connection] may be used by the application for other
 ** purposes while a backup operation is underway or being initialized.
-** ^If SQLite is compiled and configured to support threadsafe Database Tools
-** connections, then the source Database Tools connection may be used concurrently
+** ^If SQLite is compiled and configured to support threadsafe database
+** connections, then the source database connection may be used concurrently
 ** from within other threads.
 **
 ** However, the application must guarantee that the destination 
-** [Database Tools connection] is not passed to any other API (by any thread) after
+** [database connection] is not passed to any other API (by any thread) after 
 ** sqlite3_backup_init() is called and before the corresponding call to
 ** sqlite3_backup_finish().  SQLite does not currently check to see
-** if the application incorrectly accesses the destination [Database Tools connection]
+** if the application incorrectly accesses the destination [database connection]
 ** and so no error code is reported, but the operations may malfunction
-** nevertheless.  Use of the destination Database Tools connection while a
+** nevertheless.  Use of the destination database connection while a
 ** backup is in progress might also also cause a mutex deadlock.
 **
 ** If running in [shared cache mode], the application must
-** guarantee that the shared cache used by the destination Database Tools
+** guarantee that the shared cache used by the destination database
 ** is not accessed while the backup is running. In practice this means
 ** that the application must guarantee that the disk file being 
 ** backed up to is not accessed by any connection within the process,
@@ -8587,10 +8587,10 @@ typedef struct sqlite3_backup sqlite3_backup;
 ** possible that they return invalid values.
 */
 SQLITE_API sqlite3_backup *sqlite3_backup_init(
-  sqlite3 *pDest,                        /* Destination Database Tools handle */
-  const char *zDestName,                 /* Destination Database Tools name */
-  sqlite3 *pSource,                      /* Source Database Tools handle */
-  const char *zSourceName                /* Source Database Tools name */
+  sqlite3 *pDest,                        /* Destination database handle */
+  const char *zDestName,                 /* Destination database name */
+  sqlite3 *pSource,                      /* Source database handle */
+  const char *zSourceName                /* Source database name */
 );
 SQLITE_API int sqlite3_backup_step(sqlite3_backup *p, int nPage);
 SQLITE_API int sqlite3_backup_finish(sqlite3_backup *p);
@@ -8601,7 +8601,7 @@ SQLITE_API int sqlite3_backup_pagecount(sqlite3_backup *p);
 ** CAPI3REF: Unlock Notification
 ** METHOD: sqlite3
 **
-** ^When running in shared-cache mode, a Database Tools operation may fail with
+** ^When running in shared-cache mode, a database operation may fail with
 ** an [SQLITE_LOCKED] error if the required locks on the shared-cache or
 ** individual tables within the shared-cache cannot be obtained. See
 ** [SQLite Shared-Cache Mode] for a description of shared-cache locking. 
@@ -8612,12 +8612,12 @@ SQLITE_API int sqlite3_backup_pagecount(sqlite3_backup *p);
 **
 ** See Also: [Using the SQLite Unlock Notification Feature].
 **
-** ^Shared-cache locks are released when a Database Tools connection concludes
+** ^Shared-cache locks are released when a database connection concludes
 ** its current transaction, either by committing it or rolling it back. 
 **
 ** ^When a connection (known as the blocked connection) fails to obtain a
 ** shared-cache lock and SQLITE_LOCKED is returned to the caller, the
-** identity of the Database Tools connection (the blocking connection) that
+** identity of the database connection (the blocking connection) that
 ** has locked the required resource is stored internally. ^After an 
 ** application receives an SQLITE_LOCKED error, it may call the
 ** sqlite3_unlock_notify() method with the blocked connection handle as 
@@ -8669,12 +8669,12 @@ SQLITE_API int sqlite3_backup_pagecount(sqlite3_backup *p);
 ** multiple times, it is invoked once with the set of void* context pointers
 ** specified by the blocked connections bundled together into an array.
 ** This gives the application an opportunity to prioritize any actions 
-** related to the set of unblocked Database Tools connections.
+** related to the set of unblocked database connections.
 **
 ** <b>Deadlock Detection</b>
 **
 ** Assuming that after registering for an unlock-notify callback a 
-** Database Tools waits for the callback to be issued before taking any further
+** database waits for the callback to be issued before taking any further
 ** action (a reasonable assumption), then using this API may cause the
 ** application to deadlock. For example, if connection X is waiting for
 ** connection Y's transaction to be concluded, and similarly connection
@@ -8798,17 +8798,17 @@ SQLITE_API void sqlite3_log(int iErrCode, const char *zFormat, ...);
 ** METHOD: sqlite3
 **
 ** ^The [sqlite3_wal_hook()] function is used to register a callback that
-** is invoked each time data is committed to a Database Tools in wal mode.
+** is invoked each time data is committed to a database in wal mode.
 **
 ** ^(The callback is invoked by SQLite after the commit has taken place and 
-** the associated write-lock on the Database Tools released)^, so the implementation
-** may read, write or [checkpoint] the Database Tools as required.
+** the associated write-lock on the database released)^, so the implementation 
+** may read, write or [checkpoint] the database as required.
 **
 ** ^The first parameter passed to the callback function when it is invoked
 ** is a copy of the third parameter passed to sqlite3_wal_hook() when
-** registering the callback. ^The second is a copy of the Database Tools handle.
-** ^The third parameter is the name of the Database Tools that was written to -
-** either "main" or the name of an [ATTACH]-ed Database Tools. ^The fourth parameter
+** registering the callback. ^The second is a copy of the database handle.
+** ^The third parameter is the name of the database that was written to -
+** either "main" or the name of an [ATTACH]-ed database. ^The fourth parameter
 ** is the number of pages currently in the write-ahead log file,
 ** including those that were just committed.
 **
@@ -8820,7 +8820,7 @@ SQLITE_API void sqlite3_log(int iErrCode, const char *zFormat, ...);
 ** that does not correspond to any valid SQLite error code, the results
 ** are undefined.
 **
-** A single Database Tools handle may have at most a single write-ahead log callback
+** A single database handle may have at most a single write-ahead log callback 
 ** registered at one time. ^Calling [sqlite3_wal_hook()] replaces any
 ** previously registered write-ahead log callback. ^Note that the
 ** [sqlite3_wal_autocheckpoint()] interface and the
@@ -8838,7 +8838,7 @@ SQLITE_API void *sqlite3_wal_hook(
 ** METHOD: sqlite3
 **
 ** ^The [sqlite3_wal_autocheckpoint(D,N)] is a wrapper around
-** [sqlite3_wal_hook()] that causes any Database Tools on [Database Tools connection] D
+** [sqlite3_wal_hook()] that causes any database on [database connection] D
 ** to automatically [checkpoint]
 ** after committing a transaction if there are N or
 ** more frames in the [write-ahead log] file.  ^Passing zero or 
@@ -8856,7 +8856,7 @@ SQLITE_API void *sqlite3_wal_hook(
 ** ^Checkpoints initiated by this mechanism are
 ** [sqlite3_wal_checkpoint_v2|PASSIVE].
 **
-** ^Every new [Database Tools connection] defaults to having the auto-checkpoint
+** ^Every new [database connection] defaults to having the auto-checkpoint
 ** enabled with a threshold of 1000 or [SQLITE_DEFAULT_WAL_AUTOCHECKPOINT]
 ** pages.  The use of this interface
 ** is only necessary if the default setting is found to be suboptimal
@@ -8865,15 +8865,15 @@ SQLITE_API void *sqlite3_wal_hook(
 SQLITE_API int sqlite3_wal_autocheckpoint(sqlite3 *db, int N);
 
 /*
-** CAPI3REF: Checkpoint a Database Tools
+** CAPI3REF: Checkpoint a database
 ** METHOD: sqlite3
 **
 ** ^(The sqlite3_wal_checkpoint(D,X) is equivalent to
 ** [sqlite3_wal_checkpoint_v2](D,X,[SQLITE_CHECKPOINT_PASSIVE],0,0).)^
 **
 ** In brief, sqlite3_wal_checkpoint(D,X) causes the content in the 
-** [write-ahead log] for Database Tools X on [Database Tools connection] D to be
-** transferred into the Database Tools file and for the write-ahead log to
+** [write-ahead log] for database X on [database connection] D to be
+** transferred into the database file and for the write-ahead log to
 ** be reset.  See the [checkpointing] documentation for addition
 ** information.
 **
@@ -8887,18 +8887,18 @@ SQLITE_API int sqlite3_wal_autocheckpoint(sqlite3 *db, int N);
 SQLITE_API int sqlite3_wal_checkpoint(sqlite3 *db, const char *zDb);
 
 /*
-** CAPI3REF: Checkpoint a Database Tools
+** CAPI3REF: Checkpoint a database
 ** METHOD: sqlite3
 **
 ** ^(The sqlite3_wal_checkpoint_v2(D,X,M,L,C) interface runs a checkpoint
-** operation on Database Tools X of [Database Tools connection] D in mode M.  Status
+** operation on database X of [database connection] D in mode M.  Status
 ** information is written back into integers pointed to by L and C.)^
 ** ^(The M parameter must be a valid [checkpoint mode]:)^
 **
 ** <dl>
 ** <dt>SQLITE_CHECKPOINT_PASSIVE<dd>
-**   ^Checkpoint as many frames as possible without waiting for any Database Tools
-**   readers or writers to finish, then sync the Database Tools file if all frames
+**   ^Checkpoint as many frames as possible without waiting for any database 
+**   readers or writers to finish, then sync the database file if all frames 
 **   in the log were checkpointed. ^The [busy-handler callback]
 **   is never invoked in the SQLITE_CHECKPOINT_PASSIVE mode.  
 **   ^On the other hand, passive mode might leave the checkpoint unfinished
@@ -8907,19 +8907,19 @@ SQLITE_API int sqlite3_wal_checkpoint(sqlite3 *db, const char *zDb);
 ** <dt>SQLITE_CHECKPOINT_FULL<dd>
 **   ^This mode blocks (it invokes the
 **   [sqlite3_busy_handler|busy-handler callback]) until there is no
-**   Database Tools writer and all readers are reading from the most recent Database Tools
+**   database writer and all readers are reading from the most recent database
 **   snapshot. ^It then checkpoints all frames in the log file and syncs the
-**   Database Tools file. ^This mode blocks new Database Tools writers while it is pending,
-**   but new Database Tools readers are allowed to continue unimpeded.
+**   database file. ^This mode blocks new database writers while it is pending,
+**   but new database readers are allowed to continue unimpeded.
 **
 ** <dt>SQLITE_CHECKPOINT_RESTART<dd>
 **   ^This mode works the same way as SQLITE_CHECKPOINT_FULL with the addition
 **   that after checkpointing the log file it blocks (calls the 
 **   [busy-handler callback])
-**   until all readers are reading from the Database Tools file only. ^This ensures
+**   until all readers are reading from the database file only. ^This ensures 
 **   that the next writer will restart the log file from the beginning.
 **   ^Like SQLITE_CHECKPOINT_FULL, this mode blocks new
-**   Database Tools writer attempts while it is pending, but does not impede readers.
+**   database writer attempts while it is pending, but does not impede readers.
 **
 ** <dt>SQLITE_CHECKPOINT_TRUNCATE<dd>
 **   ^This mode works the same way as SQLITE_CHECKPOINT_RESTART with the
@@ -8929,46 +8929,46 @@ SQLITE_API int sqlite3_wal_checkpoint(sqlite3 *db, const char *zDb);
 **
 ** ^If pnLog is not NULL, then *pnLog is set to the total number of frames in
 ** the log file or to -1 if the checkpoint could not run because
-** of an error or because the Database Tools is not in [WAL mode]. ^If pnCkpt is not
+** of an error or because the database is not in [WAL mode]. ^If pnCkpt is not
 ** NULL,then *pnCkpt is set to the total number of checkpointed frames in the
 ** log file (including any that were already checkpointed before the function
 ** was called) or to -1 if the checkpoint could not run due to an error or
-** because the Database Tools is not in WAL mode. ^Note that upon successful
+** because the database is not in WAL mode. ^Note that upon successful
 ** completion of an SQLITE_CHECKPOINT_TRUNCATE, the log file will have been
 ** truncated to zero bytes and so both *pnLog and *pnCkpt will be set to zero.
 **
-** ^All calls obtain an exclusive "checkpoint" lock on the Database Tools file. ^If
+** ^All calls obtain an exclusive "checkpoint" lock on the database file. ^If
 ** any other process is running a checkpoint operation at the same time, the 
 ** lock cannot be obtained and SQLITE_BUSY is returned. ^Even if there is a 
 ** busy-handler configured, it will not be invoked in this case.
 **
 ** ^The SQLITE_CHECKPOINT_FULL, RESTART and TRUNCATE modes also obtain the 
-** exclusive "writer" lock on the Database Tools file. ^If the writer lock cannot be
+** exclusive "writer" lock on the database file. ^If the writer lock cannot be
 ** obtained immediately, and a busy-handler is configured, it is invoked and
 ** the writer lock retried until either the busy-handler returns 0 or the lock
 ** is successfully obtained. ^The busy-handler is also invoked while waiting for
-** Database Tools readers as described above. ^If the busy-handler returns 0 before
-** the writer lock is obtained or while waiting for Database Tools readers, the
+** database readers as described above. ^If the busy-handler returns 0 before
+** the writer lock is obtained or while waiting for database readers, the
 ** checkpoint operation proceeds from that point in the same way as 
 ** SQLITE_CHECKPOINT_PASSIVE - checkpointing as many frames as possible 
 ** without blocking any further. ^SQLITE_BUSY is returned in this case.
 **
 ** ^If parameter zDb is NULL or points to a zero length string, then the
-** specified operation is attempted on all WAL test_databases [attached] to
-** [Database Tools connection] db.  In this case the
+** specified operation is attempted on all WAL databases [attached] to 
+** [database connection] db.  In this case the
 ** values written to output parameters *pnLog and *pnCkpt are undefined. ^If 
 ** an SQLITE_BUSY error is encountered when processing one or more of the 
-** attached WAL test_databases, the operation is still attempted on any remaining
-** attached test_databases and SQLITE_BUSY is returned at the end. ^If any other
-** error occurs while processing an attached Database Tools, processing is abandoned
+** attached WAL databases, the operation is still attempted on any remaining 
+** attached databases and SQLITE_BUSY is returned at the end. ^If any other 
+** error occurs while processing an attached database, processing is abandoned 
 ** and the error code is returned to the caller immediately. ^If no error 
 ** (SQLITE_BUSY or otherwise) is encountered while processing the attached 
-** test_databases, SQLITE_OK is returned.
+** databases, SQLITE_OK is returned.
 **
-** ^If Database Tools zDb is the name of an attached Database Tools that is not in WAL
+** ^If database zDb is the name of an attached database that is not in WAL
 ** mode, SQLITE_OK is returned and both *pnLog and *pnCkpt set to -1. ^If
 ** zDb is not NULL (or a zero length string) and is not the name of any
-** attached Database Tools, SQLITE_ERROR is returned to the caller.
+** attached database, SQLITE_ERROR is returned to the caller.
 **
 ** ^Unless it returns SQLITE_MISUSE,
 ** the sqlite3_wal_checkpoint_v2() interface
@@ -8980,7 +8980,7 @@ SQLITE_API int sqlite3_wal_checkpoint(sqlite3 *db, const char *zDb);
 */
 SQLITE_API int sqlite3_wal_checkpoint_v2(
   sqlite3 *db,                    /* Database handle */
-  const char *zDb,                /* Name of attached Database Tools (or NULL) */
+  const char *zDb,                /* Name of attached database (or NULL) */
   int eMode,                      /* SQLITE_CHECKPOINT_* value */
   int *pnLog,                     /* OUT: Size of WAL log in frames */
   int *pnCkpt                     /* OUT: Total number of frames checkpointed */
@@ -9011,7 +9011,7 @@ SQLITE_API int sqlite3_wal_checkpoint_v2(
 ** xCreate virtual table method then the behavior is undefined.
 **
 ** In the call sqlite3_vtab_config(D,C,...) the D parameter is the
-** [Database Tools connection] in which the virtual table is being created and
+** [database connection] in which the virtual table is being created and
 ** which is passed in as the first argument to the [xConnect] or [xCreate]
 ** method that is invoking sqlite3_vtab_config().  The C parameter is one
 ** of the [virtual table configuration options].  The presence and meaning
@@ -9046,7 +9046,7 @@ SQLITE_API int sqlite3_vtab_config(sqlite3*, int op, ...);
 ** that if [xUpdate] returns [SQLITE_CONSTRAINT], it will do so before
 ** any modifications to internal or persistent data structures have been made.
 ** If the [ON CONFLICT] mode is ABORT, FAIL, IGNORE or ROLLBACK, SQLite 
-** is able to roll back a statement or Database Tools transaction, and abandon
+** is able to roll back a statement or database transaction, and abandon
 ** or continue processing the current SQL statement as appropriate. 
 ** If the ON CONFLICT mode is REPLACE and the [xUpdate] method returns
 ** [SQLITE_CONSTRAINT], SQLite handles this as if the ON CONFLICT mode
@@ -9256,21 +9256,21 @@ SQLITE_API void sqlite3_stmt_scanstatus_reset(sqlite3_stmt*);
 /*
 ** CAPI3REF: Flush caches to disk mid-transaction
 **
-** ^If a write-transaction is open on [Database Tools connection] D when the
+** ^If a write-transaction is open on [database connection] D when the
 ** [sqlite3_db_cacheflush(D)] interface invoked, any dirty
 ** pages in the pager-cache that are not currently in use are written out 
-** to disk. A dirty page may be in use if a Database Tools cursor created by an
-** active SQL statement is reading from it, or if it is page 1 of a Database Tools
+** to disk. A dirty page may be in use if a database cursor created by an
+** active SQL statement is reading from it, or if it is page 1 of a database
 ** file (page 1 is always "in use").  ^The [sqlite3_db_cacheflush(D)]
 ** interface flushes caches for all schemas - "main", "temp", and
-** any [attached] test_databases.
+** any [attached] databases.
 **
-** ^If this function needs to obtain extra Database Tools locks before dirty pages
+** ^If this function needs to obtain extra database locks before dirty pages 
 ** can be flushed to disk, it does so. ^If those locks cannot be obtained 
 ** immediately and there is a busy-handler callback configured, it is invoked
 ** in the usual manner. ^If the required lock still cannot be obtained, then
-** the Database Tools is skipped and an attempt made to flush any dirty pages
-** belonging to the next (if any) Database Tools. ^If any test_databases are skipped
+** the database is skipped and an attempt made to flush any dirty pages
+** belonging to the next (if any) database. ^If any databases are skipped
 ** because locks cannot be obtained, but no other error occurs, this
 ** function returns SQLITE_BUSY.
 **
@@ -9280,7 +9280,7 @@ SQLITE_API void sqlite3_stmt_scanstatus_reset(sqlite3_stmt*);
 **
 ** ^Otherwise, if no error occurs, [sqlite3_db_cacheflush()] returns SQLITE_OK.
 **
-** ^This function does not set the Database Tools handle error code or message
+** ^This function does not set the database handle error code or message
 ** returned by the [sqlite3_errcode()] and [sqlite3_errmsg()] functions.
 */
 SQLITE_API int sqlite3_db_cacheflush(sqlite3*);
@@ -9293,29 +9293,29 @@ SQLITE_API int sqlite3_db_cacheflush(sqlite3*);
 **
 ** ^The [sqlite3_preupdate_hook()] interface registers a callback function
 ** that is invoked prior to each [INSERT], [UPDATE], and [DELETE] operation
-** on a Database Tools table.
+** on a database table.
 ** ^At most one preupdate hook may be registered at a time on a single
-** [Database Tools connection]; each call to [sqlite3_preupdate_hook()] overrides
+** [database connection]; each call to [sqlite3_preupdate_hook()] overrides
 ** the previous setting.
 ** ^The preupdate hook is disabled by invoking [sqlite3_preupdate_hook()]
 ** with a NULL pointer as the second parameter.
 ** ^The third parameter to [sqlite3_preupdate_hook()] is passed through as
 ** the first parameter to callbacks.
 **
-** ^The preupdate hook only fires for changes to real Database Tools tables; the
+** ^The preupdate hook only fires for changes to real database tables; the
 ** preupdate hook is not invoked for changes to [virtual tables] or to
 ** system tables like sqlite_master or sqlite_stat1.
 **
 ** ^The second parameter to the preupdate callback is a pointer to
-** the [Database Tools connection] that registered the preupdate hook.
+** the [database connection] that registered the preupdate hook.
 ** ^The third parameter to the preupdate callback is one of the constants
 ** [SQLITE_INSERT], [SQLITE_DELETE], or [SQLITE_UPDATE] to identify the
 ** kind of update operation that is about to occur.
 ** ^(The fourth parameter to the preupdate callback is the name of the
-** Database Tools within the Database Tools connection that is being modified.  This
-** will be "main" for the main Database Tools or "temp" for TEMP tables or
+** database within the database connection that is being modified.  This
+** will be "main" for the main database or "temp" for TEMP tables or 
 ** the name given after the AS keyword in the [ATTACH] statement for attached
-** test_databases.)^
+** databases.)^
 ** ^The fifth parameter to the preupdate callback is the name of the
 ** table that is being modified.
 **
@@ -9334,7 +9334,7 @@ SQLITE_API int sqlite3_db_cacheflush(sqlite3*);
 ** provide additional information about a preupdate event. These routines
 ** may only be called from within a preupdate callback.  Invoking any of
 ** these routines from outside of a preupdate callback or with a
-** [Database Tools connection] pointer that is different from the one supplied
+** [database connection] pointer that is different from the one supplied
 ** to the preupdate callback results in undefined and probably undesirable
 ** behavior.
 **
@@ -9404,19 +9404,19 @@ SQLITE_API int sqlite3_system_errno(sqlite3*);
 ** KEYWORDS: {snapshot} {sqlite3_snapshot}
 **
 ** An instance of the snapshot object records the state of a [WAL mode]
-** Database Tools for some specific point in history.
+** database for some specific point in history.
 **
-** In [WAL mode], multiple [Database Tools connections] that are open on the
-** same Database Tools file can each be reading a different historical version
-** of the Database Tools file.  When a [Database Tools connection] begins a read
-** transaction, that connection sees an unchanging copy of the Database Tools
+** In [WAL mode], multiple [database connections] that are open on the
+** same database file can each be reading a different historical version
+** of the database file.  When a [database connection] begins a read
+** transaction, that connection sees an unchanging copy of the database
 ** as it existed for the point in time when the transaction first started.
-** Subsequent changes to the Database Tools from other connections are not seen
+** Subsequent changes to the database from other connections are not seen
 ** by the reader until a new read transaction is started.
 **
 ** The sqlite3_snapshot object records state information about an historical
-** version of the Database Tools file so that it is possible to later open a new read
-** transaction that sees that historical version of the Database Tools rather than
+** version of the database file so that it is possible to later open a new read
+** transaction that sees that historical version of the database rather than
 ** the most recent version.
 */
 typedef struct sqlite3_snapshot {
@@ -9429,7 +9429,7 @@ typedef struct sqlite3_snapshot {
 **
 ** ^The [sqlite3_snapshot_get(D,S,P)] interface attempts to make a
 ** new [sqlite3_snapshot] object that records the current state of
-** schema S in Database Tools connection D.  ^On success, the
+** schema S in database connection D.  ^On success, the
 ** [sqlite3_snapshot_get(D,S,P)] interface writes a pointer to the newly
 ** created [sqlite3_snapshot] object into *P and returns SQLITE_OK.
 ** If there is not already a read-transaction open on schema S when
@@ -9441,22 +9441,22 @@ typedef struct sqlite3_snapshot {
 ** in this case. 
 **
 ** <ul>
-**   <li> The Database Tools handle must not be in [autocommit mode].
+**   <li> The database handle must not be in [autocommit mode].
 **
-**   <li> Schema S of [Database Tools connection] D must be a [WAL mode] Database Tools.
+**   <li> Schema S of [database connection] D must be a [WAL mode] database.
 **
-**   <li> There must not be a write transaction open on schema S of Database Tools
+**   <li> There must not be a write transaction open on schema S of database
 **        connection D.
 **
 **   <li> One or more transactions must have been written to the current wal
 **        file since it was created on disk (by any connection). This means
-**        that a snapshot cannot be taken on a wal mode Database Tools with no wal
+**        that a snapshot cannot be taken on a wal mode database with no wal 
 **        file immediately after it is first opened. At least one transaction
 **        must be written to it first.
 ** </ul>
 **
 ** This function may also return SQLITE_NOMEM.  If it is called with the
-** Database Tools handle in autocommit mode but fails for some other reason,
+** database handle in autocommit mode but fails for some other reason, 
 ** whether or not a read transaction is opened on schema S is undefined.
 **
 ** The [sqlite3_snapshot] object returned from a successful call to
@@ -9478,14 +9478,14 @@ SQLITE_API SQLITE_EXPERIMENTAL int sqlite3_snapshot_get(
 **
 ** ^The [sqlite3_snapshot_open(D,S,P)] interface either starts a new read 
 ** transaction or upgrades an existing one for schema S of 
-** [Database Tools connection] D such that the read transaction refers to
+** [database connection] D such that the read transaction refers to 
 ** historical [snapshot] P, rather than the most recent change to the 
-** Database Tools. ^The [sqlite3_snapshot_open()] interface returns SQLITE_OK
+** database. ^The [sqlite3_snapshot_open()] interface returns SQLITE_OK 
 ** on success or an appropriate [error code] if it fails.
 **
-** ^In order to succeed, the Database Tools connection must not be in
+** ^In order to succeed, the database connection must not be in 
 ** [autocommit mode] when [sqlite3_snapshot_open(D,S,P)] is called. If there
-** is already a read transaction open on schema S, then the Database Tools handle
+** is already a read transaction open on schema S, then the database handle
 ** must have no active statements (SELECT statements that have been passed
 ** to sqlite3_step() but not sqlite3_reset() or sqlite3_finalize()). 
 ** SQLITE_ERROR is returned if either of these conditions is violated, or
@@ -9497,20 +9497,20 @@ SQLITE_API SQLITE_EXPERIMENTAL int sqlite3_snapshot_get(
 **
 ** If there is already a read transaction open when this function is 
 ** invoked, then the same read transaction remains open (on the same
-** Database Tools snapshot) if SQLITE_ERROR, SQLITE_BUSY or SQLITE_ERROR_SNAPSHOT
+** database snapshot) if SQLITE_ERROR, SQLITE_BUSY or SQLITE_ERROR_SNAPSHOT
 ** is returned. If another error code - for example SQLITE_PROTOCOL or an
 ** SQLITE_IOERR error code - is returned, then the final state of the
 ** read transaction is undefined. If SQLITE_OK is returned, then the 
-** read transaction is now open on Database Tools snapshot P.
+** read transaction is now open on database snapshot P.
 **
 ** ^(A call to [sqlite3_snapshot_open(D,S,P)] will fail if the
-** Database Tools connection D does not know that the Database Tools file for
-** schema S is in [WAL mode].  A Database Tools connection might not know
-** that the Database Tools file is in [WAL mode] if there has been no prior
-** I/O on that Database Tools connection, or if the Database Tools entered [WAL mode]
-** after the most recent I/O on the Database Tools connection.)^
+** database connection D does not know that the database file for
+** schema S is in [WAL mode].  A database connection might not know
+** that the database file is in [WAL mode] if there has been no prior
+** I/O on that database connection, or if the database entered [WAL mode] 
+** after the most recent I/O on the database connection.)^
 ** (Hint: Run "[PRAGMA application_id]" against a newly opened
-** Database Tools connection in order to make it ready to use snapshots.)
+** database connection in order to make it ready to use snapshots.)
 **
 ** The [sqlite3_snapshot_open()] interface is only available when the
 ** [SQLITE_ENABLE_SNAPSHOT] compile-time option is used.
@@ -9541,19 +9541,19 @@ SQLITE_API SQLITE_EXPERIMENTAL void sqlite3_snapshot_free(sqlite3_snapshot*);
 ** The sqlite3_snapshot_cmp(P1, P2) interface is used to compare the ages
 ** of two valid snapshot handles. 
 **
-** If the two snapshot handles are not associated with the same Database Tools
+** If the two snapshot handles are not associated with the same database 
 ** file, the result of the comparison is undefined. 
 **
 ** Additionally, the result of the comparison is only valid if both of the
 ** snapshot handles were obtained by calling sqlite3_snapshot_get() since the
 ** last time the wal file was deleted. The wal file is deleted when the
-** Database Tools is changed back to rollback mode or when the number of Database Tools
+** database is changed back to rollback mode or when the number of database
 ** clients drops to zero. If either snapshot handle was obtained before the 
 ** wal file was last deleted, the value returned by this function 
 ** is undefined.
 **
 ** Otherwise, this API returns a negative value if P1 refers to an older
-** snapshot than P2, zero if the two handles refer to the same Database Tools
+** snapshot than P2, zero if the two handles refer to the same database
 ** snapshot, and a positive value if P1 is a newer snapshot than P2.
 **
 ** This interface is only available if SQLite is compiled with the
@@ -9568,19 +9568,19 @@ SQLITE_API SQLITE_EXPERIMENTAL int sqlite3_snapshot_cmp(
 ** CAPI3REF: Recover snapshots from a wal file
 ** METHOD: sqlite3_snapshot
 **
-** If a [WAL file] remains on disk after all Database Tools connections close
+** If a [WAL file] remains on disk after all database connections close
 ** (either through the use of the [SQLITE_FCNTL_PERSIST_WAL] [file control]
-** or because the last process to have the Database Tools opened exited without
+** or because the last process to have the database opened exited without
 ** calling [sqlite3_close()]) and a new connection is subsequently opened
-** on that Database Tools and [WAL file], the [sqlite3_snapshot_open()] interface
+** on that database and [WAL file], the [sqlite3_snapshot_open()] interface
 ** will only be able to open the last transaction added to the WAL file
 ** even though the WAL file contains other valid transactions.
 **
-** This function attempts to scan the WAL file associated with Database Tools zDb
-** of Database Tools handle db and make all valid snapshots available to
+** This function attempts to scan the WAL file associated with database zDb
+** of database handle db and make all valid snapshots available to
 ** sqlite3_snapshot_open(). It is an error if there is already a read
-** transaction open on the Database Tools, or if the Database Tools is not a WAL mode
-** Database Tools.
+** transaction open on the database, or if the database is not a WAL mode
+** database.
 **
 ** SQLITE_OK is returned if successful, or an SQLite error code otherwise.
 **
@@ -9590,33 +9590,33 @@ SQLITE_API SQLITE_EXPERIMENTAL int sqlite3_snapshot_cmp(
 SQLITE_API SQLITE_EXPERIMENTAL int sqlite3_snapshot_recover(sqlite3 *db, const char *zDb);
 
 /*
-** CAPI3REF: Serialize a Database Tools
+** CAPI3REF: Serialize a database
 **
 ** The sqlite3_serialize(D,S,P,F) interface returns a pointer to memory
-** that is a serialization of the S Database Tools on [Database Tools connection] D.
-** If P is not a NULL pointer, then the size of the Database Tools in bytes
+** that is a serialization of the S database on [database connection] D.
+** If P is not a NULL pointer, then the size of the database in bytes
 ** is written into *P.
 **
-** For an ordinary on-disk Database Tools file, the serialization is just a
-** copy of the disk file.  For an in-memory Database Tools or a "TEMP" Database Tools,
+** For an ordinary on-disk database file, the serialization is just a
+** copy of the disk file.  For an in-memory database or a "TEMP" database,
 ** the serialization is the same sequence of bytes which would be written
-** to disk if that Database Tools where backed up to disk.
+** to disk if that database where backed up to disk.
 **
 ** The usual case is that sqlite3_serialize() copies the serialization of
-** the Database Tools into memory obtained from [sqlite3_malloc64()] and returns
+** the database into memory obtained from [sqlite3_malloc64()] and returns
 ** a pointer to that memory.  The caller is responsible for freeing the
 ** returned value to avoid a memory leak.  However, if the F argument
 ** contains the SQLITE_SERIALIZE_NOCOPY bit, then no memory allocations
 ** are made, and the sqlite3_serialize() function will return a pointer
-** to the contiguous memory representation of the Database Tools that SQLite
-** is currently using for that Database Tools, or NULL if the no such contiguous
-** memory representation of the Database Tools exists.  A contiguous memory
-** representation of the Database Tools will usually only exist if there has
+** to the contiguous memory representation of the database that SQLite
+** is currently using for that database, or NULL if the no such contiguous
+** memory representation of the database exists.  A contiguous memory
+** representation of the database will usually only exist if there has
 ** been a prior call to [sqlite3_deserialize(D,S,...)] with the same
 ** values of D and S.
-** The size of the Database Tools is written into *P even if the
+** The size of the database is written into *P even if the 
 ** SQLITE_SERIALIZE_NOCOPY bit is set but no contiguous copy
-** of the Database Tools exists.
+** of the database exists.
 **
 ** A call to sqlite3_serialize(D,S,P,F) might return NULL even if the
 ** SQLITE_SERIALIZE_NOCOPY bit is omitted from argument F if a memory
@@ -9626,7 +9626,7 @@ SQLITE_API SQLITE_EXPERIMENTAL int sqlite3_snapshot_recover(sqlite3 *db, const c
 ** [SQLITE_ENABLE_DESERIALIZE] option.
 */
 SQLITE_API unsigned char *sqlite3_serialize(
-  sqlite3 *db,           /* The Database Tools connection */
+  sqlite3 *db,           /* The database connection */
   const char *zSchema,   /* Which DB to serialize. ex: "main", "temp", ... */
   sqlite3_int64 *piSize, /* Write size of the DB here, if not NULL */
   unsigned int mFlags    /* Zero or more SQLITE_SERIALIZE_* flags */
@@ -9639,35 +9639,35 @@ SQLITE_API unsigned char *sqlite3_serialize(
 ** the F argument to [sqlite3_serialize(D,S,P,F)].
 **
 ** SQLITE_SERIALIZE_NOCOPY means that [sqlite3_serialize()] will return
-** a pointer to contiguous in-memory Database Tools that it is currently using,
-** without making a copy of the Database Tools.  If SQLite is not currently using
-** a contiguous in-memory Database Tools, then this option causes
+** a pointer to contiguous in-memory database that it is currently using,
+** without making a copy of the database.  If SQLite is not currently using
+** a contiguous in-memory database, then this option causes
 ** [sqlite3_serialize()] to return a NULL pointer.  SQLite will only be
-** using a contiguous in-memory Database Tools if it has been initialized by a
+** using a contiguous in-memory database if it has been initialized by a
 ** prior call to [sqlite3_deserialize()].
 */
 #define SQLITE_SERIALIZE_NOCOPY 0x001   /* Do no memory allocations */
 
 /*
-** CAPI3REF: Deserialize a Database Tools
+** CAPI3REF: Deserialize a database
 **
 ** The sqlite3_deserialize(D,S,P,N,M,F) interface causes the 
-** [Database Tools connection] D to disconnect from Database Tools S and then
-** reopen S as an in-memory Database Tools based on the serialization contained
-** in P.  The serialized Database Tools P is N bytes in size.  M is the size of
+** [database connection] D to disconnect from database S and then
+** reopen S as an in-memory database based on the serialization contained
+** in P.  The serialized database P is N bytes in size.  M is the size of
 ** the buffer P, which might be larger than N.  If M is larger than N, and
 ** the SQLITE_DESERIALIZE_READONLY bit is not set in F, then SQLite is
-** permitted to add content to the in-memory Database Tools as long as the total
+** permitted to add content to the in-memory database as long as the total
 ** size does not exceed M bytes.
 **
 ** If the SQLITE_DESERIALIZE_FREEONCLOSE bit is set in F, then SQLite will
-** invoke sqlite3_free() on the serialization buffer when the Database Tools
+** invoke sqlite3_free() on the serialization buffer when the database
 ** connection closes.  If the SQLITE_DESERIALIZE_RESIZEABLE bit is set, then
 ** SQLite will try to increase the buffer size using sqlite3_realloc64()
-** if writes on the Database Tools cause it to grow larger than M bytes.
+** if writes on the database cause it to grow larger than M bytes.
 **
 ** The sqlite3_deserialize() interface will fail with SQLITE_BUSY if the
-** Database Tools is currently in a read transaction or is involved in a backup
+** database is currently in a read transaction or is involved in a backup
 ** operation.
 **
 ** If sqlite3_deserialize(D,S,P,N,M,F) fails for any reason and if the 
@@ -9678,9 +9678,9 @@ SQLITE_API unsigned char *sqlite3_serialize(
 ** [SQLITE_ENABLE_DESERIALIZE] option.
 */
 SQLITE_API int sqlite3_deserialize(
-  sqlite3 *db,            /* The Database Tools connection */
+  sqlite3 *db,            /* The database connection */
   const char *zSchema,    /* Which DB to reopen with the deserialization */
-  unsigned char *pData,   /* The serialized Database Tools content */
+  unsigned char *pData,   /* The serialized database content */
   sqlite3_int64 szDb,     /* Number bytes in the deserialization */
   sqlite3_int64 szBuf,    /* Total size of buffer pData[] */
   unsigned mFlags         /* Zero or more SQLITE_DESERIALIZE_* flags */
@@ -9692,19 +9692,19 @@ SQLITE_API int sqlite3_deserialize(
 ** The following are allowed values for 6th argument (the F argument) to
 ** the [sqlite3_deserialize(D,S,P,N,M,F)] interface.
 **
-** The SQLITE_DESERIALIZE_FREEONCLOSE means that the Database Tools serialization
+** The SQLITE_DESERIALIZE_FREEONCLOSE means that the database serialization
 ** in the P argument is held in memory obtained from [sqlite3_malloc64()]
 ** and that SQLite should take ownership of this memory and automatically
 ** free it when it has finished using it.  Without this flag, the caller
 ** is responsible for freeing any dynamically allocated memory.
 **
 ** The SQLITE_DESERIALIZE_RESIZEABLE flag means that SQLite is allowed to
-** grow the size of the Database Tools using calls to [sqlite3_realloc64()].  This
+** grow the size of the database using calls to [sqlite3_realloc64()].  This
 ** flag should only be used if SQLITE_DESERIALIZE_FREEONCLOSE is also used.
-** Without this flag, the deserialized Database Tools cannot increase in size beyond
+** Without this flag, the deserialized database cannot increase in size beyond
 ** the number of bytes specified by the M parameter.
 **
-** The SQLITE_DESERIALIZE_READONLY flag means that the deserialized Database Tools
+** The SQLITE_DESERIALIZE_READONLY flag means that the deserialized database
 ** should be treated as read-only.
 */
 #define SQLITE_DESERIALIZE_FREEONCLOSE 1 /* Call sqlite3_free() on close */
@@ -9860,7 +9860,7 @@ extern "C" {
 ** CAPI3REF: Session Object Handle
 **
 ** An instance of this object is a [session] that can be used to
-** record changes to a Database Tools.
+** record changes to a database.
 */
 typedef struct sqlite3_session sqlite3_session;
 
@@ -9876,32 +9876,32 @@ typedef struct sqlite3_changeset_iter sqlite3_changeset_iter;
 ** CAPI3REF: Create A New Session Object
 ** CONSTRUCTOR: sqlite3_session
 **
-** Create a new session object attached to Database Tools handle db. If successful,
+** Create a new session object attached to database handle db. If successful,
 ** a pointer to the new object is written to *ppSession and SQLITE_OK is
 ** returned. If an error occurs, *ppSession is set to NULL and an SQLite
 ** error code (e.g. SQLITE_NOMEM) is returned.
 **
 ** It is possible to create multiple session objects attached to a single
-** Database Tools handle.
+** database handle.
 **
 ** Session objects created using this function should be deleted using the
-** [sqlite3session_delete()] function before the Database Tools handle that they
-** are attached to is itself closed. If the Database Tools handle is closed before
+** [sqlite3session_delete()] function before the database handle that they
+** are attached to is itself closed. If the database handle is closed before
 ** the session object is deleted, then the results of calling any session
 ** module function, including [sqlite3session_delete()] on the session object
 ** are undefined.
 **
 ** Because the session module uses the [sqlite3_preupdate_hook()] API, it
 ** is not possible for an application to register a pre-update hook on a
-** Database Tools handle that has one or more session objects attached. Nor is
-** it possible to create a session object attached to a Database Tools handle for
+** database handle that has one or more session objects attached. Nor is
+** it possible to create a session object attached to a database handle for
 ** which a pre-update hook is already defined. The results of attempting 
 ** either of these things are undefined.
 **
 ** The session object will be used to create changesets for tables in
-** Database Tools zDb, where zDb is either "main", or "temp", or the name of an
-** attached Database Tools. It is not an error if Database Tools zDb is not attached
-** to the Database Tools when the session object is created.
+** database zDb, where zDb is either "main", or "temp", or the name of an
+** attached database. It is not an error if database zDb is not attached
+** to the database when the session object is created.
 */
 SQLITE_API int sqlite3session_create(
   sqlite3 *db,                    /* Database handle */
@@ -9918,7 +9918,7 @@ SQLITE_API int sqlite3session_create(
 ** results of attempting to use pSession with any other session module
 ** function are undefined.
 **
-** Session objects must be deleted before the Database Tools handle to which they
+** Session objects must be deleted before the database handle to which they
 ** are attached is closed. Refer to the documentation for 
 ** [sqlite3session_create()] for details.
 */
@@ -9930,7 +9930,7 @@ SQLITE_API void sqlite3session_delete(sqlite3_session *pSession);
 ** METHOD: sqlite3_session
 **
 ** Enable or disable the recording of changes by a session object. When
-** enabled, a session object records changes made to the Database Tools. When
+** enabled, a session object records changes made to the database. When
 ** disabled - it does not. A newly created session object is enabled.
 ** Refer to the documentation for [sqlite3session_changeset()] for further
 ** details regarding how enabling and disabling a session object affects
@@ -9985,7 +9985,7 @@ SQLITE_API int sqlite3session_indirect(sqlite3_session *pSession, int bIndirect)
 ** documentation for [sqlite3session_changeset()] for further details.
 **
 ** Or, if argument zTab is NULL, then changes are recorded for all tables
-** in the Database Tools. If additional tables are added to the Database Tools (by
+** in the database. If additional tables are added to the database (by 
 ** executing "CREATE TABLE" statements) after this call is made, changes for 
 ** the new tables are also recorded.
 **
@@ -9994,7 +9994,7 @@ SQLITE_API int sqlite3session_indirect(sqlite3_session *pSession, int bIndirect)
 ** PRIMARY KEY is an "INTEGER PRIMARY KEY" (rowid alias) or not. The PRIMARY
 ** KEY may consist of a single column, or may be a composite key.
 ** 
-** It is not an error if the named table does not exist in the Database Tools. Nor
+** It is not an error if the named table does not exist in the database. Nor
 ** is it an error if the named table does not have a PRIMARY KEY. However,
 ** no changes will be recorded in either of these scenarios.
 **
@@ -10070,10 +10070,10 @@ SQLITE_API void sqlite3session_table_filter(
 **
 ** A changeset consists of zero or more INSERT, UPDATE and/or DELETE changes,
 ** each representing a change to a single row of an attached table. An INSERT
-** change contains the values of each field of a new Database Tools row. A DELETE
-** contains the original values of each field of a deleted Database Tools row. An
+** change contains the values of each field of a new database row. A DELETE
+** contains the original values of each field of a deleted database row. An
 ** UPDATE change contains the original values of each field of an updated
-** Database Tools row along with the updated values for each updated non-primary-key
+** database row along with the updated values for each updated non-primary-key
 ** column. It is not possible for an UPDATE change to represent a change that
 ** modifies the values of primary key columns. If such a change is made, it
 ** is represented in a changeset as a DELETE followed by an INSERT.
@@ -10090,12 +10090,12 @@ SQLITE_API void sqlite3session_table_filter(
 **
 ** The contents of a changeset may be traversed using an iterator created
 ** using the [sqlite3changeset_start()] API. A changeset may be applied to
-** a Database Tools with a compatible schema using the [sqlite3changeset_apply()]
+** a database with a compatible schema using the [sqlite3changeset_apply()]
 ** API.
 **
 ** Within a changeset generated by this function, all changes related to a
 ** single table are grouped together. In other words, when iterating through
-** a changeset or when applying a changeset to a Database Tools, all changes related
+** a changeset or when applying a changeset to a database, all changes related
 ** to a single table are processed before moving on to the next table. Tables
 ** are sorted in the same order in which they were attached (or auto-attached)
 ** to the sqlite3_session object. The order in which the changes related to
@@ -10125,22 +10125,22 @@ SQLITE_API void sqlite3session_table_filter(
 ** or updates a record).
 **
 ** When this function is called, the requested changeset is created using
-** both the accumulated records and the current contents of the Database Tools
+** both the accumulated records and the current contents of the database
 ** file. Specifically:
 **
 ** <ul>
-**   <li> For each record generated by an insert, the Database Tools is queried
+**   <li> For each record generated by an insert, the database is queried
 **        for a row with a matching primary key. If one is found, an INSERT
 **        change is added to the changeset. If no such row is found, no change 
 **        is added to the changeset.
 **
-**   <li> For each record generated by an update or delete, the Database Tools is
+**   <li> For each record generated by an update or delete, the database is 
 **        queried for a row with a matching primary key. If such a row is
 **        found and one or more of the non-primary key fields have been
 **        modified from their original values, an UPDATE change is added to 
 **        the changeset. Or, if no such row is found in the table, a DELETE 
 **        change is added to the changeset. If there is a row with a matching
-**        primary key in the Database Tools, but all fields contain their original
+**        primary key in the database, but all fields contain their original
 **        values, no change is added to the changeset.
 ** </ul>
 **
@@ -10178,8 +10178,8 @@ SQLITE_API int sqlite3session_changeset(
 ** does not have a primary key, this function is a no-op (but does not return
 ** an error).
 **
-** Argument zFromDb must be the name of a Database Tools ("main", "temp" etc.)
-** attached to the same Database Tools handle as the session object that contains
+** Argument zFromDb must be the name of a database ("main", "temp" etc.)
+** attached to the same database handle as the session object that contains 
 ** a table compatible with the table attached to the session by this function.
 ** A table is considered compatible if it:
 **
@@ -10195,7 +10195,7 @@ SQLITE_API int sqlite3session_changeset(
 ** APIs, tables without PRIMARY KEYs are simply ignored.
 **
 ** This function adds a set of changes to the session object that could be
-** used to update the table in Database Tools zFrom (call this the "from-table")
+** used to update the table in database zFrom (call this the "from-table") 
 ** so that its content is the same as the table attached to the session 
 ** object (call this the "to-table"). Specifically:
 **
@@ -10213,10 +10213,10 @@ SQLITE_API int sqlite3session_changeset(
 **
 ** To clarify, if this function is called and then a changeset constructed
 ** using [sqlite3session_changeset()], then after applying that changeset to 
-** Database Tools zFrom the contents of the two compatible tables would be
+** database zFrom the contents of the two compatible tables would be 
 ** identical.
 **
-** It an error if Database Tools zFrom does not exist or does not contain the
+** It an error if database zFrom does not exist or does not contain the
 ** required compatible table.
 **
 ** If the operation is successful, SQLITE_OK is returned. Otherwise, an SQLite
@@ -10544,7 +10544,7 @@ SQLITE_API int sqlite3changeset_conflict(
 ** This function may only be called with an iterator passed to an
 ** SQLITE_CHANGESET_FOREIGN_KEY conflict handler callback. In this case
 ** it sets the output variable to the total number of known foreign key
-** violations in the destination Database Tools and returns SQLITE_OK.
+** violations in the destination database and returns SQLITE_OK.
 **
 ** In all other cases this function returns SQLITE_MISUSE.
 */
@@ -10590,7 +10590,7 @@ SQLITE_API int sqlite3changeset_finalize(sqlite3_changeset_iter *pIter);
 ** CAPI3REF: Invert A Changeset
 **
 ** This function is used to "invert" a changeset object. Applying an inverted
-** changeset to a Database Tools reverses the effects of applying the uninverted
+** changeset to a database reverses the effects of applying the uninverted
 ** changeset. Specifically:
 **
 ** <ul>
@@ -10819,8 +10819,8 @@ SQLITE_API void sqlite3changegroup_delete(sqlite3_changegroup*);
 /*
 ** CAPI3REF: Apply A Changeset To A Database
 **
-** Apply a changeset or patchset to a Database Tools. These functions attempt to
-** update the "main" Database Tools attached to handle db with the changes found in
+** Apply a changeset or patchset to a database. These functions attempt to
+** update the "main" database attached to handle db with the changes found in
 ** the changeset passed via the second and third arguments. 
 **
 ** The fourth argument (xFilter) passed to these functions is the "filter
@@ -10833,7 +10833,7 @@ SQLITE_API void sqlite3changegroup_delete(sqlite3_changegroup*);
 ** is NULL, all changes related to the table are attempted.
 **
 ** For each table that is not excluded by the filter callback, this function 
-** tests that the target Database Tools contains a compatible table. A table is
+** tests that the target database contains a compatible table. A table is 
 ** considered compatible if all of the following are true:
 **
 ** <ul>
@@ -10875,22 +10875,22 @@ SQLITE_API void sqlite3changegroup_delete(sqlite3_changegroup*);
 **
 ** <dl>
 ** <dt>DELETE Changes<dd>
-**   For each DELETE change, the function checks if the target Database Tools
+**   For each DELETE change, the function checks if the target database 
 **   contains a row with the same primary key value (or values) as the 
 **   original row values stored in the changeset. If it does, and the values 
 **   stored in all non-primary key columns also match the values stored in 
-**   the changeset the row is deleted from the target Database Tools.
+**   the changeset the row is deleted from the target database.
 **
 **   If a row with matching primary key values is found, but one or more of
 **   the non-primary key fields contains a value different from the original
 **   row value stored in the changeset, the conflict-handler function is
 **   invoked with [SQLITE_CHANGESET_DATA] as the second argument. If the
-**   Database Tools table has more columns than are recorded in the changeset,
+**   database table has more columns than are recorded in the changeset,
 **   only the values of those non-primary key fields are compared against
-**   the current Database Tools contents - any trailing Database Tools table columns
+**   the current database contents - any trailing database table columns
 **   are ignored.
 **
-**   If no row with matching primary key values is found in the Database Tools,
+**   If no row with matching primary key values is found in the database,
 **   the conflict-handler function is invoked with [SQLITE_CHANGESET_NOTFOUND]
 **   passed as the second argument.
 **
@@ -10903,11 +10903,11 @@ SQLITE_API void sqlite3changegroup_delete(sqlite3_changegroup*);
 **
 ** <dt>INSERT Changes<dd>
 **   For each INSERT change, an attempt is made to insert the new row into
-**   the Database Tools. If the changeset row contains fewer fields than the
-**   Database Tools table, the trailing fields are populated with their default
+**   the database. If the changeset row contains fewer fields than the
+**   database table, the trailing fields are populated with their default
 **   values.
 **
-**   If the attempt to insert the row fails because the Database Tools already
+**   If the attempt to insert the row fails because the database already 
 **   contains a row with the same primary key values, the conflict handler
 **   function is invoked with the second argument set to 
 **   [SQLITE_CHANGESET_CONFLICT].
@@ -10920,11 +10920,11 @@ SQLITE_API void sqlite3changegroup_delete(sqlite3_changegroup*);
 **   [SQLITE_CHANGESET_REPLACE].
 **
 ** <dt>UPDATE Changes<dd>
-**   For each UPDATE change, the function checks if the target Database Tools
+**   For each UPDATE change, the function checks if the target database 
 **   contains a row with the same primary key value (or values) as the 
 **   original row values stored in the changeset. If it does, and the values 
 **   stored in all modified non-primary key columns also match the values
-**   stored in the changeset the row is updated within the target Database Tools.
+**   stored in the changeset the row is updated within the target database.
 **
 **   If a row with matching primary key values is found, but one or more of
 **   the modified non-primary key fields contains a value different from an
@@ -10934,7 +10934,7 @@ SQLITE_API void sqlite3changegroup_delete(sqlite3_changegroup*);
 **   to be modified, only those fields need to match the original values to
 **   avoid the SQLITE_CHANGESET_DATA conflict-handler callback.
 **
-**   If no row with matching primary key values is found in the Database Tools,
+**   If no row with matching primary key values is found in the database,
 **   the conflict-handler function is invoked with [SQLITE_CHANGESET_NOTFOUND]
 **   passed as the second argument.
 **
@@ -10953,8 +10953,8 @@ SQLITE_API void sqlite3changegroup_delete(sqlite3_changegroup*);
 **
 ** All changes made by these functions are enclosed in a savepoint transaction.
 ** If any other error (aside from a constraint failure when attempting to
-** write to the target Database Tools) occurs, then the savepoint transaction is
-** rolled back, restoring the target Database Tools to its original state, and an
+** write to the target database) occurs, then the savepoint transaction is
+** rolled back, restoring the target database to its original state, and an 
 ** SQLite error code returned.
 **
 ** If the output parameters (ppRebase) and (pnRebase) are non-NULL and
@@ -11040,17 +11040,17 @@ SQLITE_API int sqlite3changeset_apply_v2(
 ** <dt>SQLITE_CHANGESET_DATA<dd>
 **   The conflict handler is invoked with CHANGESET_DATA as the second argument
 **   when processing a DELETE or UPDATE change if a row with the required
-**   PRIMARY KEY fields is present in the Database Tools, but one or more other
+**   PRIMARY KEY fields is present in the database, but one or more other 
 **   (non primary-key) fields modified by the update do not contain the 
 **   expected "before" values.
 ** 
-**   The conflicting row, in this case, is the Database Tools row with the matching
+**   The conflicting row, in this case, is the database row with the matching
 **   primary key.
 ** 
 ** <dt>SQLITE_CHANGESET_NOTFOUND<dd>
 **   The conflict handler is invoked with CHANGESET_NOTFOUND as the second
 **   argument when processing a DELETE or UPDATE change if a row with the
-**   required PRIMARY KEY fields is not present in the Database Tools.
+**   required PRIMARY KEY fields is not present in the database.
 ** 
 **   There is no conflicting row in this case. The results of invoking the
 **   sqlite3changeset_conflict() API are undefined.
@@ -11060,12 +11060,12 @@ SQLITE_API int sqlite3changeset_apply_v2(
 **   handler while processing an INSERT change if the operation would result 
 **   in duplicate primary key values.
 ** 
-**   The conflicting row in this case is the Database Tools row with the matching
+**   The conflicting row in this case is the database row with the matching
 **   primary key.
 **
 ** <dt>SQLITE_CHANGESET_FOREIGN_KEY<dd>
 **   If foreign key handling is enabled, and applying a changeset leaves the
-**   Database Tools in a state containing foreign key violations, the conflict
+**   database in a state containing foreign key violations, the conflict 
 **   handler is invoked with CHANGESET_FOREIGN_KEY as the second argument
 **   exactly once before the changeset is committed. If the conflict handler
 **   returns CHANGESET_OMIT, the changes, including those that caused the
@@ -11114,9 +11114,9 @@ SQLITE_API int sqlite3changeset_apply_v2(
 **   on the type of change.
 **
 **   If CHANGESET_REPLACE is returned by an SQLITE_CHANGESET_CONFLICT conflict
-**   handler, then the conflicting row is removed from the Database Tools and a
+**   handler, then the conflicting row is removed from the database and a
 **   second attempt to apply the change is made. If this second attempt fails,
-**   the original row is restored to the Database Tools before continuing.
+**   the original row is restored to the database before continuing.
 **
 ** <dt>SQLITE_CHANGESET_ABORT<dd>
 **   If this value is returned, any changes applied so far are rolled back 
@@ -11131,11 +11131,11 @@ SQLITE_API int sqlite3changeset_apply_v2(
 ** CAPI3REF: Rebasing changesets
 ** EXPERIMENTAL
 **
-** Suppose there is a site hosting a Database Tools in state S0. And that
-** modifications are made that move that Database Tools to state S1 and a
+** Suppose there is a site hosting a database in state S0. And that
+** modifications are made that move that database to state S1 and a
 ** changeset recorded (the "local" changeset). Then, a changeset based
 ** on S0 is received from another site (the "remote" changeset) and 
-** applied to the Database Tools. The Database Tools is then in state
+** applied to the database. The database is then in state 
 ** (S1+"remote"), where the exact state depends on any conflict
 ** resolution decisions (OMIT or REPLACE) made while applying "remote".
 ** Rebasing a changeset is to update it to take those conflict 
@@ -11208,7 +11208,7 @@ SQLITE_API int sqlite3changeset_apply_v2(
 ** OMIT.
 **
 ** In order to rebase a local changeset, the remote changeset must first
-** be applied to the local Database Tools using sqlite3changeset_apply_v2() and
+** be applied to the local database using sqlite3changeset_apply_v2() and
 ** the buffer of rebase information captured. Then:
 **
 ** <ol>
@@ -11870,7 +11870,7 @@ struct Fts5ExtensionApi {
 **       <li> <b>FTS5_TOKENIZE_AUX</b> - The tokenizer is being invoked to 
 **            satisfy an fts5_api.xTokenize() request made by an auxiliary
 **            function. Or an fts5_api.xColumnSize() request made by the same
-**            on a columnsize=0 Database Tools.
+**            on a columnsize=0 database.  
 **   </ul>
 **
 **   For each token in the input string, the supplied callback xToken() must
@@ -11987,7 +11987,7 @@ struct Fts5ExtensionApi {
 **   because the index contains entries for both "first" and "1st", prefix
 **   queries such as 'fi*' or '1s*' will match correctly. However, because
 **   extra entries are added to the FTS index, this method uses more space
-**   within the Database Tools.
+**   within the database.
 **
 **   Method (2) offers a midpoint between (1) and (3). Using this method,
 **   a query such as '1s*' will match documents that contain the literal 

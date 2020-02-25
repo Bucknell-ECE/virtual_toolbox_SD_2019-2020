@@ -17,7 +17,7 @@
  * Same goes for any #define statements for Macro values.
  */
 #include "ToolScanner.h"
-
+using namespace std;
 
 
 /**
@@ -46,7 +46,13 @@ ToolScanner::ToolScanner() {
     * IDs that are in the physical ToolBox.
     */
 vector<string> ToolScanner::scanForTools(){
-
+    vector<string> vec;
+    int offset = 100000000;
+    int i;
+    for(i = 0; i < 495; i++){
+        vec.push_back(to_string(offset + i));
+    }
+    return vec;
 }
 
 /**

@@ -70,10 +70,15 @@ void SQLiteDatabase::findMissingTool(vector<string> toolIDs) {
     }
     //Build command
 
-    string cmd = "SELECT * FROM TOOLS WHERE ID NOT IN " + idList + ";";
+    string cmd = "SELECT * FROM TOOLS WHERE ID NOT IN " + idList + ";";    
+    cout << "CMD" << endl;
     char* errMsg;
-    sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void*)"MISS", &errMsg);
+    int rv = sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void*)"MISS", &errMsg);
     //Get response
+    cout << rv << endl;
+    if (rv)
+        cout << errMsg << endl;
+    cout << "END" << endl;
     missingIDs = getMissingIDVec();
 }
 
@@ -145,9 +150,12 @@ string SQLiteDatabase::selectToolByName(string toolName, string table) {
 }
 
 vector<string> SQLiteDatabase::getMissingIDs() {
+    cout << "missing tool" << endl;
+    findMissingTool();
     return missingIDs;
 }
 
 vector<string> SQLiteDatabase::getNewIDs() {
+    findNewTool();
     return newIDs;
 }
