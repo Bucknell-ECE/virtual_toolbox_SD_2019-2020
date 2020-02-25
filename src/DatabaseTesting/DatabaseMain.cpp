@@ -9,7 +9,7 @@
 
 using namespace std;
 
-string filepath = "C:/Users/MattTurconi/virtual_toolbox_SD_2019-2020/test_databases/";
+string filepath = "dbFiles/";
 int id_offset = 100000000;
 
 
@@ -103,8 +103,14 @@ void printVec(vector<string> vec){
 
 
 int main(int argc, char* argv[]){
-    ToolScanner* tl = new ToolScanner();
-    SQLiteDatabase* db = new SQLiteDatabase(filepath + "ToolBoxStr300.db", tl);
+    createDatabaseOfSize(500, "ToolBox500.db");
+    
+    
+    
+//    ToolScanner* tl = new ToolScanner();
+//    SQLiteDatabase* db = new SQLiteDatabase(filepath + "ToolBox500.db", tl);
+    
+    
 
 //    vector<string> vec_missing = getUniqueRandIDs(300, 1, 3);
 //    vector<string> vec_without_missing = getMissingIDListTester(vec_missing, 300);

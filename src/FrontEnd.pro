@@ -25,7 +25,7 @@ HEADERS += FrontEnd/missing_model.h \
            FrontEnd/registerwidget.h \
 	   FrontEnd/mainwidget.h \
 	   DatabaseTools/SQLiteDatabase.h \
-	   ../HardwareSkeletonCode/ToolScanner.h \
+	   HardwareSkeletonCode/ToolScanner.h \
 	   ../sqlite3/sqlite3.h \
 	   DatabaseTools/CallbackFunctions.cpp
 	   #dlfcn.h	   
@@ -34,6 +34,6 @@ SOURCES += mvc.cpp \
            FrontEnd/registerwidget.cpp \
 	   FrontEnd/mainwidget.cpp \
 	   DatabaseTools/SQLiteDatabase.cpp \
-	   ../HardwareSkeletonCode/ToolScanner.cpp \
+	   HardwareSkeletonCode/ToolScanner.cpp \
 	   ../sqlite3/sqlite3.c \
 	   DatabaseTools/CallbackFunctions.cpp
