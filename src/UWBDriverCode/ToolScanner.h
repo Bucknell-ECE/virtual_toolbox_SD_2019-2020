@@ -1,5 +1,6 @@
 //
 // Created by MattTurconi on 2/5/2020.
+// Edited by Owen Meng on 02/25/2020
 //
 /**
  * This file is part of the Virtual Toolbox system.
@@ -26,6 +27,15 @@
 #include <cstring>
 using namespace std;
 
+// Distances for tracking, in mm
+#define X_MIN 0
+#define X_MAX 830
+#define Y_MIN -2380
+#define Y_MAX 0
+#define Z_MIN 0
+#define Z_MAX 1350
+#define D 1000 // DELTA. Allowed error in accuracy
+
 /**
  * The ToolScanner class will allow the backend of the virtual toolbox
  * to communicate with physical hardware.
@@ -39,16 +49,16 @@ class ToolScanner {
 private:
     //TODO Define any attributes that this class will have specific to your implementation
     //TODO Define any class constants here
-    int fd;
-    char ch;
-    char str[33];
-    char* tok;
+    int fd;  // Pipe for UART
+    char ch;  // Buffer to store read byte from UART
+    char str[33];  // Buffer to glue together all the bytes
+    char* tok;  // Tokenized keyword from UART to extract tag info
     
-    int tag_name;
-    int tag_x;
-    int tag_y;
-    int tag_z;
-    int tag_quality;
+    int tag_name;  // Name of the tag in int
+    int tag_x;  // X in mm
+    int tag_y;  // Y in mm
+    int tag_z;  // Z in mm
+    int tag_quality; // Estimated quality of the signal, 0 is misreading
 
     /**
      * This is where functions that are able to be called on your object are specified
@@ -82,6 +92,13 @@ public:
      */
     void setupScanner();
 
+    /**
+     * Determine if the position is in the truck based on xyz.
+     * Return True if is in truck.
+     */
+    bool isInTruck(int x, int y, int z, int q);
+    
+    vector<string> removeDuplicates(vector<string> vec);
     //TODO if needed put your helper functions here. Add documentation
     //TODO define any getters and setters for each private variable.
 };

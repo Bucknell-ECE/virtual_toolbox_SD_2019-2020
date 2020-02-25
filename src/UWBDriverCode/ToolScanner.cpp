@@ -1,5 +1,6 @@
 //
 // Created by MattTurconi on 2/5/2020.
+// Edited by Owen Meng on 02/25/2020
 //
 /**
  * This file is part of the Virtual Toolbox system.
@@ -45,12 +46,50 @@ ToolScanner::ToolScanner() {
     * The returned list is assumed to have a complete and accurate list of tool
     * IDs that are in the physical ToolBox.
     */
-vector<string> ToolScanner::scanForTools(){
+vector<string> ToolScanner::scanForTools(){    
+    // Set timer
+    time_t start,end;
+    double elapsed;
+    start = time(NULL);
+    int terminate = 1;
+    
+    // Buffer to store strings of tools in the truck
     vector<string> vec;
-    int offset = 100000000;
-    int i;
-    for(i = 0; i < 495; i++){
-        vec.push_back(to_string(offset + i));
+    
+    // Run until timer ends
+    while (terminate) {
+        strcpy(str,"");
+        ch = serialGetchar(fd);
+        while (ch != '\n') {
+            strncat(str,&ch,1);
+            ch = serialGetchar(fd);
+        }
+        // Rocord the correctly formated position update
+        if ((strstr(str, "POS") != NULL) && (strstr(str, " ") == NULL)) {
+            tok = strtok(str,",");
+            tok = strtok(NULL,",");
+            tok = strtok(NULL,",");
+            sscanf(tok,"%x",&tag_name);
+            tok = strtok(NULL,",");
+            tag_x = (int) (1000*atof(tok));
+            tok = strtok(0,",");
+            tag_y = (int) (1000*atof(tok));
+            tok = strtok(0,",");
+            tag_z = (int) (1000*atof(tok));
+            tok = strtok(0,",");
+            tag_quality = atof(tok);
+            
+            if (isInTruck(tag_x,tag_y,tag_z,tag_quality)) {
+                vec.push_back(to_string(tag_name));
+            }
+        }
+        
+        // Update the timer
+        end = time(NULL);
+        elapsed = difftime(end,start);
+        if (elapsed >= 5 /* seconds */) {
+            terminate = 0;
+        }
     }
     return vec;
 }
@@ -68,7 +107,7 @@ void ToolScanner::setupScanner(){
     // Setup UART and wiringPi
     if ((fd = serialOpen("/dev/serial0",115200))<0){
         fprintf(stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
-        // return 1 ;
+        // return 1 ; // I don't know what to put here
     }
     if (wiringPiSetup () == -1) {
         fprintf (stdout, "Unable to start wiringPi: %s\n", strerror (errno)) ;
@@ -87,4 +126,21 @@ void ToolScanner::setupScanner(){
 
 //TODO Write any getters and setters
 //TODO Write any helper methods
+
+bool ToolScanner::isInTruck(int x,int y,int z, int q) {
+    if (q != 0)
+        if ((X_MIN-D)<x)
+            if (x<(X_MAX+D))
+                if ((Y_MIN-D)<y)
+                    if (y<(Y_MAX+D))
+                        if ((Z_MIN-D)<z)
+                            if (z<(Z_MAX+D))
+                                return true;
+    return false;
+}
+
+vector<string> removeDuplicates(vector<string> vec) {
+    // TODO
+    return vec;
+}
 

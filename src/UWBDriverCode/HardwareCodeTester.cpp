@@ -1,5 +1,6 @@
 //
 // Created by MattTurconi on 2/5/2020.
+// Edited by Owen Meng on 02/25/2020
 //
 
 #include "ToolScanner.h"
@@ -21,5 +22,4 @@ int main(int argc, char *argv[]) {
     for (auto it = input.begin(); it != input.end(); it++) {
         std::cout << *it << " ";
     }
-    
 }
