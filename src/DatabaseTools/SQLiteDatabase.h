@@ -89,9 +89,10 @@ public:
      * If a list of tools are not provided, a list will be requested from the tool
      * scanner object
      *
+     * @param retColField an optional string identfier
      * @param toolIDs an optional list of tool IDs
      */
-    void findMissingTool(vector<string> toolIDs = {});
+    void findMissingTool(string retColField = "", vector<string> toolIDs = {});
 
     /**
      * Dumps the whole database to the terminal
@@ -112,20 +113,38 @@ public:
      *
      * If a list of tools are not provided, a list will be requested from the tool
      * scanner object
+     * If a ToolScanner object is not provided the ToolScanner object that was provided
+     * at object creation will be used
      *
      * @param toolIDs an optional list of tool IDs
      */
-    void findNewTool(vector<string> toolIDs = {});
+    vector<string> findNewTool(ToolScanner* ts = nullptr, vector<string> toolIDs = {});
+
+    /**
+     * Registers a tool given a tool name string
+     *
+     * @param toolName the name of the tool
+     * @param ts an optional tool scanner object to get the list of toolIds from
+     * @return a 1 on success and a 0 on error
+     */
+    int registerNewTool(string toolName, ToolScanner* ts = nullptr);
 
     /**
      * Calls the find missing tool function and returns a list of string ids
      *
      * @return A vector of string ids
      */
-    vector<string> getMissingIDs();
+    vector<string> getMissingToolIDs();
 
     /**
-     * Calls the find ne tool function and returns a list of new string ids
+     * Calls the find missing tool function and returns a list of tool names that are missing
+     *
+     * @return A vector of tool string names
+     */
+    vector<string> getMissingToolNames();
+
+    /**
+     * A getter method for the list of new string ids after a findNewTools call
      *
      * @return A vector of new string ids
      */

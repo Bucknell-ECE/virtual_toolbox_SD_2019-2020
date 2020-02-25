@@ -55,10 +55,12 @@ void SQLiteDatabase::addTool(string ID, string toolName) {
 }
 
 //Done...
-void SQLiteDatabase::findMissingTool(vector<string> toolIDs) {
+void SQLiteDatabase::findMissingTool(string retColField, vector<string> toolIDs) {
     //If no list was provided we need to get it from teh scanner
     if(toolIDs.size() == 0)
         toolIDs = toolScanner->scanForTools();
+    if(retColField == "")
+        retColField = "ID";
     //Build list of ID's to pass to the select command
     string idList = "( VALUES";
     int i;
@@ -70,26 +72,17 @@ void SQLiteDatabase::findMissingTool(vector<string> toolIDs) {
     }
     //Build command
 
-    string cmd = "SELECT * FROM TOOLS WHERE ID NOT IN " + idList + ";";    
-    cout << "CMD" << endl;
+    string cmd = "SELECT " + retColField + " FROM TOOLS WHERE ID NOT IN " + idList + ";";
     char* errMsg;
     int rv = sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void*)"MISS", &errMsg);
     //Get response
-    cout << rv << endl;
     if (rv)
         cout << errMsg << endl;
-    cout << "END" << endl;
     missingIDs = getMissingIDVec();
 }
 
-/**
- * WITH ids (ID) AS (VALUES (12554455), (2252252), (52464455), (12665455), (12666555))
- * SELECT * FROM ids WHERE ID NOT IN ( SELECT ID FROM TOOLS );
- * @param toolIDs
- * @return
- */
  //Done
-void SQLiteDatabase::findNewTool(vector<string> toolIDs){
+ vector<string> SQLiteDatabase::findNewTool(ToolScanner* ts, vector<string> toolIDs){
     //If no tool list is provided we need to get it from the user.
     if(toolIDs.size() == 0)
         toolIDs = toolScanner->scanForTools();
@@ -114,6 +107,20 @@ void SQLiteDatabase::findNewTool(vector<string> toolIDs){
 
     vector<string> idxs = getNewIDVec();
     newIDs = idxs;
+    return newIDs;
+}
+
+int SQLiteDatabase::registerNewTool(string toolName, ToolScanner *tls) {
+    vector<string> ids;
+    if(tls == nullptr)
+        ids = findNewTool();
+    else
+        ids = findNewTool(tls);
+
+    if(ids.size() == 1)
+        addTool(toolName,ids[0]);
+    else
+        return 0;
 }
 
 //Done
@@ -149,13 +156,16 @@ string SQLiteDatabase::selectToolByName(string toolName, string table) {
     return getSelectResponse();
 }
 
-vector<string> SQLiteDatabase::getMissingIDs() {
-    cout << "missing tool" << endl;
+vector<string> SQLiteDatabase::getMissingToolIDs() {
     findMissingTool();
     return missingIDs;
 }
 
 vector<string> SQLiteDatabase::getNewIDs() {
-    findNewTool();
     return newIDs;
+}
+
+vector<string> SQLiteDatabase::getMissingToolNames() {
+     findMissingTool("NAME");
+     return missingIDs;
 }

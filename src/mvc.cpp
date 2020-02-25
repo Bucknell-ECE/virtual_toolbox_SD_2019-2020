@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
      * Everything in here should be in some loop
      */
     //Gets the missing tools
-    missing = db_tools->getMissingIDs();
+    missing = db_tools->getMissingToolIDs();
     
     //Converts into UI string object
     for (int i = 0; i < missing.size(); i++){

@@ -191,7 +191,7 @@ int main(int argc, char * argv[]) {
 
 //
 //    cout<<"MISSING RETURNED"<<endl;
-//    vector<int> ret = db->getMissingIDs();
+//    vector<int> ret = db->getMissingToolIDs();
 //    printVec(ret);
 //    cout<<"Check Resp: " << checkMissingIDs(missing,ret) << endl;
 }

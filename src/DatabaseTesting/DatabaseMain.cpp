@@ -2,14 +2,14 @@
 // Created by MattTurconi on 2/22/2020.
 //
 
-#include "../Database Tools/SQLiteDatabase.h"
+#include "../DatabaseTools/SQLiteDatabase.h"
 #include <iostream>
 #include <random>
 #include <ctime>
 
 using namespace std;
 
-string filepath = "dbFiles/";
+string filepath = "../test_databases/";
 int id_offset = 100000000;
 
 
@@ -103,22 +103,12 @@ void printVec(vector<string> vec){
 
 
 int main(int argc, char* argv[]){
-    createDatabaseOfSize(500, "ToolBox500.db");
-    
-    
-    
-//    ToolScanner* tl = new ToolScanner();
-//    SQLiteDatabase* db = new SQLiteDatabase(filepath + "ToolBox500.db", tl);
-    
-    
 
-//    vector<string> vec_missing = getUniqueRandIDs(300, 1, 3);
-//    vector<string> vec_without_missing = getMissingIDListTester(vec_missing, 300);
-//    printVec(vec_missing);
-//
-//    db->findMissingTool(vec_without_missing);
-//    vector<string> retIds = db->getMissingIDs();
-//    printVec(retIds);
+    ToolScanner* tl = new ToolScanner();
+    SQLiteDatabase* db = new SQLiteDatabase(filepath + "ToolBox500.db", tl);
+
+    vector<string> vec = db->getMissingToolNames();
+    printVec(vec);
 
 
     return 0;
