@@ -1,5 +1,6 @@
 //
 // Created by MattTurconi on 2/5/2020.
+// Edited by Owen Meng on 02/25/2020
 //
 /**
  * This file is part of the Virtual Toolbox system.
@@ -35,6 +36,7 @@ using namespace std;
  */
 ToolScanner::ToolScanner() {
     printf("Created Object\n");
+    setupScanner();
 }
 
 /**
@@ -45,14 +47,67 @@ ToolScanner::ToolScanner() {
     * The returned list is assumed to have a complete and accurate list of tool
     * IDs that are in the physical ToolBox.
     */
-vector<string> ToolScanner::scanForTools(){
+vector<string> ToolScanner::scanForTools(){    
+    // Set timer
+    time_t start,end;
+    double elapsed;
+    start = time(NULL);
+    int terminate = 1;
+    
+    // Buffer to store strings of tools in the truck
     vector<string> vec;
-    int offset = 100000000;
-    int i;
-    for(i = 0; i < 495; i++){
-        vec.push_back(to_string(offset + i));
+    
+    // Run until timer ends
+    while (terminate) {
+        if (DEBUG) {
+            std::cout << "Loop again \n";
+        }
+        strcpy(str,"");
+        ch = serialGetchar(fd);
+        while (ch != '\n') {
+            strncat(str,&ch,1);
+            ch = serialGetchar(fd);
+        }
+        
+        if (DEBUG) {
+            std::cout << "Data: " << str << "\n";
+        }
+        
+        // Rocord the correctly formated position update
+        if ((strstr(str, "POS") != NULL) && (strstr(str, " ") == NULL)) {
+            tok = strtok(str,",");
+            tok = strtok(NULL,",");
+            tok = strtok(NULL,",");
+            sscanf(tok,"%x",&tag_name);
+            tok = strtok(NULL,",");
+            tag_x = (int) (1000*atof(tok));
+            tok = strtok(0,",");
+            tag_y = (int) (1000*atof(tok));
+            tok = strtok(0,",");
+            tag_z = (int) (1000*atof(tok));
+            tok = strtok(0,",");
+            tag_quality = atof(tok);
+            
+            if (isInTruck(tag_x,tag_y,tag_z,tag_quality)) {
+                vec.push_back(to_string(tag_name));
+                if (DEBUG) {
+                    std::cout << tag_name << " is in\n";
+                }
+            } else {
+                if (DEBUG) {
+                    std::cout << tag_name << " is out\n";
+                }
+            }
+        }
+        
+        // Update the timer
+        end = time(NULL);
+        elapsed = difftime(end,start);
+        if (elapsed >= 10 /* seconds */) {
+            terminate = 0;
+        }
     }
-    return vec;
+    return removeDuplicates(vec);
 }
 
 /**
@@ -65,9 +120,44 @@ vector<string> ToolScanner::scanForTools(){
  * the scanner is not physically connected to the PI correctly.
  */
 void ToolScanner::setupScanner(){
+    // Setup UART and wiringPi
+    if ((fd = serialOpen("/dev/serial0",115200))<0){
+        fprintf(stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
+        // return 1 ; // I don't know what to put here
+    }
+    if (wiringPiSetup () == -1) {
+        fprintf (stdout, "Unable to start wiringPi: %s\n", strerror (errno)) ;
+        // return 1 ;
+    }
 
+    // Enter UART shell mode
+	serialPrintf(fd,"\r\r");
+    delay(2000);
+    // Activate listener mode
+    //serialPrintf(fd,"lec\r");
+    //delay(2000);
+    serialPrintf(fd,"lep\r");
+    delay(2000);
 }
 
 //TODO Write any getters and setters
 //TODO Write any helper methods
+
+bool ToolScanner::isInTruck(int x,int y,int z, int q) {
+    if (q != 0)
+        if ((X_MIN-D)<x)
+            if (x<(X_MAX+D))
+                if ((Y_MIN-D)<y)
+                    if (y<(Y_MAX+D))
+                        if ((Z_MIN-D)<z)
+                            if (z<(Z_MAX+D))
+                                return true;
+    return false;
+}
+
+vector<string> ToolScanner::removeDuplicates(vector<string> vec) {
+    sort(vec.begin(),vec.end());
+    vec.erase(unique(vec.begin(),vec.end()),vec.end());
+    return vec;
+}
 

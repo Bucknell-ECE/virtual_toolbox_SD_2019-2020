@@ -12,7 +12,7 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_TESTLIB_LIB -DQT_SQL_LIB -DQT_CORE_LIB -DQT_TESTCASE_BUILDDIR='"/home/pi/Downloads/virtual_toolbox_SD_2019-2020-master/src"'
+DEFINES       = -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_TESTLIB_LIB -DQT_SQL_LIB -DQT_CORE_LIB -DQT_TESTCASE_BUILDDIR='"/home/pi/Downloads/virtual_toolbox_SD_2019-2020-UWB/src"'
 CFLAGS        = -pipe -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 INCPATH       = -I. -I. -isystem /usr/include/arm-linux-gnueabihf/qt5 -isystem /usr/include/arm-linux-gnueabihf/qt5/QtWidgets -isystem /usr/include/arm-linux-gnueabihf/qt5/QtGui -isystem /usr/include/arm-linux-gnueabihf/qt5/QtTest -isystem /usr/include/arm-linux-gnueabihf/qt5/QtSql -isystem /usr/include/arm-linux-gnueabihf/qt5/QtCore -I. -I/usr/lib/arm-linux-gnueabihf/qt5/mkspecs/linux-g++
@@ -35,10 +35,10 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = VirtualToolbox1.0.0
-DISTDIR = /home/pi/Downloads/virtual_toolbox_SD_2019-2020-master/src/.tmp/VirtualToolbox1.0.0
+DISTDIR = /home/pi/Downloads/virtual_toolbox_SD_2019-2020-UWB/src/.tmp/VirtualToolbox1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1
-LIBS          = $(SUBLIBS) -ldl -pthread -lQt5Widgets -lQt5Gui -lQt5Test -lQt5Sql -lQt5Core -lGLESv2 -lpthread -latomic 
+LIBS          = $(SUBLIBS) -ldl -pthread -lwiringPi -lQt5Widgets -lQt5Gui -lQt5Test -lQt5Sql -lQt5Core -lGLESv2 -lpthread -latomic 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -54,7 +54,7 @@ SOURCES       = mvc.cpp \
 		FrontEnd/registerwidget.cpp \
 		FrontEnd/mainwidget.cpp \
 		DatabaseTools/SQLiteDatabase.cpp \
-		HardwareSkeletonCode/ToolScanner.cpp \
+		UWBDriverCode/ToolScanner.cpp \
 		../sqlite3/sqlite3.c \
 		DatabaseTools/CallbackFunctions.cpp moc_registerwidget.cpp \
 		moc_mainwidget.cpp
@@ -146,13 +146,13 @@ DIST          = /usr/lib/arm-linux-gnueabihf/qt5/mkspecs/features/spec_pre.prf \
 		FrontEnd/registerwidget.h \
 		FrontEnd/mainwidget.h \
 		DatabaseTools/SQLiteDatabase.h \
-		HardwareSkeletonCode/ToolScanner.h \
+		UWBDriverCode/ToolScanner.h \
 		../sqlite3/sqlite3.h \
 		DatabaseTools/CallbackFunctions.cpp mvc.cpp \
 		FrontEnd/registerwidget.cpp \
 		FrontEnd/mainwidget.cpp \
 		DatabaseTools/SQLiteDatabase.cpp \
-		HardwareSkeletonCode/ToolScanner.cpp \
+		UWBDriverCode/ToolScanner.cpp \
 		../sqlite3/sqlite3.c \
 		DatabaseTools/CallbackFunctions.cpp
 QMAKE_TARGET  = VirtualToolbox
@@ -344,8 +344,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/arm-linux-gnueabihf/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents FrontEnd/missing_model.h FrontEnd/registerwidget.h FrontEnd/mainwidget.h DatabaseTools/SQLiteDatabase.h HardwareSkeletonCode/ToolScanner.h ../sqlite3/sqlite3.h DatabaseTools/CallbackFunctions.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents mvc.cpp FrontEnd/registerwidget.cpp FrontEnd/mainwidget.cpp DatabaseTools/SQLiteDatabase.cpp HardwareSkeletonCode/ToolScanner.cpp ../sqlite3/sqlite3.c DatabaseTools/CallbackFunctions.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents FrontEnd/missing_model.h FrontEnd/registerwidget.h FrontEnd/mainwidget.h DatabaseTools/SQLiteDatabase.h UWBDriverCode/ToolScanner.h ../sqlite3/sqlite3.h DatabaseTools/CallbackFunctions.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents mvc.cpp FrontEnd/registerwidget.cpp FrontEnd/mainwidget.cpp DatabaseTools/SQLiteDatabase.cpp UWBDriverCode/ToolScanner.cpp ../sqlite3/sqlite3.c DatabaseTools/CallbackFunctions.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -383,13 +383,13 @@ compiler_moc_header_clean:
 moc_registerwidget.cpp: FrontEnd/registerwidget.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/pi/Downloads/virtual_toolbox_SD_2019-2020-master/src/moc_predefs.h -I/usr/lib/arm-linux-gnueabihf/qt5/mkspecs/linux-g++ -I/home/pi/Downloads/virtual_toolbox_SD_2019-2020-master/src -I/home/pi/Downloads/virtual_toolbox_SD_2019-2020-master/src -I/usr/include/arm-linux-gnueabihf/qt5 -I/usr/include/arm-linux-gnueabihf/qt5/QtWidgets -I/usr/include/arm-linux-gnueabihf/qt5/QtGui -I/usr/include/arm-linux-gnueabihf/qt5/QtTest -I/usr/include/arm-linux-gnueabihf/qt5/QtSql -I/usr/include/arm-linux-gnueabihf/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/arm-linux-gnueabihf/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/arm-linux-gnueabihf/8/include -I/usr/local/include -I/usr/lib/gcc/arm-linux-gnueabihf/8/include-fixed -I/usr/include/arm-linux-gnueabihf -I/usr/include FrontEnd/registerwidget.h -o moc_registerwidget.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/pi/Downloads/virtual_toolbox_SD_2019-2020-UWB/src/moc_predefs.h -I/usr/lib/arm-linux-gnueabihf/qt5/mkspecs/linux-g++ -I/home/pi/Downloads/virtual_toolbox_SD_2019-2020-UWB/src -I/home/pi/Downloads/virtual_toolbox_SD_2019-2020-UWB/src -I/usr/include/arm-linux-gnueabihf/qt5 -I/usr/include/arm-linux-gnueabihf/qt5/QtWidgets -I/usr/include/arm-linux-gnueabihf/qt5/QtGui -I/usr/include/arm-linux-gnueabihf/qt5/QtTest -I/usr/include/arm-linux-gnueabihf/qt5/QtSql -I/usr/include/arm-linux-gnueabihf/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/arm-linux-gnueabihf/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/arm-linux-gnueabihf/8/include -I/usr/local/include -I/usr/lib/gcc/arm-linux-gnueabihf/8/include-fixed -I/usr/include/arm-linux-gnueabihf -I/usr/include FrontEnd/registerwidget.h -o moc_registerwidget.cpp
 
 moc_mainwidget.cpp: FrontEnd/missing_model.h \
 		FrontEnd/mainwidget.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/pi/Downloads/virtual_toolbox_SD_2019-2020-master/src/moc_predefs.h -I/usr/lib/arm-linux-gnueabihf/qt5/mkspecs/linux-g++ -I/home/pi/Downloads/virtual_toolbox_SD_2019-2020-master/src -I/home/pi/Downloads/virtual_toolbox_SD_2019-2020-master/src -I/usr/include/arm-linux-gnueabihf/qt5 -I/usr/include/arm-linux-gnueabihf/qt5/QtWidgets -I/usr/include/arm-linux-gnueabihf/qt5/QtGui -I/usr/include/arm-linux-gnueabihf/qt5/QtTest -I/usr/include/arm-linux-gnueabihf/qt5/QtSql -I/usr/include/arm-linux-gnueabihf/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/arm-linux-gnueabihf/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/arm-linux-gnueabihf/8/include -I/usr/local/include -I/usr/lib/gcc/arm-linux-gnueabihf/8/include-fixed -I/usr/include/arm-linux-gnueabihf -I/usr/include FrontEnd/mainwidget.h -o moc_mainwidget.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/pi/Downloads/virtual_toolbox_SD_2019-2020-UWB/src/moc_predefs.h -I/usr/lib/arm-linux-gnueabihf/qt5/mkspecs/linux-g++ -I/home/pi/Downloads/virtual_toolbox_SD_2019-2020-UWB/src -I/home/pi/Downloads/virtual_toolbox_SD_2019-2020-UWB/src -I/usr/include/arm-linux-gnueabihf/qt5 -I/usr/include/arm-linux-gnueabihf/qt5/QtWidgets -I/usr/include/arm-linux-gnueabihf/qt5/QtGui -I/usr/include/arm-linux-gnueabihf/qt5/QtTest -I/usr/include/arm-linux-gnueabihf/qt5/QtSql -I/usr/include/arm-linux-gnueabihf/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/arm-linux-gnueabihf/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/arm-linux-gnueabihf/8/include -I/usr/local/include -I/usr/lib/gcc/arm-linux-gnueabihf/8/include-fixed -I/usr/include/arm-linux-gnueabihf -I/usr/include FrontEnd/mainwidget.h -o moc_mainwidget.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -412,7 +412,7 @@ mvc.o: mvc.cpp FrontEnd/missing_model.h \
 		FrontEnd/registerwidget.h \
 		DatabaseTools/SQLiteDatabase.h \
 		../sqlite3/sqlite3.h \
-		HardwareSkeletonCode/ToolScanner.h
+		UWBDriverCode/ToolScanner.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mvc.o mvc.cpp
 
 registerwidget.o: FrontEnd/registerwidget.cpp FrontEnd/registerwidget.h
@@ -424,12 +424,12 @@ mainwidget.o: FrontEnd/mainwidget.cpp FrontEnd/mainwidget.h \
 
 SQLiteDatabase.o: DatabaseTools/SQLiteDatabase.cpp DatabaseTools/SQLiteDatabase.h \
 		../sqlite3/sqlite3.h \
-		HardwareSkeletonCode/ToolScanner.h \
+		UWBDriverCode/ToolScanner.h \
 		DatabaseTools/CallbackFunctions.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o SQLiteDatabase.o DatabaseTools/SQLiteDatabase.cpp
 
-ToolScanner.o: HardwareSkeletonCode/ToolScanner.cpp HardwareSkeletonCode/ToolScanner.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ToolScanner.o HardwareSkeletonCode/ToolScanner.cpp
+ToolScanner.o: UWBDriverCode/ToolScanner.cpp UWBDriverCode/ToolScanner.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ToolScanner.o UWBDriverCode/ToolScanner.cpp
 
 sqlite3.o: ../sqlite3/sqlite3.c 
 	$(CC) -c $(CFLAGS) $(INCPATH) -o sqlite3.o ../sqlite3/sqlite3.c

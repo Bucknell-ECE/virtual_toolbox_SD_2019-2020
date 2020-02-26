@@ -8,13 +8,15 @@
 #include <QTest>
 #include <QElapsedTimer>
 #include <QtSql>
+#include <stdio.h>
+#include <wiringPi.h>
 using namespace std;
 #include <QtWidgets>
 #include "FrontEnd/missing_model.h"
 #include "FrontEnd/mainwidget.h"
 #include "FrontEnd/registerwidget.h"
 #include "DatabaseTools/SQLiteDatabase.h"
-#include "HardwareSkeletonCode/ToolScanner.h"
+#include "UWBDriverCode/ToolScanner.h"
 
 
 /**
@@ -23,7 +25,7 @@ using namespace std;
  * Tool Ids are a string that range between 100000000-100000500 
  * 
  */
-string databaseFilepath = "../dbFiles/ToolBox500.db";
+string databaseFilepath = "../dbFiles/ToolBox400.db";
 
 int main(int argc, char *argv[])
 {
@@ -50,26 +52,78 @@ int main(int argc, char *argv[])
     regwidget->show();
     
     //DB init
+    cout<<"Booting\n"<<endl;
     ToolScanner* tl = new ToolScanner();
+    cout<<"Complete\n"<<endl;
     SQLiteDatabase* db_tools = new SQLiteDatabase(databaseFilepath, tl);
-
+    
+    
+    
+    db_tools->addTool(to_string(22319), "Tag F5");
+    db_tools->addTool(to_string(52885), "Tag T2");
+    db_tools->addTool(to_string(140), "Tag T1");
+    db_tools->addTool(to_string(53644), "Tag T3");
+    db_tools->addTool(to_string(309), "Tag T4");
+    
+     
     /**
-     * Everything in here should be in some loop
+     * Everything in here should be in limit switch loop
      */
-    //Gets the missing tools
-    missing = db_tools->getMissingToolIDs();
-    
-    //Converts into UI string object
-    for (int i = 0; i < missing.size(); i++){
-        QString next = QString::fromStdString(missing[i]);
-        output.append(next);
-    }
 
-    //all that is needed for reloading data
-    widget->SetData(output);
-    widget->loadView();
+        const int button = 27;
+         wiringPiSetup();
+        //set gpio pin 26(25) to high 3.3V and gpio 16(27) to output
+        pinMode(25,OUTPUT);
+        digitalWrite(25,1);
+        pinMode(button,INPUT);
+        bool flag = false;
+        
+        
+        
+      
+        
+        
+        int lastButtonRead = LOW;
+        int thisButtonRead = LOW;
+        bool buttonLowToHigh = false;
+        while(1){
+            lastButtonRead = thisButtonRead;
+            thisButtonRead = digitalRead(button);
+            if ((thisButtonRead == HIGH)&&(lastButtonRead==LOW)) {
+                buttonLowToHigh = true;
+            } else {
+                buttonLowToHigh = false;
+            }
+            
+            if (buttonLowToHigh == false){
+                //flag = true;
+                //delay(50);
+                //cout<<"Test 1" <<endl;
+            }
+            if (buttonLowToHigh == true){
+                
+                //Gets the missing tools
+                missing = db_tools->getMissingToolIDs();
+                cout<<"Test " <<endl;
     
-    return app.exec();
- 
+                //Converts into UI string object
+                for (int i = 0; i < missing.size(); i++){
+                    QString next = QString::fromStdString(missing[i]);
+                    cout << missing[i] << "\n";
+                    output.append(next);
+                }
 
+                //all that is needed for reloading data
+                widget->SetData(output);
+                widget->loadView();
+    
+                
+                flag = false;
+                //For widget
+                return app.exec();
+            }
+        }
+        //No widget
+        //return app.exec();
+        return 0;
 }
