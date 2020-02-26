@@ -67,9 +67,9 @@ vector<string> ToolScanner::scanForTools(){
             strncat(str,&ch,1);
             ch = serialGetchar(fd);
         }
-        
         if (DEBUG) {
             std::cout << "Data Received \n";
+            std::cout << "Data: " << str << "\n";
         }
         
         // Rocord the correctly formated position update
@@ -134,9 +134,9 @@ void ToolScanner::setupScanner(){
     delay(1000);
     // Activate listener mode
     serialPrintf(fd,"lec\r");
-    delay(100);
+    delay(1000);
     serialPrintf(fd,"lep\r");
-    delay(100);
+    delay(1000);
 }
 
 //TODO Write any getters and setters

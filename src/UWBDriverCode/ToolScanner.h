@@ -37,7 +37,7 @@ using namespace std;
 #define Z_MIN 0
 #define Z_MAX 1350
 #define D 1000 // DELTA. Allowed error in accuracy
-#define DEBUG false // true to print out every scan
+#define DEBUG true // true to print out every scan
 
 /**
  * The ToolScanner class will allow the backend of the virtual toolbox
@@ -54,7 +54,7 @@ private:
     //TODO Define any class constants here
     int fd;  // Pipe for UART
     char ch;  // Buffer to store read byte from UART
-    char str[33];  // Buffer to glue together all the bytes
+    char str[100];  // Buffer to glue together all the bytes
     char* tok;  // Tokenized keyword from UART to extract tag info
     
     int tag_name;  // Name of the tag in int
