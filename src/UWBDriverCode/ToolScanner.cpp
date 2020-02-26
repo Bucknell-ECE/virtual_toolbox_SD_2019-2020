@@ -56,12 +56,16 @@ vector<string> ToolScanner::scanForTools(){
     
     // Buffer to store strings of tools in the truck
     vector<string> vec;
+    // Buffer to store tools without duplication
+    vector<string> new_vec;
     
     // Run until timer ends
     while (terminate) {
         if (DEBUG) {
-            std::cout << "Loop again \n";
+            std::cout << "Start pulling from UWB \n";
         }
+        
+        // Copy Received bytes into an empty string
         strcpy(str,"");
         ch = serialGetchar(fd);
         while (ch != '\n') {
@@ -70,7 +74,7 @@ vector<string> ToolScanner::scanForTools(){
         }
         
         if (DEBUG) {
-            std::cout << "Data: " << str << "\n";
+            std::cout << "Received data: " << str << "\n";
         }
         
         // Rocord the correctly formated position update
@@ -88,14 +92,15 @@ vector<string> ToolScanner::scanForTools(){
             tok = strtok(0,",");
             tag_quality = atof(tok);
             
+            // Push into vector if the tool is in truck
             if (isInTruck(tag_x,tag_y,tag_z,tag_quality)) {
                 vec.push_back(to_string(tag_name));
                 if (DEBUG) {
-                    std::cout << tag_name << " is in\n";
+                    std::cout << tag_name << " is in\n------------------\n";
                 }
             } else {
                 if (DEBUG) {
-                    std::cout << tag_name << " is out\n";
+                    std::cout << tag_name << " is out\n------------------\n";
                 }
             }
         }
@@ -107,7 +112,11 @@ vector<string> ToolScanner::scanForTools(){
             terminate = 0;
         }
     }
-    return removeDuplicates(vec);
+    
+    // Remove duplicated tags
+    new_vec = removeDuplicates(vec);
+    
+    return new_vec;
 }
 
 /**
@@ -130,14 +139,15 @@ void ToolScanner::setupScanner(){
         // return 1 ;
     }
 
+    // Restart if already in shell mode
+    serialPrintf(fd,"reset\r");
+    delay(1000);
     // Enter UART shell mode
 	serialPrintf(fd,"\r\r");
-    delay(2000);
+    delay(1000);
     // Activate listener mode
-    //serialPrintf(fd,"lec\r");
-    //delay(2000);
     serialPrintf(fd,"lep\r");
-    delay(2000);
+    delay(1000);
 }
 
 //TODO Write any getters and setters

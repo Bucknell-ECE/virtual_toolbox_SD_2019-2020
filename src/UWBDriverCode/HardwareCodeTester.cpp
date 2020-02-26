@@ -17,9 +17,11 @@ int main(int argc, char *argv[]) {
     ToolScanner ts = ToolScanner();
     
     vector<string> input = ts.scanForTools();
-    for (auto it = input.begin(); it != input.end(); it++) {
-        std::cout << *it << " ";
-    }
     
-    std::cout << "\n\nfinish";
+    std::cout << "Tools in truck: \n";
+        
+    for (auto & value : input)
+    {
+        std::cout << value << " \n";
+    }
 }

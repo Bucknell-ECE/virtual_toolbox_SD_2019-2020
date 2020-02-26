@@ -36,7 +36,7 @@ using namespace std;
 #define Y_MAX 0
 #define Z_MIN 0
 #define Z_MAX 1350
-#define D 1000 // DELTA. Allowed error in accuracy
+#define D 600 // DELTA. Allowed error in accuracy
 #define DEBUG true // true to print out every scan
 
 /**
