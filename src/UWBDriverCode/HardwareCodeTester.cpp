@@ -4,7 +4,6 @@
 //
 
 #include "ToolScanner.h"
-#include <iostream>
  
 /**
  * This is where you can run all your test code from.
@@ -22,4 +21,6 @@ int main(int argc, char *argv[]) {
     for (auto it = input.begin(); it != input.end(); it++) {
         std::cout << *it << " ";
     }
+    
+    std::cout << "\n\nfinish";
 }

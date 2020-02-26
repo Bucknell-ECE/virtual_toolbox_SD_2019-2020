@@ -25,6 +25,8 @@
 #include <wiringSerial.h>
 #include <map>
 #include <cstring>
+#include <algorithm>
+#include <iostream>
 using namespace std;
 
 // Distances for tracking, in mm
@@ -35,6 +37,7 @@ using namespace std;
 #define Z_MIN 0
 #define Z_MAX 1350
 #define D 1000 // DELTA. Allowed error in accuracy
+#define DEBUG false // true to print out every scan
 
 /**
  * The ToolScanner class will allow the backend of the virtual toolbox

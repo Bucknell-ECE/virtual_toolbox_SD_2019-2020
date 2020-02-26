@@ -58,12 +58,20 @@ vector<string> ToolScanner::scanForTools(){
     
     // Run until timer ends
     while (terminate) {
+        if (DEBUG) {
+            std::cout << "Loop again \n";
+        }
         strcpy(str,"");
         ch = serialGetchar(fd);
         while (ch != '\n') {
             strncat(str,&ch,1);
             ch = serialGetchar(fd);
         }
+        
+        if (DEBUG) {
+            std::cout << "Data Received \n";
+        }
+        
         // Rocord the correctly formated position update
         if ((strstr(str, "POS") != NULL) && (strstr(str, " ") == NULL)) {
             tok = strtok(str,",");
@@ -81,6 +89,13 @@ vector<string> ToolScanner::scanForTools(){
             
             if (isInTruck(tag_x,tag_y,tag_z,tag_quality)) {
                 vec.push_back(to_string(tag_name));
+                if (DEBUG) {
+                    std::cout << tag_name << " is in\n";
+                }
+            } else {
+                if (DEBUG) {
+                    std::cout << tag_name << " is out\n";
+                }
             }
         }
         
@@ -91,7 +106,7 @@ vector<string> ToolScanner::scanForTools(){
             terminate = 0;
         }
     }
-    return vec;
+    return removeDuplicates(vec);
 }
 
 /**
@@ -139,8 +154,9 @@ bool ToolScanner::isInTruck(int x,int y,int z, int q) {
     return false;
 }
 
-vector<string> removeDuplicates(vector<string> vec) {
-    // TODO
+vector<string> ToolScanner::removeDuplicates(vector<string> vec) {
+    sort(vec.begin(),vec.end());
+    vec.erase(unique(vec.begin(),vec.end()),vec.end());
     return vec;
 }
 
