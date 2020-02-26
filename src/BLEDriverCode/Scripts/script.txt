@@ -1,0 +1,7 @@
+#!/sbin/bash
+
+sudo bluetoothctl
+
+echo -e "power on" | bluetoothctl
+echo -e "discoverable on" | bluetoothctl
+echo -e "scan on" | bluetoothctl
