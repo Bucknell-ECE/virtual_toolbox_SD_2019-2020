@@ -4,7 +4,7 @@
 #include <QDebug>
 
 // Constructor for main window
-RegisterWidget::RegisterWidget(QWidget *parent) :
+RegisterWidget::RegisterWidget(QWidget *parent, SQLiteDatabase *db_tools, ToolScanner *tl) :
     QWidget(parent)
 {
    //foo = new QString();
@@ -22,6 +22,9 @@ RegisterWidget::RegisterWidget(QWidget *parent) :
    //mainLayout->addWidget(textBrowser_,1,0);
    setLayout(mainLayout);
    //setWindowTitle(tr("Missing Tools"));
+   
+   db_tools = db_tools;
+   tl = tl;
 
    connect(button_, SIGNAL(released()), this, SLOT(onButtonReleased()));
    connect(&process_, SIGNAL(readyReadStandardOutput()), this, SLOT(onCaptureProcessOutput()));
@@ -31,22 +34,21 @@ RegisterWidget::RegisterWidget(QWidget *parent) :
 RegisterWidget::~RegisterWidget()
 {
     delete button_;
-   //delete textBrowser_;
+    delete tl;
+    delete db_tools;
 }
 
 // Handler for button click
 void RegisterWidget::onButtonReleased()
 {
-    //foo = textBrowser_->toPlainText();
-    // clear the text in the textBrowser and start the process
-    //textBrowser_->clear();
-    //box.setText("Enter Name of New Tool");
-    //box.text();
+    int success;
     box.exec();
-/////////////////    if (isOkPressed){
-      foo = box.textValue();
-      qDebug() << foo;
-   ///////////////// }
+    foo = box.textValue();
+    qDebug() << foo;
+    //QString to string
+    ///string name = foo.toUtf8().constData();
+    ///success = db_tools->registerNewTool(name, tl);
+    qDebug() << success;
 
 
     // Set up our process to write to stdout and run our command
@@ -60,11 +62,8 @@ void RegisterWidget::onCaptureProcessOutput()
 {
    qDebug() << "kldsajflkadflk";
    int i;
-   //*QMessageBox _box = new QMessageBox();
-   // Determine whether the object that sent the signal was a pointer to a process
    QProcess* process = qobject_cast<QProcess*>(sender());
    // If so, append the output to the textbrowser
    if (process)
       i = 0;
-       //textBrowser_->append(process->readAllStandardOutput());
 }
