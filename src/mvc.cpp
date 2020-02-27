@@ -25,7 +25,7 @@ using namespace std;
  * Tool Ids are a string that range between 100000000-100000500 
  * 
  */
-string databaseFilepath = "../dbFiles/ToolBox400.db";
+string databaseFilepath = "../dbFiles/ToolBox100.db";
 
 int main(int argc, char *argv[])
 {
@@ -51,25 +51,12 @@ int main(int argc, char *argv[])
     regwidget->move(400, 150);
     regwidget->show();
     
-    //DB init
-    cout<<"Booting\n"<<endl;
-    ToolScanner* tl = new ToolScanner();
-    cout<<"Complete\n"<<endl;
-    SQLiteDatabase* db_tools = new SQLiteDatabase(databaseFilepath, tl);
-    
-    
-    
-    db_tools->addTool(to_string(22319), "Tag F5");
-    db_tools->addTool(to_string(52885), "Tag T2");
-    db_tools->addTool(to_string(140), "Tag T1");
-    db_tools->addTool(to_string(53644), "Tag T3");
-    db_tools->addTool(to_string(309), "Tag T4");
     
      
     /**
      * Everything in here should be in limit switch loop
      */
-
+/*
         const int button = 27;
          wiringPiSetup();
         //set gpio pin 26(25) to high 3.3V and gpio 16(27) to output
@@ -77,11 +64,7 @@ int main(int argc, char *argv[])
         digitalWrite(25,1);
         pinMode(button,INPUT);
         bool flag = false;
-        
-        
-        
       
-        
         
         int lastButtonRead = LOW;
         int thisButtonRead = LOW;
@@ -116,14 +99,15 @@ int main(int argc, char *argv[])
                 //all that is needed for reloading data
                 widget->SetData(output);
                 widget->loadView();
+                cout<<"Here" <<endl;
     
                 
                 flag = false;
                 //For widget
-                return app.exec();
+                app.exec();
             }
         }
-        //No widget
-        //return app.exec();
-        return 0;
+        //No widget*/
+        return app.exec();
+        //return 0;
 }
