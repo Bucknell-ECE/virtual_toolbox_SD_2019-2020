@@ -33,6 +33,15 @@ int main(int argc, char *argv[])
     Missing_Model model;
     
     QApplication app(argc, argv);
+    
+    ToolScanner* tl = new ToolScanner;
+    SQLiteDatabase* db_tools = new SQLiteDatabase(databaseFilepath, tl);
+    db_tools->addTool(to_string(22319), "Tag F5");
+    db_tools->addTool(to_string(52885), "Tag T2");
+    db_tools->addTool(to_string(140), "Tag T1");
+    db_tools->addTool(to_string(53644), "Tag T3");
+    db_tools->addTool(to_string(309), "Tag T4");
+    //db_tools->addTool(to_string(1), "Tag T10");
 
     QWidget window;
     window.resize(600, 300);
@@ -44,7 +53,7 @@ int main(int argc, char *argv[])
     QStringList output;
     
     
-    MissingWidget *widget = new MissingWidget(&window);
+    MissingWidget *widget = new MissingWidget(&window, db_tools, tl);
     widget->show();
 
     RegisterWidget *regwidget = new RegisterWidget(&window);
