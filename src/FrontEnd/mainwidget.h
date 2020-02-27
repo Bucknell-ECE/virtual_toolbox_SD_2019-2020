@@ -5,6 +5,8 @@
 #include <QWidget>
 #include <QProcess>
 #include <QInputDialog>
+#include "../DatabaseTools/SQLiteDatabase.h"
+#include "../UWBDriverCode/ToolScanner.h"
 
 class QPushButton;
 class QTextBrowser;
@@ -21,6 +23,7 @@ public:
     void SetData(QStringList list);
     void loadView();
 
+
 private slots:
     void onButtonReleased(); // Handler for button presses
     void onCaptureProcessOutput(); // Handler for Process output
@@ -28,6 +31,8 @@ private slots:
 private:
    QPushButton* button_;
    QTextBrowser* textBrowser_;
+   ToolScanner* tl;
+   SQLiteDatabase* db_tools;//("../dbFiles/ToolBox100.db", tl);
    QProcess process_;   // This is the process the button will fire off
    // QString foo;
    // QInputDialog box;
