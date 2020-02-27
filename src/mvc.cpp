@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     MissingWidget *widget = new MissingWidget(&window, db_tools, tl);
     widget->show();
 
-    RegisterWidget *regwidget = new RegisterWidget(&window);
+    RegisterWidget *regwidget = new RegisterWidget(&window, db_tools, tl);
     regwidget->move(400, 150);
     regwidget->show();
     
