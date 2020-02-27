@@ -18,7 +18,7 @@ class MissingWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit MissingWidget(QWidget *parent = 0); //Constructor
+    explicit MissingWidget(QWidget *parent = 0, SQLiteDatabase *sqlitedb = 0, ToolScanner *toolscanner = 0); //Constructor
     ~MissingWidget(); // Destructor
     void SetData(QStringList list);
     void loadView();
