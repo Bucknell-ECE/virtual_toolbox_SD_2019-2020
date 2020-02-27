@@ -4,7 +4,7 @@
 #include <QDebug>
 
 // Constructor for main window
-MissingWidget::MissingWidget(QWidget *parent) :
+MissingWidget::MissingWidget(QWidget *parent, SQLiteDatabase *sqlitedb, ToolScanner *toolscanner) :
     QWidget(parent)
 {
    //foo = new QString();
@@ -22,14 +22,8 @@ MissingWidget::MissingWidget(QWidget *parent) :
    setLayout(mainLayout);
    setWindowTitle(tr("Missing Tools"));
    
-   tl = new ToolScanner;
-   db_tools = new SQLiteDatabase("../dbFiles/ToolBox100.db", tl);
-   db_tools->addTool(to_string(22319), "Tag F5");
-    db_tools->addTool(to_string(52885), "Tag T2");
-    db_tools->addTool(to_string(140), "Tag T1");
-    db_tools->addTool(to_string(53644), "Tag T3");
-    db_tools->addTool(to_string(309), "Tag T4");
-    //db_tools->addTool(to_string(1), "Tag T10");
+   tl = toolscanner;
+   db_tools = sqlitedb;
 
    connect(button_, SIGNAL(released()), this, SLOT(onButtonReleased()));
    connect(&process_, SIGNAL(readyReadStandardOutput()), this, SLOT(onCaptureProcessOutput()));
