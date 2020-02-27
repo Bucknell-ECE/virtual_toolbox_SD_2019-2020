@@ -17,7 +17,22 @@
  * Same goes for any #define statements for Macro values.
  */
 #include "ToolScanner.h"
-
+#include <string.h>
+#include <iostream>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <vector>
+#include <stdio.h>
+#include <stdlib.h>
+#include <fstream>
+#include <typeinfo>
+#include <iterator>
+#include <sstream>
+#include <string>
+#include <unistd.h>
+#include <algorithm>
+using namespace std;
 
 
 /**
@@ -46,7 +61,31 @@ ToolScanner::ToolScanner() {
     * IDs that are in the physical ToolBox.
     */
 vector<string> ToolScanner::scanForTools(){
+    //make csv in python
+    system("python mult.py");
+	
+    std::ifstream       file("uid.csv");
+	
+	
+    std::vector<std::string>   result;
+    std::string                line;
+    std::getline(file,line);
 
+    std::stringstream          lineStream(line);
+    std::string                cell;
+
+    while(std::getline(lineStream,cell, ','))
+    {
+        result.push_back(cell);
+    }
+    // This checks for a trailing comma with no data after it.
+    if (!lineStream && cell.empty())
+    {
+        // If there was a trailing comma then add an empty element.
+        result.push_back("");
+    }
+    
+    return result;
 }
 
 /**
@@ -64,4 +103,3 @@ void ToolScanner::setupScanner(){
 
 //TODO Write any getters and setters
 //TODO Write any helper methods
-
