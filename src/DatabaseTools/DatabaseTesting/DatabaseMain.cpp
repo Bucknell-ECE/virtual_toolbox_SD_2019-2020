@@ -2,7 +2,7 @@
 // Created by MattTurconi on 2/22/2020.
 //
 
-#include "../DatabaseTools/SQLiteDatabase.h"
+#include "../SQLiteDatabase.h"
 #include <iostream>
 #include <random>
 #include <ctime>

@@ -15,7 +15,7 @@ add_executable(RFIDDriverCode
         src/RFIDDriverCode/ToolScanner.h)
 
 add_executable(DatabaseTester
-        "src/DatabaseTesting/DatabaseTester.cpp"
+        "src/DatabaseTools/DatabaseTesting/DatabaseTester.cpp"
         "src/DatabaseTools/SQLiteDatabase.cpp"
         "src/DatabaseTools/SQLiteDatabase.h"
         sqlite3/sqlite3.c
@@ -26,7 +26,7 @@ add_executable(DatabaseTester
         src/HardwareSkeletonCode/ToolScanner.cpp)
 
 add_executable(DatabaseMain
-        src/DatabaseTesting/DatabaseMain.cpp
+        src/DatabaseTools/DatabaseTesting/DatabaseMain.cpp
         "src/DatabaseTools/SQLiteDatabase.cpp"
         "src/DatabaseTools/SQLiteDatabase.h"
         sqlite3/sqlite3.c
