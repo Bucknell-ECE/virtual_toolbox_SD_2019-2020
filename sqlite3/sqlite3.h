@@ -165,7 +165,7 @@ SQLITE_API const char *sqlite3_sourceid(void);
 SQLITE_API int sqlite3_libversion_number(void);
 
 /*
-** CAPI3REF: Run-Time Library Compilation Options Diagnostics
+** CAPI3REF: Run-Time Library compilation Options Diagnostics
 **
 ** ^The sqlite3_compileoption_used() function returns 0 or 1 
 ** indicating whether the specified option was defined at 

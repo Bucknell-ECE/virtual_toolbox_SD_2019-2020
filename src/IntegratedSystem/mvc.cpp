@@ -12,11 +12,11 @@
 #include <wiringPi.h>
 using namespace std;
 #include <QtWidgets>
-#include "FrontEnd/missing_model.h"
-#include "FrontEnd/mainwidget.h"
-#include "FrontEnd/registerwidget.h"
-#include "DatabaseTools/SQLiteDatabase.h"
-#include "UWBDriverCode/ToolScanner.h"
+#include "../FrontEnd/missing_model.h"
+#include "../FrontEnd/mainwidget.h"
+#include "../FrontEnd/registerwidget.h"
+#include "../DatabaseTools/SQLiteDatabase.h"
+#include "../UWBDriverCode/ToolScanner.h"
 
 
 /**
