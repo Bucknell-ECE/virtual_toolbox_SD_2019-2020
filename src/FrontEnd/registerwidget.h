@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QProcess>
 #include <QInputDialog>
+#include "../DatabaseTools/SQLiteDatabase.h"
+#include "../UWBDriverCode/ToolScanner.h"
 
 class QPushButton;
 class QTextBrowser;
@@ -15,7 +17,7 @@ class RegisterWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit RegisterWidget(QWidget *parent = 0); //Constructor
+    explicit RegisterWidget(QWidget *parent = 0, SQLiteDatabase *db_tools = 0, ToolScanner *tl = 0 ); //Constructor
     ~RegisterWidget(); // Destructor
     
 
@@ -29,6 +31,8 @@ private:
    QProcess process_;   // This is the process the button will fire off
    QString foo;
    QInputDialog box;
+   ToolScanner* tl;
+   SQLiteDatabase* db_tools;
    //Missing_Model model;
 };
 

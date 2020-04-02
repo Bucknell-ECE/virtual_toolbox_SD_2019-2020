@@ -59,6 +59,7 @@ void SQLiteDatabase::findMissingTool(string retColField, vector<string> toolIDs)
     //If no list was provided we need to get it from teh scanner
     if(toolIDs.size() == 0)
         toolIDs = toolScanner->scanForTools();
+    
     if(retColField == "")
         retColField = "ID";
     //Build list of ID's to pass to the select command
@@ -74,6 +75,8 @@ void SQLiteDatabase::findMissingTool(string retColField, vector<string> toolIDs)
 
     string cmd = "SELECT " + retColField + " FROM TOOLS WHERE ID NOT IN " + idList + ";";
     char* errMsg;
+    cout << "CMD" << endl;
+    cout << cmd << endl;
     int rv = sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void*)"MISS", &errMsg);
     //Get response
     if (rv)
