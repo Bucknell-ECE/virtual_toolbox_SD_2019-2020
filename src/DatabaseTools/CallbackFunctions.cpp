@@ -11,18 +11,10 @@ string callbackResponse;
 string selectResponse;
 vector<string> newIDs;
 vector<string> missingIDs;
+vector<int> priorityList;
 
-/**
- * A call back function for the SQL call. This function is called when the SQL call
- * is finished.
- *
- * @param data pointer that is passed to the sqlite3_exec command that could be used
- * as a way to determine how this function operates based on sql call
- * @param argc the number of data arguments for this call
- * @param argv the data returned by the sql call
- * @param columnNames
- * @return a 0 on success, 1 on error
- */
+void insertInToolList(int priority, string basicString);
+
 int callback(void *data, int argc, char **argv, char **columnNames){
     char* cmdtype = (char*) data;
 //    cout<<cmdtype<<endl;
@@ -42,8 +34,12 @@ int callback(void *data, int argc, char **argv, char **columnNames){
             str += argv[i]; str += "   ";
         }
         cout << str << endl;
-    }else if(strcmp(cmdtype, "MISS") == 0){
+    }else if(strcmp(cmdtype, "MISS") == 0) {
         missingIDs.push_back(argv[0]);
+    }else if(strcmp(cmdtype, "MISSP") == 0){
+        int priority = atoi(argv[1]);
+        string tool = argv[0];
+        insertInToolList(priority, tool);
     }else if(strcmp(cmdtype, "EXIST") == 0){
         callbackResponse = argv[0];
     }else if(strcmp(cmdtype, "NEW") == 0){
@@ -59,12 +55,32 @@ int callback(void *data, int argc, char **argv, char **columnNames){
     return 0;
 }
 
+void insertInToolList(int priority, string basicString) {
+    auto itID = missingIDs.begin();
+    auto itP = priorityList.begin();
+    if(priorityList.size() == 0){
+        priorityList.push_back(priority);
+        missingIDs.push_back(basicString);
+        return;
+    }
+
+    int i;
+    for(i = 0; i < priorityList.size(); i++){
+        if(priorityList[i] < priority) {
+            itID++;
+            itP++;
+        }else
+            break;
+    }
+    missingIDs.insert(itID, basicString);
+    priorityList.insert(itP, priority);
+}
+
 string getSelectResponse(){
     string str = selectResponse;
     selectResponse = "";
     return str;
 }
-
 
 string getCallBackResponse(){
     string str = callbackResponse;
@@ -74,24 +90,21 @@ string getCallBackResponse(){
 
 vector<string> getMissingIDVec(){
     vector<string> idxs = missingIDs;
-//    int i;
-//    for(i=0;i<idxs.size();i++){
-//        cout<<to_string(idxs[i]) +',';
-//    }
-//    cout<<endl;
     missingIDs.clear();
+    priorityList.clear();
     return idxs;
 }
 
 vector<string> getNewIDVec(){
     vector<string> idxs = newIDs;
-//    int i;
-//    for(i=0;i<idxs.size();i++){
-//        cout<<to_string(idxs[i]) +',';
-//    }
-//    cout<<endl;
     newIDs.clear();
     return idxs;
 }
 
-
+vector<int> getPriorityVec(){
+    int i;
+    for(i = 0; i < priorityList.size(); i ++){
+        cout << priorityList[i] << ", ";
+    }
+    cout << endl;
+}

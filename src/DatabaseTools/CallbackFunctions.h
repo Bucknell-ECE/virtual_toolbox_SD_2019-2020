@@ -26,12 +26,39 @@ using namespace std;
  */
 int callback(void *data, int argc, char **argv, char **columnNames);
 
+/**
+ * Used to retrieve a generic callback string value mainly used for debugging
+ * purposes.
+ *
+ * @return A Debugging Keyword
+ */
 string getCallBackResponse();
 
+/**
+ * After a select call to the sqlite database, this function allows for
+ * singular retrieval of the result separated by commas.
+ *
+ * @return A comma separated string
+ */
 string getSelectResponse();
 
+/**
+ * Used to retrieve a vector of string ID's that correspond to tools that
+ * were not found in the database. This list indicates which tools are
+ * currently missing from the toolbox.
+ *
+ * @return A vector of Tool ID's as Strings
+ */
 vector<string> getMissingIDVec();
 
+/**
+ * Used to retrieve a vector of a unique String ID that is new to the the
+ * tool database for registration purposes.
+ *
+ * @return A vector with a new Tool ID as a String
+ */
 vector<string> getNewIDVec();
+
+vector<int> getPriorityVec();
 
 #endif //VIRTUAL_TOOLBOX_SD_2019_2020_CALLBACKFUNCTIONS_H

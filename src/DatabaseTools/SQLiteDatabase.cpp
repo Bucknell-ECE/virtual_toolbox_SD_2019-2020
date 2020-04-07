@@ -7,11 +7,11 @@
 #include "CallbackFunctions.h"
 #include <ctime>
 
-SQLiteDatabase::SQLiteDatabase(std::string dbName, ToolScanner* toolScanner){
-    this->dbName = dbName;
+SQLiteDatabase::SQLiteDatabase(std::string dbFilePath, ToolScanner* toolScanner){
+    this->dbPath = dbFilePath;
     this->toolScanner = toolScanner;
     //Check if the DB exists, if not create it and set up table
-    if(sqlite3_open(dbName.c_str(), & db)){
+    if(sqlite3_open(dbFilePath.c_str(), & db)){
         //TODO throw an error here
         cout << sqlite3_errmsg(db) << endl;
     }else{
@@ -27,7 +27,8 @@ SQLiteDatabase::SQLiteDatabase(std::string dbName, ToolScanner* toolScanner){
             const char* cmd = "CREATE TABLE TOOLS("
                               "ID TEXT PRIMARY KEY,"
                               "NAME TEXT NOT NULL,"
-                              "REG_DATE TEXT NOT NULL);";
+                              "REG_DATE TEXT NOT NULL,"
+                              "PRIORITY INT NOT NULL);";
             sqlite3_exec(db, cmd, callback, (void*)"CREATE", & errMsg);
         }
     }
@@ -43,25 +44,43 @@ sqlite3* SQLiteDatabase::get_db(){
     return this->db;
 }
 
-//Done...
-void SQLiteDatabase::addTool(string ID, string toolName) {
+void SQLiteDatabase::addTool(string ID, string toolName, int priority) {
     time_t now = time(0);
     string curDate = ctime(&now);
     curDate = curDate.substr(0,curDate.size() - 1);
-    string cmd = "INSERT INTO TOOLS (ID, NAME, REG_DATE) VALUES"
-                 "(" + ID + ", '" + toolName + "', '" + curDate + "');";
+    string cmd = "INSERT INTO TOOLS (ID, NAME, REG_DATE, PRIORITY) VALUES"
+                 "(" + ID + ", '" + toolName + "', '" + curDate + "', " +
+                 to_string(priority) + ");";
     char* errMsg;
-    sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void*)"INS", &errMsg);
+    int rv = sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void*)"INS", &errMsg);
+    //Get response
+    if (rv)
+        cout << errMsg << endl;
 }
 
-//Done...
-void SQLiteDatabase::findMissingTool(string retColField, vector<string> toolIDs) {
+void SQLiteDatabase::update_priority(string tool_id, int priority){
+    string cmd = "UPDATE TOOLS SET PRIORITY = " + to_string(priority) + " WHERE (ID == " + tool_id + ");";
+
+    char* errMsg;
+    int rv = sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void*)"UPDATE", &errMsg);
+    if(rv)
+        cout << errMsg << endl;
+}
+
+void SQLiteDatabase::findMissingTool(int sorted, string retColField, vector<string> toolIDs) {
     //If no list was provided we need to get it from teh scanner
     if(toolIDs.size() == 0)
         toolIDs = toolScanner->scanForTools();
-    
+
+    string cmd_flag;
+    if(sorted)
+        cmd_flag = "MISSP"; //Flag that sorts the missing tools in the return vector
+    else
+        cmd_flag = "MISS";
+
     if(retColField == "")
         retColField = "ID";
+    retColField += ", PRIORITY";
     //Build list of ID's to pass to the select command
     string idList = "( VALUES";
     int i;
@@ -75,17 +94,17 @@ void SQLiteDatabase::findMissingTool(string retColField, vector<string> toolIDs)
 
     string cmd = "SELECT " + retColField + " FROM TOOLS WHERE ID NOT IN " + idList + ";";
     char* errMsg;
-    cout << "CMD" << endl;
-    cout << cmd << endl;
-    int rv = sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void*)"MISS", &errMsg);
+//    cout << "CMD" << endl;
+//    cout << cmd << endl;
+    int rv = sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void*)cmd_flag.c_str(), &errMsg);
     //Get response
     if (rv)
         cout << errMsg << endl;
+    getPriorityVec();
     missingIDs = getMissingIDVec();
 }
 
- //Done
- vector<string> SQLiteDatabase::findNewTool(ToolScanner* ts, vector<string> toolIDs){
+vector<string> SQLiteDatabase::findNewTool(ToolScanner* ts, vector<string> toolIDs){
     //If no tool list is provided we need to get it from the user.
     if(toolIDs.size() == 0)
         toolIDs = toolScanner->scanForTools();
@@ -126,11 +145,13 @@ int SQLiteDatabase::registerNewTool(string toolName, ToolScanner *tls) {
         return 0;
 }
 
-//Done
 void SQLiteDatabase::dumpDB() {
     char* errMsg;
     const char* cmd = "SELECT * FROM TOOLS;";
-    sqlite3_exec(db, cmd, callback, (void*) "DUMP", & errMsg);
+    int rv = sqlite3_exec(db, cmd, callback, (void*) "DUMP", & errMsg);
+    //Get response
+    if (rv)
+        cout << errMsg << endl;
     getCallBackResponse();
 }
 
@@ -140,7 +161,6 @@ void SQLiteDatabase::deleteToolByID(string id) {
     sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void *)"DELETE", &errMsg);
 }
 
-//As of right now I'm not sure why I would need this but I'm gonna keep it just in case
 string SQLiteDatabase::selectToolByID(string toolID, string table) {
     string str = "SELECT * ";
     char* errMsg;
@@ -159,16 +179,30 @@ string SQLiteDatabase::selectToolByName(string toolName, string table) {
     return getSelectResponse();
 }
 
-vector<string> SQLiteDatabase::getMissingToolIDs() {
-    findMissingTool();
-    return missingIDs;
-}
-
 vector<string> SQLiteDatabase::getNewIDs() {
     return newIDs;
 }
 
+vector<string> SQLiteDatabase::getMissingToolIDs() {
+    findMissingTool(0);
+    return missingIDs;
+}
+
 vector<string> SQLiteDatabase::getMissingToolNames() {
-     findMissingTool("NAME");
+     findMissingTool(0, "NAME");
      return missingIDs;
+}
+
+vector<string> SQLiteDatabase::getMissingToolIDsSorted() {
+    findMissingTool(1);
+    return missingIDs;
+}
+
+vector<string> SQLiteDatabase::getMissingToolNamesSorted() {
+    findMissingTool(1, "NAME");
+    return missingIDs;
+}
+
+vector<string> SQLiteDatabase::get_missing_ids_vec() {
+    return missingIDs;
 }

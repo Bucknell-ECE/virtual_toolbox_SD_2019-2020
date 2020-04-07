@@ -9,12 +9,13 @@
 
 using namespace std;
 
-string filepath = "../test_databases/";
+//string filepath = "./../../../dbFiles/test_databases/";
+string filepath = "C:\\Users\\MattTurconi\\virtual_toolbox_SD_2019-2020\\dbFiles\\test_databases\\";
 int id_offset = 100000000;
 
 
 /**
- * Creates a databse of a specific size with string IDs
+ * Creates a database of a specific size with string IDs
  *
  * @param size
  * @param dbName
@@ -23,12 +24,14 @@ void createDatabaseOfSize(int size, string dbName){
     string dbPath = filepath + dbName;
     ToolScanner* tl = new ToolScanner();
     SQLiteDatabase* db_tools = new SQLiteDatabase(dbPath, tl);
+    srand(time(NULL));
 
     int interval = size / 10;
     cout<<"Creating db of size " + to_string(size) << endl;
-    int i;
+    int i, pri;
     for(i=0;i<size;i++){
-        db_tools->addTool(to_string(i + id_offset), "Tool" + to_string(i));
+        pri = 1 + (rand() % (5 - 1 + 1));
+        db_tools->addTool(to_string(i + id_offset), "Tool" + to_string(i), pri);
         if(i % interval == 0)
             cout<<"Added " + to_string(i) + " so far."<<endl;
     }
@@ -56,8 +59,8 @@ vector<string> getUniqueRandIDs(int hi, int lo, int count){
     while(i < count){
         int k = 0;
         val = lo + (rand() % (hi - lo + 1));
-        for(j = 0; j<int_ids.size(); j++){
-            if(int_ids[j] == val + id_offset){
+        for(j = 0; j<str_ids.size(); j++){
+            if(stoi(str_ids[j]) == val + id_offset){
                 k = 1;
             }
         }
@@ -103,13 +106,15 @@ void printVec(vector<string> vec){
 
 
 int main(int argc, char* argv[]){
+    //createDatabaseOfSize(20, "PrioDB20.db");
 
     ToolScanner* tl = new ToolScanner();
-    SQLiteDatabase* db = new SQLiteDatabase(filepath + "ToolBox500.db", tl);
+    SQLiteDatabase* db = new SQLiteDatabase(filepath + "PrioDB20.db", tl);
 
-    vector<string> vec = db->getMissingToolNames();
-    printVec(vec);
-
+    db->dumpDB();
+    vector<string> ids = getUniqueRandIDs(19, 0, 15);
+    db->findMissingTool(1, "", ids);
+    printVec(db->get_missing_ids_vec());
 
     return 0;
 }

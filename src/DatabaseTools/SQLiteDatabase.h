@@ -8,7 +8,14 @@
 #include "../../sqlite3/sqlite3.h"
 #include <vector>
 #include <string>
-#include "../UWBDriverCode/ToolScanner.h"
+#include "../HardwareSkeletonCode/ToolScanner.h"
+
+/**
+ * This value sets lowest priority that a tool can receive,
+ * this is also the value specified if no priority is given
+ * during tool registration.
+ */
+#define LOWEST_PRIORITY_VAL 5
 
 using namespace std;
 
@@ -28,7 +35,7 @@ private:
     /**
      * File path name of the database
      */
-    string dbName;
+    string dbPath;
 
     /**
      * List of missing tool IDs
@@ -42,21 +49,27 @@ private:
 
 public:
     /**
-     * Creates/opens a Database Tools depending on the name of the
-     * Database Tools file name.
+     * Creates/opens a Database Tools given a filepath for the database.
+     * Requires a ToolScanner object that will allow for the database
+     * to receive Tool ID's from the toolbox.
      *
-     * @param dbName name of a Database Tools .db file
+     * @param dbFilePath path of a Database Tools .db file
+     * @param toolScanner a ToolScanner object for a physical scanner
      */
-    SQLiteDatabase(string dbName, ToolScanner* toolScanner);
+    SQLiteDatabase(string dbFilePath, ToolScanner* toolScanner);
 
     /**
      * Adds a tool to the Database Tools with a new tool ID and
      * the human readable name of the tool.
+     * The priority works as follows:
+     * 1 - Highest priority
+     * LOWEST_PRIORITY_VAL - Lowest priority
      *
      * @param tooID an unique tool id integer
      * @param toolName a human readable tool name string.
+     * @param priority an integer between 1 and LOWEST_PRIORITY_VAL inclusive
      */
-    void addTool(string ID, string toolName);
+    void addTool(string ID, string toolName, int priority = LOWEST_PRIORITY_VAL);
 
     /**
      * Closes the database and frees the memory
@@ -89,10 +102,11 @@ public:
      * If a list of tools are not provided, a list will be requested from the tool
      * scanner object
      *
-     * @param retColField an optional string identfier
+     * @param sorted field to indicate if the missing tool list should be sorted by priority. 1 Yes, 0 No
+     * @param retColField an optional string identifier
      * @param toolIDs an optional list of tool IDs
      */
-    void findMissingTool(string retColField = "", vector<string> toolIDs = {});
+    void findMissingTool(int sorted, string retColField = "", vector<string> toolIDs = {});
 
     /**
      * Dumps the whole database to the terminal
@@ -100,6 +114,14 @@ public:
      * Do not use outside of small scale testing
      */
     void dumpDB();
+
+    /**
+     * Updates the priority of a given tool based on its tool_id
+     *
+     * @param tool_id the id for a given tool
+     * @param priority the new priority integer to give the tool
+     */
+    void update_priority(string tool_id, int priority);
 
     /**
      * Deletes a tool in the database by the tool id string
@@ -137,11 +159,27 @@ public:
     vector<string> getMissingToolIDs();
 
     /**
+     * Calls the find missing tool function and returns a list of string ids sorted
+     * by the priority int in the return vector.
+     *
+     * @return A vector of tool IDs sorted by priority number
+     */
+    vector<string> getMissingToolIDsSorted();
+
+    /**
      * Calls the find missing tool function and returns a list of tool names that are missing
      *
      * @return A vector of tool string names
      */
     vector<string> getMissingToolNames();
+
+    /**
+     * Calls the find missing tool function and returns a list of missing tool names that are
+     * int the return vector by priority.
+     *
+     * @return A vector of tool string names sorted by priority number
+     */
+    vector<string> getMissingToolNamesSorted();
 
     /**
      * A getter method for the list of new string ids after a findNewTools call
@@ -151,11 +189,17 @@ public:
     vector<string> getNewIDs();
 
     /**
-     * Getter for the sqlite3 database
+     * Getter for the sqlite3 database.
+     * Used primarily as a way to debug small databases in a development setting.
+     *
+     * Dumps entire database to standard output
      */
      sqlite3* get_db();
 
+    vector<string> get_missing_ids_vec();
 };
-
+//TODO Track number of times it was detected out of box.
+// Will incorporate the last Physical time it was checked out
+// Is the tool checked out flag
 
 #endif //VIRTUAL_TOOLBOX_SD_2019_2020_SQLITEDATABASE_H
