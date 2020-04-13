@@ -9,6 +9,8 @@
 #include <iostream>
 #include <string.h>
 #include <string>
+#include "Tool.h"
+
 using namespace std;
 
 
@@ -49,7 +51,7 @@ string getSelectResponse();
  *
  * @return A vector of Tool ID's as Strings
  */
-vector<string> getMissingIDVec();
+vector<Tool> getMissingIDVec();
 
 /**
  * Used to retrieve a vector of a unique String ID that is new to the the
@@ -59,6 +61,5 @@ vector<string> getMissingIDVec();
  */
 vector<string> getNewIDVec();
 
-vector<int> getPriorityVec();
 
 #endif //VIRTUAL_TOOLBOX_SD_2019_2020_CALLBACKFUNCTIONS_H

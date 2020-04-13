@@ -9,6 +9,7 @@
 #include <vector>
 #include <string>
 #include "../HardwareSkeletonCode/ToolScanner.h"
+#include "Tool.h"
 
 /**
  * This value sets lowest priority that a tool can receive,
@@ -38,9 +39,9 @@ private:
     string dbPath;
 
     /**
-     * List of missing tool IDs
+     * List of missing tools as Tool Objects
      */
-    vector<string> missingIDs;
+    vector<Tool> missingTools;
 
     /**
      * List of new tool IDs
@@ -106,7 +107,7 @@ public:
      * @param retColField an optional string identifier
      * @param toolIDs an optional list of tool IDs
      */
-    void findMissingTool(int sorted, string retColField = "", vector<string> toolIDs = {});
+    void findMissingTool(int sorted, vector<string> toolIDs = {});
 
     /**
      * Dumps the whole database to the terminal
@@ -152,34 +153,19 @@ public:
     int registerNewTool(string toolName, ToolScanner* ts = nullptr);
 
     /**
-     * Calls the find missing tool function and returns a list of string ids
-     *
-     * @return A vector of string ids
-     */
-    vector<string> getMissingToolIDs();
-
-    /**
-     * Calls the find missing tool function and returns a list of string ids sorted
-     * by the priority int in the return vector.
-     *
-     * @return A vector of tool IDs sorted by priority number
-     */
-    vector<string> getMissingToolIDsSorted();
-
-    /**
      * Calls the find missing tool function and returns a list of tool names that are missing
      *
-     * @return A vector of tool string names
+     * @return A vector of Tool objects
      */
-    vector<string> getMissingToolNames();
+    vector<Tool> getMissingTools();
 
     /**
      * Calls the find missing tool function and returns a list of missing tool names that are
      * int the return vector by priority.
      *
-     * @return A vector of tool string names sorted by priority number
+     * @return A vector of Tool objects sorted by priority number
      */
-    vector<string> getMissingToolNamesSorted();
+    vector<Tool> getMissingToolsSorted();
 
     /**
      * A getter method for the list of new string ids after a findNewTools call
@@ -196,8 +182,12 @@ public:
      */
      sqlite3* get_db();
 
-    vector<string> get_missing_ids_vec();
+     vector<Tool> getToolVec(){
+         return missingTools;
+     }
 };
+
+//TODO Add a tool object that is passed back for the ordered missing tools.
 //TODO Track number of times it was detected out of box.
 // Will incorporate the last Physical time it was checked out
 // Is the tool checked out flag

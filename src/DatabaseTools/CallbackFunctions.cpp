@@ -4,16 +4,16 @@
 
 
 #include "CallbackFunctions.h"
+#include "Tool.h"
 
 using namespace std;
 
 string callbackResponse;
 string selectResponse;
 vector<string> newIDs;
-vector<string> missingIDs;
-vector<int> priorityList;
+vector<Tool> missingIDs;
 
-void insertInToolList(int priority, string basicString);
+void insertInToolList(Tool tl);
 
 int callback(void *data, int argc, char **argv, char **columnNames){
     char* cmdtype = (char*) data;
@@ -35,11 +35,11 @@ int callback(void *data, int argc, char **argv, char **columnNames){
         }
         cout << str << endl;
     }else if(strcmp(cmdtype, "MISS") == 0) {
-        missingIDs.push_back(argv[0]);
+        Tool tl = Tool(argv[0], argv[1], argv[2], atoi(argv[3]));
+        missingIDs.push_back(tl);
     }else if(strcmp(cmdtype, "MISSP") == 0){
-        int priority = atoi(argv[1]);
-        string tool = argv[0];
-        insertInToolList(priority, tool);
+        Tool tool = Tool(argv[0], argv[1], argv[2], atoi(argv[3]));
+        insertInToolList(tool);
     }else if(strcmp(cmdtype, "EXIST") == 0){
         callbackResponse = argv[0];
     }else if(strcmp(cmdtype, "NEW") == 0){
@@ -55,25 +55,21 @@ int callback(void *data, int argc, char **argv, char **columnNames){
     return 0;
 }
 
-void insertInToolList(int priority, string basicString) {
+void insertInToolList(Tool tl) {
     auto itID = missingIDs.begin();
-    auto itP = priorityList.begin();
-    if(priorityList.size() == 0){
-        priorityList.push_back(priority);
-        missingIDs.push_back(basicString);
+    if(missingIDs.size() == 0){
+        missingIDs.push_back(tl);
         return;
     }
 
     int i;
-    for(i = 0; i < priorityList.size(); i++){
-        if(priorityList[i] < priority) {
+    for(i = 0; i < missingIDs.size(); i++){
+        if(missingIDs[i].getPriority() < tl.getPriority()) {
             itID++;
-            itP++;
         }else
             break;
     }
-    missingIDs.insert(itID, basicString);
-    priorityList.insert(itP, priority);
+    missingIDs.insert(itID, tl);
 }
 
 string getSelectResponse(){
@@ -88,10 +84,9 @@ string getCallBackResponse(){
     return str;
 }
 
-vector<string> getMissingIDVec(){
-    vector<string> idxs = missingIDs;
+vector<Tool> getMissingIDVec(){
+    vector<Tool> idxs = missingIDs;
     missingIDs.clear();
-    priorityList.clear();
     return idxs;
 }
 
@@ -101,10 +96,3 @@ vector<string> getNewIDVec(){
     return idxs;
 }
 
-vector<int> getPriorityVec(){
-    int i;
-    for(i = 0; i < priorityList.size(); i ++){
-        cout << priorityList[i] << ", ";
-    }
-    cout << endl;
-}

@@ -67,20 +67,17 @@ void SQLiteDatabase::update_priority(string tool_id, int priority){
         cout << errMsg << endl;
 }
 
-void SQLiteDatabase::findMissingTool(int sorted, string retColField, vector<string> toolIDs) {
+void SQLiteDatabase::findMissingTool(int sorted, vector<string> toolIDs) {
     //If no list was provided we need to get it from teh scanner
     if(toolIDs.size() == 0)
         toolIDs = toolScanner->scanForTools();
-
     string cmd_flag;
-    if(sorted)
-        cmd_flag = "MISSP"; //Flag that sorts the missing tools in the return vector
-    else
-        cmd_flag = "MISS";
 
-    if(retColField == "")
-        retColField = "ID";
-    retColField += ", PRIORITY";
+    if(sorted)
+        cmd_flag += "MISSP"; //Flag that sorts the missing tools in the return vector
+    else
+        cmd_flag += "MISS";
+
     //Build list of ID's to pass to the select command
     string idList = "( VALUES";
     int i;
@@ -92,7 +89,7 @@ void SQLiteDatabase::findMissingTool(int sorted, string retColField, vector<stri
     }
     //Build command
 
-    string cmd = "SELECT " + retColField + " FROM TOOLS WHERE ID NOT IN " + idList + ";";
+    string cmd = "SELECT * FROM TOOLS WHERE ID NOT IN " + idList + ";";
     char* errMsg;
 //    cout << "CMD" << endl;
 //    cout << cmd << endl;
@@ -100,8 +97,7 @@ void SQLiteDatabase::findMissingTool(int sorted, string retColField, vector<stri
     //Get response
     if (rv)
         cout << errMsg << endl;
-    getPriorityVec();
-    missingIDs = getMissingIDVec();
+    missingTools = getMissingIDVec();
 }
 
 vector<string> SQLiteDatabase::findNewTool(ToolScanner* ts, vector<string> toolIDs){
@@ -183,26 +179,13 @@ vector<string> SQLiteDatabase::getNewIDs() {
     return newIDs;
 }
 
-vector<string> SQLiteDatabase::getMissingToolIDs() {
+vector<Tool> SQLiteDatabase::getMissingTools() {
     findMissingTool(0);
-    return missingIDs;
+    return missingTools;
 }
 
-vector<string> SQLiteDatabase::getMissingToolNames() {
-     findMissingTool(0, "NAME");
-     return missingIDs;
-}
-
-vector<string> SQLiteDatabase::getMissingToolIDsSorted() {
+vector<Tool> SQLiteDatabase::getMissingToolsSorted() {
     findMissingTool(1);
-    return missingIDs;
+    return missingTools;
 }
 
-vector<string> SQLiteDatabase::getMissingToolNamesSorted() {
-    findMissingTool(1, "NAME");
-    return missingIDs;
-}
-
-vector<string> SQLiteDatabase::get_missing_ids_vec() {
-    return missingIDs;
-}

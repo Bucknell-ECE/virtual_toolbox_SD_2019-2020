@@ -34,4 +34,4 @@ add_executable(DatabaseMain
         "src/DatabaseTools/CallbackFunctions.cpp"
         "src/DatabaseTools/CallbackFunctions.h"
         src/HardwareSkeletonCode/ToolScanner.h
-        src/HardwareSkeletonCode/ToolScanner.cpp)
+        src/HardwareSkeletonCode/ToolScanner.cpp src/DatabaseTools/Tool.cpp src/DatabaseTools/Tool.h)

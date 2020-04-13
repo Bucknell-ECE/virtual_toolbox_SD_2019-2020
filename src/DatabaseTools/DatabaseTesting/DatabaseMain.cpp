@@ -104,6 +104,13 @@ void printVec(vector<string> vec){
     cout<<endl;
 }
 
+void printVec(vector<Tool> vec){
+    int i;
+    for(i=0;i<vec.size();i++)
+        cout<< vec[i].getToolId() << ",";
+    cout<<endl;
+}
+
 
 int main(int argc, char* argv[]){
     //createDatabaseOfSize(20, "PrioDB20.db");
@@ -113,8 +120,7 @@ int main(int argc, char* argv[]){
 
     db->dumpDB();
     vector<string> ids = getUniqueRandIDs(19, 0, 15);
-    db->findMissingTool(1, "", ids);
-    printVec(db->get_missing_ids_vec());
-
+    db->findMissingTool(1, ids);
+    printVec(db->getToolVec());
     return 0;
 }
