@@ -211,7 +211,6 @@ void SQLiteDatabase::updateMissingToolCount() {
             }
         }else{
             string cmd = "UPDATE TOOLS SET MISS_COUNT = 1, LAST_MISS_DATE = ";
-            now -= 5000;
             string curDate = to_string((int)now);
             cmd += curDate +  " WHERE (ID == '" + tl.getToolId() + "');";
             char* errMsg;

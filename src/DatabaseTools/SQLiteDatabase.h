@@ -211,8 +211,4 @@ public:
      }
 };
 
-//TODO Track number of times it was detected out of box.
-// Will incorporate the last Physical time it was checked out
-// Is the tool checked out flag
-
 #endif //VIRTUAL_TOOLBOX_SD_2019_2020_SQLITEDATABASE_H
