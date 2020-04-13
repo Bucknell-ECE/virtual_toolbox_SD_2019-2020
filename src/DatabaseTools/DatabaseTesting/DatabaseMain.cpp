@@ -113,14 +113,16 @@ void printVec(vector<Tool> vec){
 
 
 int main(int argc, char* argv[]){
-    //createDatabaseOfSize(20, "PrioDB20.db");
+//    createDatabaseOfSize(20, "PrioDB20.db");
 
     ToolScanner* tl = new ToolScanner();
     SQLiteDatabase* db = new SQLiteDatabase(filepath + "PrioDB20.db", tl);
 
-    db->dumpDB();
+    int i;
     vector<string> ids = getUniqueRandIDs(19, 0, 15);
     db->findMissingTool(1, ids);
     printVec(db->getToolVec());
+    db->dumpDB();
+
     return 0;
 }

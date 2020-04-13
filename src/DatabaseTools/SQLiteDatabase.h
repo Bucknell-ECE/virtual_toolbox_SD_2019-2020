@@ -5,6 +5,7 @@
 #ifndef VIRTUAL_TOOLBOX_SD_2019_2020_SQLITEDATABASE_H
 #define VIRTUAL_TOOLBOX_SD_2019_2020_SQLITEDATABASE_H
 
+#define ONE_HOUR_SEC 3600
 #include "../../sqlite3/sqlite3.h"
 #include <vector>
 #include <string>
@@ -48,11 +49,34 @@ private:
      */
     vector<string> newIDs;
 
+    /**
+     * Called by the findMissingTool function in order to update
+     * the miss_count field and last_miss_date field in the database
+     * for any missing tool.
+     *
+     * This function will only update the miss_count and last_miss_date field if
+     * the current time is one hour greater than the last time it was was reported missing.
+     * The time is checked in order to eliminate the system from over-counting the number
+     * of times the tool is recorded missing, as a use-case exists where more than on
+     * scan for missing tools could be made during one singular use of the user.
+     */
+    void updateMissingToolCount();
+
 public:
     /**
      * Creates/opens a Database Tools given a filepath for the database.
      * Requires a ToolScanner object that will allow for the database
      * to receive Tool ID's from the toolbox.
+     *
+     * If a database that is provided in the dbFilePath parameter, a db
+     * file will be created. The function creates a SQL style database with
+     * one table named TOOLS with the following fields:
+     * ID TEXT (primary key) - the id of the tool as a string
+     * NAME TEXT - the human readable name of the tool
+     * REG_DATE INT - the date the tool was registered as a time_t value
+     * PRIORITY INT - the priority of the tool used to display the tool to the user
+     * MISS_COUNT INT - the number of times that the tool has been recorded missing
+     * LAST_MISS_DATE INT - the last date and time the tool has been recorded missing as a time_t value
      *
      * @param dbFilePath path of a Database Tools .db file
      * @param toolScanner a ToolScanner object for a physical scanner
@@ -187,7 +211,6 @@ public:
      }
 };
 
-//TODO Add a tool object that is passed back for the ordered missing tools.
 //TODO Track number of times it was detected out of box.
 // Will incorporate the last Physical time it was checked out
 // Is the tool checked out flag

@@ -35,10 +35,10 @@ int callback(void *data, int argc, char **argv, char **columnNames){
         }
         cout << str << endl;
     }else if(strcmp(cmdtype, "MISS") == 0) {
-        Tool tl = Tool(argv[0], argv[1], argv[2], atoi(argv[3]));
+        Tool tl = Tool(argv[0], argv[1], atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
         missingIDs.push_back(tl);
     }else if(strcmp(cmdtype, "MISSP") == 0){
-        Tool tool = Tool(argv[0], argv[1], argv[2], atoi(argv[3]));
+        Tool tool = Tool(argv[0], argv[1], atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
         insertInToolList(tool);
     }else if(strcmp(cmdtype, "EXIST") == 0){
         callbackResponse = argv[0];

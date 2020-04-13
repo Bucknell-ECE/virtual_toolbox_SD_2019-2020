@@ -6,6 +6,10 @@
 #include "SQLiteDatabase.h"
 #include "CallbackFunctions.h"
 #include <ctime>
+#include <iomanip>
+#include <sstream>
+
+using namespace std;
 
 SQLiteDatabase::SQLiteDatabase(std::string dbFilePath, ToolScanner* toolScanner){
     this->dbPath = dbFilePath;
@@ -27,8 +31,10 @@ SQLiteDatabase::SQLiteDatabase(std::string dbFilePath, ToolScanner* toolScanner)
             const char* cmd = "CREATE TABLE TOOLS("
                               "ID TEXT PRIMARY KEY,"
                               "NAME TEXT NOT NULL,"
-                              "REG_DATE TEXT NOT NULL,"
-                              "PRIORITY INT NOT NULL);";
+                              "REG_DATE INT NOT NULL,"
+                              "PRIORITY INT NOT NULL,"
+                              "MISS_COUNT INT,"
+                              "LAST_MISS_DATE INT);";
             sqlite3_exec(db, cmd, callback, (void*)"CREATE", & errMsg);
         }
     }
@@ -46,11 +52,9 @@ sqlite3* SQLiteDatabase::get_db(){
 
 void SQLiteDatabase::addTool(string ID, string toolName, int priority) {
     time_t now = time(0);
-    string curDate = ctime(&now);
-    curDate = curDate.substr(0,curDate.size() - 1);
-    string cmd = "INSERT INTO TOOLS (ID, NAME, REG_DATE, PRIORITY) VALUES"
-                 "(" + ID + ", '" + toolName + "', '" + curDate + "', " +
-                 to_string(priority) + ");";
+    string cmd = "INSERT INTO TOOLS (ID, NAME, REG_DATE, PRIORITY, MISS_COUNT, LAST_MISS_DATE) VALUES"
+                 "(" + ID + ", '" + toolName + "', '" + to_string((int)now) + "', " +
+                 to_string(priority) + ", 0, -1);";
     char* errMsg;
     int rv = sqlite3_exec(db, (const char*) cmd.c_str(), callback, (void*)"INS", &errMsg);
     //Get response
@@ -98,6 +102,7 @@ void SQLiteDatabase::findMissingTool(int sorted, vector<string> toolIDs) {
     if (rv)
         cout << errMsg << endl;
     missingTools = getMissingIDVec();
+    updateMissingToolCount();
 }
 
 vector<string> SQLiteDatabase::findNewTool(ToolScanner* ts, vector<string> toolIDs){
@@ -187,5 +192,33 @@ vector<Tool> SQLiteDatabase::getMissingTools() {
 vector<Tool> SQLiteDatabase::getMissingToolsSorted() {
     findMissingTool(1);
     return missingTools;
+}
+
+void SQLiteDatabase::updateMissingToolCount() {
+    int i;
+    for(i = 0; i < missingTools.size(); i++){
+        Tool tl = missingTools[i];
+        time_t now = time(0);
+        if(tl.getLastMissDate() != -1){
+            time_t then = (time_t)tl.getLastMissDate();
+            if(now - then> ONE_HOUR_SEC){
+                string cmd = "UPDATE TOOLS SET MISS_COUNT = " + to_string(tl.getMissCount() + 1) +
+                        ", LAST_MISS_DATE = " + to_string(now) + " WHERE (ID == '" + tl.getToolId() + "');";
+                char* errMsg;
+                int rv = sqlite3_exec(db, cmd.c_str(), callback, (void*) "UMISS", &errMsg);
+                if(rv)
+                    cout<<errMsg<<endl;
+            }
+        }else{
+            string cmd = "UPDATE TOOLS SET MISS_COUNT = 1, LAST_MISS_DATE = ";
+            now -= 5000;
+            string curDate = to_string((int)now);
+            cmd += curDate +  " WHERE (ID == '" + tl.getToolId() + "');";
+            char* errMsg;
+            int rv = sqlite3_exec(db, cmd.c_str(), callback, (void*) "UMISS", & errMsg);
+            if(rv)
+                cout<<errMsg<<endl;
+        }
+    }
 }
 

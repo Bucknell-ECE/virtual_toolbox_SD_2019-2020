@@ -23,25 +23,37 @@ private:
      */
     string toolID;
     /**
-     * The date the tool was registered in the toolbox.
+     * The date the tool was registered in the toolbox as an integer that
+     * could be converted to time_t.
      */
-    string registerDate;
+    int registerDate;
     /**
      * The priority given to this specific tool.
      */
     int priority;
+    /**
+     * The number of times this tool was documented missing
+     */
+    int miss_count;
+    /**
+     * The last recorded date and time this tool was documented missing as an int
+     * that could be converted to a time_t
+     */
+    int last_miss_date;
 
 public:
     /**
      * Creates an instance of a tool object which holds the following info for a
      * unique tool.
      *
-     * @param toolName the name of the tool
      * @param toolID the id of the tool
+     * @param toolName the name of the tool
      * @param registerDate the registration date of the tool
      * @param priority the priority given to the tool for display
+     * @param miss_count the number of times the tool has been missing
+     * @param last_miss_date the last date the tool was missing
      */
-    Tool(string toolName, string toolID, string registerDate, int priority);
+    Tool(string toolID, string toolName, int registerDate, int priority, int miss_count, int last_miss_date);
 
     /** Getters and Setters */
 
@@ -53,13 +65,21 @@ public:
 
     void setToolId(const string &toolId);
 
-    const string &getRegisterDate() const;
+    int getRegisterDate() const;
 
-    void setRegisterDate(const string &registerDate);
+    void setRegisterDate(int registerDate);
 
     int getPriority() const;
 
     void setPriority(int priority);
+
+    int getMissCount() const;
+
+    void setMissCount(int missCount);
+
+    int getLastMissDate() const;
+
+    void setLastMissDate(int lastMissDate);
 };
 
 
